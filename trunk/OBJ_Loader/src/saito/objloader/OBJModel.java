@@ -25,8 +25,11 @@ import java.util.Vector;
  * 
  * @author tatsuyas
  * 
- * TODO:
- * 
+ * TODO: 
+ * Add documentation and examples to the google code repository
+ * Add vertex normals and face normals from Collada Loader
+ * Add getNormal() function
+ * Use getNormal to push vers along normals in example
  */
 
 public class OBJModel {
