@@ -30,6 +30,8 @@ import java.util.Vector;
  * Add vertex normals and face normals from Collada Loader
  * Add getNormal() function
  * Use getNormal to push vers along normals in example
+ * Add drawOPENGL() draw mode. Move model data into array lists see this for example http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1206221585;start=1#1
+ * 
  */
 
 public class OBJModel {
