@@ -205,8 +205,7 @@ public class OBJModel {
 
 				boolean bTexture = true;
 
-				ModelSegment tmpModelSegment = (ModelSegment) modelSegments
-						.elementAt(s);
+				ModelSegment tmpModelSegment = (ModelSegment) modelSegments.elementAt(s);
 
 				mtl = (Material) materials.get(tmpModelSegment.mtlName);
 
@@ -216,19 +215,16 @@ public class OBJModel {
 				{
 					mtl = (Material) materials.get(defaultMaterialName);
 
-					debug.println("Material '" + tmpModelSegment.mtlName
-							+ "' not defined");
+					debug.println("Material '" + tmpModelSegment.mtlName + "' not defined");
 				}
 
 				if (flagMaterial) {
-					parent.fill(255.0f * mtl.Ka[0], 255.0f * mtl.Ka[1],
-							255.0f * mtl.Ka[2], 255.0f * mtl.d);
+					parent.fill(255.0f * mtl.Ka[0], 255.0f * mtl.Ka[1], 255.0f * mtl.Ka[2], 255.0f * mtl.d);
 				}
 
 				for (int f = 0; f < tmpModelSegment.elements.size(); f++) {
 
-					ModelElement tmpf = (ModelElement) (tmpModelSegment.elements
-							.elementAt(f));
+					ModelElement tmpf = (ModelElement) (tmpModelSegment.elements.elementAt(f));
 
 					parent.textureMode(PApplet.NORMALIZED);
 
@@ -262,8 +258,7 @@ public class OBJModel {
 
 						for (int fp = 0; fp < tmpf.indexes.size(); fp++) {
 
-							vidx = ((Integer) (tmpf.indexes.elementAt(fp)))
-									.intValue();
+							vidx = ((Integer) (tmpf.indexes.elementAt(fp))).intValue();
 
 							v = (Vertex) vertexes.elementAt(vidx - 1);
 
@@ -273,25 +268,20 @@ public class OBJModel {
 
 									if (tmpf.nindexes.size() > 0) {
 
-										vnidx = ((Integer) (tmpf.nindexes
-												.elementAt(fp))).intValue();
+										vnidx = ((Integer) (tmpf.nindexes.elementAt(fp))).intValue();
 
-										vn = (Vertex) normv
-												.elementAt(vnidx - 1);
+										vn = (Vertex) normv.elementAt(vnidx - 1);
 
 										parent.normal(vn.vx, vn.vy, vn.vz);
 									}
 
 									if (bTexture) {
 
-										vtidx = ((Integer) (tmpf.tindexes
-												.elementAt(fp))).intValue();
+										vtidx = ((Integer) (tmpf.tindexes.elementAt(fp))).intValue();
 
-										vt = (Vertex) texturev
-												.elementAt(vtidx - 1);
+										vt = (Vertex) texturev.elementAt(vtidx - 1);
 
-										parent.vertex(v.vx, -v.vy, v.vz, vt.vx,
-												1.0f - vt.vy);
+										parent.vertex(v.vx, -v.vy, v.vz, vt.vx, 1.0f - vt.vy);
 
 									} else
 
@@ -541,44 +531,63 @@ public class OBJModel {
 								String[] forder = seg.split("/");
 
 								if (forder.length > 2) {
+									
 									if (forder[2].length() > 0)
-										tmpf.nindexes.add(Integer
-												.valueOf(forder[2]));
+										
+										tmpf.nindexes.add(Integer.valueOf(forder[2]));
+									
 									if (forder[1].length() > 0)
-										tmpf.tindexes.add(Integer
-												.valueOf(forder[1]));
+										
+										tmpf.tindexes.add(Integer.valueOf(forder[1]));
+									
 									if (forder[0].length() > 0)
-										tmpf.indexes.add(Integer
-												.valueOf(forder[0]));
+										
+										tmpf.indexes.add(Integer.valueOf(forder[0]));
+									
 								} else if (forder.length > 1) {
+									
 									if (forder[1].length() > 0)
-										tmpf.tindexes.add(Integer
-												.valueOf(forder[1]));
+										
+										tmpf.tindexes.add(Integer.valueOf(forder[1]));
+									
 									if (forder[0].length() > 0)
-										tmpf.indexes.add(Integer
-												.valueOf(forder[0]));
+										
+										tmpf.indexes.add(Integer.valueOf(forder[0]));
+									
 								} else if (forder.length > 0) {
+									
 									if (forder[0].length() > 0)
-										tmpf.indexes.add(Integer
-												.valueOf(forder[0]));
+										
+										tmpf.indexes.add(Integer.valueOf(forder[0]));
+									
 								}
 							} else {
+								
 								if (seg.length() > 0)
+									
 									tmpf.indexes.add(Integer.valueOf(seg));
+								
 							}
 						}
+						
 						currentModelSegment.elements.add(tmpf);
+						
 					} else if (elements[0].equals("ll")) { // line
+						
 						ModelElement tmpf = new ModelElement();
+						
 						tmpf.iType = ModelElement.POLYGON;
 
 						if (elements.length < 2) {
-							debug
-									.println("Warning: potential model data error");
+							
+							debug.println("Warning: potential model data error");
+							
 						}
 
 						for (int i = 1; i < elements.length; i++) {
+							
 							tmpf.indexes.add(Integer.valueOf(elements[i]));
+							
 						}
 
 						currentModelSegment.elements.add(tmpf);
@@ -587,7 +596,9 @@ public class OBJModel {
 				}
 			}
 		} catch (Exception e) {
+			
 			e.printStackTrace();
+			
 		}
 	}
 
