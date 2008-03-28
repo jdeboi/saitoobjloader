@@ -14,8 +14,6 @@ import processing.core.PImage;
 /**
  * @author tatsuyas
  * 
- * TODO To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Style - Code Templates
  */
 public class Material {
 	public PImage map_Ka;
