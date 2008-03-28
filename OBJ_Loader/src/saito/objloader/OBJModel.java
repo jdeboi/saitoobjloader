@@ -25,12 +25,11 @@ import java.util.Vector;
  * 
  * @author tatsuyas
  * 
- * TODO: 
- * Add documentation and examples to the google code repository
- * Add vertex normals and face normals from Collada Loader
- * Add getNormal() function
- * Use getNormal to push vers along normals in example
- * Add drawOPENGL() draw mode. Move model data into array lists see this for example http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1206221585;start=1#1
+ * TODO: Add documentation and examples to the google code repository
+ * TODO: Add vertex normals and face normals from Collada Loader
+ * TODO: Add getNormal() function
+ * TODO: Use getNormal to push vers along normals in example
+ * TODO: Add drawOPENGL() draw mode. Move model data into array lists see this for example http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1206221585;start=1#1
  * 
  */
 
