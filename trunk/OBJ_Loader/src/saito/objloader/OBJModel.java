@@ -31,6 +31,10 @@ import java.util.Vector;
  * TODO: Use getNormal to push vers along normals in example
  * TODO: Add drawOPENGL() draw mode. Move model data into array lists see this for example http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1206221585;start=1#1
  * 
+ * google code address (because I always forget)
+ * 
+ * http://code.google.com/p/saitoobjloader/
+ * 
  */
 
 public class OBJModel {
