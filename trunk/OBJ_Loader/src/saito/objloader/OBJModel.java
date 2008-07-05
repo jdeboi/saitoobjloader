@@ -10,6 +10,7 @@ package saito.objloader;
  */
 
 import processing.core.*;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader; // import java.io.File;
@@ -24,11 +25,12 @@ import java.util.Vector;
 /**
  * 
  * @author tatsuyas
+ * @author mditton
  * 
  * TODO: Add documentation and examples to the google code repository
  * TODO: Add vertex normals and face normals from Collada Loader
  * TODO: Add getNormal() function
- * TODO: Use getNormal to push vers along normals in example
+ * TODO: Use getNormal to push verts along normals in example
  * TODO: Add drawOPENGL() draw mode. Move model data into array lists see this for example http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1206221585;start=1#1
  * 
  * google code address (because I always forget)
@@ -37,7 +39,7 @@ import java.util.Vector;
  * 
  */
 
-public class OBJModel {
+public class OBJModel implements PConstants{
 
 	// global variables
 	Vector vertexes; // vertexes
@@ -66,7 +68,7 @@ public class OBJModel {
 	PImage texture; // texture image applied from the code.
 
 	// runtime rendering variables
-	int mode = PApplet.POLYGON; // render mode (ex. POLYGON, POINTS ..)
+	int mode = PApplet.TRIANGLES; // render mode (ex. POLYGON, POINTS ..)
 
 	boolean flagTexture = true;
 
@@ -79,6 +81,23 @@ public class OBJModel {
 	String originalTexture;
 
 	public OBJModel(PApplet parent) {
+		
+		setup(parent);
+
+	}
+	
+	//extra constructor because I got sick of having two lines to create and load the model. - MD
+	public OBJModel(PApplet parent, String s) {
+		
+		setup(parent);
+		
+		load(s);
+		
+	}
+	
+	
+	private void setup(PApplet parent){
+		
 		this.parent = parent;
 
 		parent.registerDispose(this);
@@ -97,15 +116,10 @@ public class OBJModel {
 
 		debug = new Debug(parent);
 
-		// debug.enabled = true; // use this for pre release builds
-
-		// debug.println("objloader 013 pre release check website soon for the
-		// final release");
-
-		// debug.println("http://users.design.ucla.edu/~tatsuyas/tools/objloader/index.htm"
-		// + "\n");
+		//debug.enabled = true; // use this for pre release builds
 
 		debug.enabled = false;
+		
 	}
 
 	public void pre() {
@@ -315,33 +329,35 @@ public class OBJModel {
 
 	public void drawMode(int mode) {
 		this.mode = mode;
-
-		if (mode == 16) {
-			debug.println("draw mode:\t\tPOINTS");
-		}
-
-		if (mode == 32) {
-			debug.println("draw mode:\t\tLINES");
-		}
-
-		if (mode == 256) {
-			debug.println("draw mode:\t\tPOLYGON");
-		}
-
-		if (mode == 64) {
-			debug.println("draw mode:\t\tTRIANGLES");
-		}
-
-		if (mode == 65) {
-			debug.println("draw mode:\t\tTRIANGLE_STRIP");
-		}
-
-		if (mode == 128) {
-			debug.println("draw mode:\t\tQUADS");
-		}
-
-		if (mode == 129) {
-			debug.println("draw mode:\t\tQUAD_STRIP");
+		
+		switch(mode){
+			case(POINTS):
+				debug.println("draw mode:\t\tPOINTS");
+				break;
+			
+			case(LINES):
+				debug.println("draw mode:\t\tLINES");
+				break;
+				
+			case(POLYGON):
+				debug.println("draw mode:\t\tPOLYGON");
+				break;
+				
+			case(TRIANGLES):
+				debug.println("draw mode:\t\tTRIANGLES");
+				break;
+				
+			case(TRIANGLE_STRIP):
+				debug.println("draw mode:\t\tTRIANGLE_STRIP");
+				break;
+				
+			case(QUADS):
+				debug.println("draw mode:\t\tQUADS");
+				break;
+				
+			case(QUAD_STRIP):
+				debug.println("draw mode:\t\t");
+				break;
 		}
 	}
 
@@ -700,9 +716,10 @@ public class OBJModel {
 	public void debugMode() {
 		debug.enabled = true;
 		debug.println("");
-		debug.println("objloader version 013");
-		debug.println("http://users.design.ucla.edu/~tatsuyas/tools/objloader/index.htm");
-		debug.println("http://www.polymonkey.com/2008/page.asp?obj_loader");
+		debug.println("objloader version 014");
+		debug.println("http://code.google.com/p/saitoobjloader/");		
+		//debug.println("http://users.design.ucla.edu/~tatsuyas/tools/objloader/index.htm");
+		//debug.println("http://www.polymonkey.com/2008/page.asp?obj_loader");
 		debug.println("");
 
 	}
