@@ -40,7 +40,7 @@ public class ModelElement implements PConstants{
 		int[] v = new int[getSize()];
 		
 		for(int i = 0; i < getSize(); i ++){
-			v[i] = getVertexIndex(i) -1;
+			v[i] = getVertexIndex(i);
 		}
 		                  
 		return v;
@@ -51,7 +51,7 @@ public class ModelElement implements PConstants{
 		int[] v = new int[getSize()];
 		
 		for(int i = 0; i < getSize(); i ++){
-			v[i] = getNormalIndex(i) -1;
+			v[i] = getNormalIndex(i);
 		}
 		                  
 		return v;
@@ -62,19 +62,22 @@ public class ModelElement implements PConstants{
 		int[] v = new int[getSize()];
 		
 		for(int i = 0; i < getSize(); i ++){
-			v[i] = getTextureIndex(i) -1;
+			v[i] = getTextureIndex(i);
 		}
 		                  
 		return v;
 	}
 	
+	
+	//remember kids arrays start at 0 (hence the -1)
 	public int getVertexIndex(int i){
-		return ((Integer)indexes.elementAt(i)).intValue();
+		return ((Integer)indexes.elementAt(i)).intValue() -1;
 	}
 	public int getTextureIndex(int i){
-		return ((Integer)tindexes.elementAt(i)).intValue();		
+		return ((Integer)tindexes.elementAt(i)).intValue() -1;		
 	}
 	public int getNormalIndex(int i){
-		return ((Integer)nindexes.elementAt(i)).intValue();
+		return ((Integer)nindexes.elementAt(i)).intValue() -1;
 	}
+
 }
