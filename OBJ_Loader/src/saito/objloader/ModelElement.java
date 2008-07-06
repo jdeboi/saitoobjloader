@@ -11,30 +11,63 @@ package saito.objloader;
 
 import java.util.Vector;
 
+import processing.core.PConstants;
+
 /**
  * @author tatsuyas
  */
 
-public class ModelElement {
+public class ModelElement implements PConstants{
 
-	public static int LINE=0;
-	public static int POLYGON=1;
-
-	public int iType=POLYGON;
+	public int iType = POLYGON;
 	
 	public Vector indexes;
 	public Vector tindexes;
 	public Vector nindexes;
-
+	
 	public ModelElement() {
 		indexes = new Vector();
 		tindexes = new Vector();
 		nindexes = new Vector();
 	}
-
+	
 	public int getSize(){
 		return indexes.size();
 	}
+	
+	public int[] getVertexIndexArray(){
+		
+		int[] v = new int[getSize()];
+		
+		for(int i = 0; i < getSize(); i ++){
+			v[i] = getVertexIndex(i);
+		}
+		                  
+		return v;
+	}
+	
+	public int[] getNormalIndexArray(){
+		
+		int[] v = new int[getSize()];
+		
+		for(int i = 0; i < getSize(); i ++){
+			v[i] = getNormalIndex(i);
+		}
+		                  
+		return v;
+	}
+	
+	public int[] getTextureIndexArray(){
+		
+		int[] v = new int[getSize()];
+		
+		for(int i = 0; i < getSize(); i ++){
+			v[i] = getTextureIndex(i);
+		}
+		                  
+		return v;
+	}
+	
 	public int getVertexIndex(int i){
 		return ((Integer)indexes.elementAt(i)).intValue();
 	}
