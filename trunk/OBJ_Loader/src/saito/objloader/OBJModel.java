@@ -48,11 +48,11 @@ public class OBJModel implements PConstants{
 
 	Vector normv;
 
-	Hashtable materials;
-
-	Hashtable groups;
-
 	Vector modelSegments;
+
+	Hashtable materials;
+	
+	Hashtable groups;
 
 	String objName = "default";
 
@@ -189,35 +189,42 @@ public class OBJModel implements PConstants{
 	      
 	    }
 	    
+	    debug.println("number of model groups = " + groups.size());
+	    
+	    debug.println(" " + groups.toString());
+	    
+	    
+	    groups.keys();
 
-	
+	    
 		debug.println("number of model segments = " + modelSegments.size());
 		
 		// Why are there empty model segments? Should I kill them off? - MD
+		
 		
 		for (int i = 0; i < modelSegments.size(); i ++){
 			
 			ModelSegment tmpModelSegment = (ModelSegment) modelSegments.elementAt(i);
 			
-			debug.println("number of model elements = " + tmpModelSegment.elements.size());
+			debug.println("number of model elements = " + tmpModelSegment.getSize());
 			debug.println("model element uses this mtl = " + tmpModelSegment.getMtlname());
 			
-			if(tmpModelSegment.elements.size() > 0){
+			if(tmpModelSegment.getSize() > 0){
 				
-				for (int j = 0; j <  tmpModelSegment.elements.size(); j ++){
+				for (int j = 0; j <  tmpModelSegment.getSize(); j ++){
 					
-					ModelElement tmpf = (ModelElement) (tmpModelSegment.elements.elementAt(j));
+					ModelElement tmpf = (ModelElement) (tmpModelSegment.getElement(j));
 					
-					vertind = PApplet.concat(vertind, tmpf.getVertexIndexArray());
-					normind = PApplet.concat(normind, tmpf.getNormalIndexArray());
-					texind =  PApplet.concat(texind,  tmpf.getTextureIndexArray());
-					
-//					if(j == 12){
-//						debug.println(tmpf.getVertexIndexArray());
-//						debug.println(tmpf.getNormalIndexArray());
-//						debug.println(tmpf.getTextureIndexArray());
-//					}
-					
+					if(j == 0){
+						vertind = tmpf.getVertexIndexArray();
+						normind = tmpf.getNormalIndexArray();
+						texind =  tmpf.getTextureIndexArray();
+					}
+					else{
+						vertind = PApplet.concat(vertind, tmpf.getVertexIndexArray());
+						normind = PApplet.concat(normind, tmpf.getNormalIndexArray());
+						texind =  PApplet.concat(texind,  tmpf.getTextureIndexArray());
+					}
 				}
 			}
 		}
@@ -290,11 +297,11 @@ public class OBJModel implements PConstants{
 
 	private float[] getFloatArrayFromVector(Vector v, int stride){
 		
-		float[] f = new float[ v.size() * stride];
+		float[] f = new float[ v.size() * stride ];
 		
 		int count = 0;
 		
-		for(int i = 0; i < f.length - stride; i += stride ){
+		for(int i = 0; i < f.length - stride + 1; i += stride ){
 			
 			Vertex p = (Vertex)v.elementAt(count);	
 			
@@ -339,12 +346,11 @@ public class OBJModel implements PConstants{
 	    
 	    gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0); 
 
-
-	    
 	    switch(mode){
 	    
 		    case(POINTS):
 		    	gl.glDrawElements(GL.GL_POINTS, vertind.length, GL.GL_UNSIGNED_INT, indexesIB);
+//		    	gl.glDrawElements(GL.GL_POINTS, normind.length, GL.GL_UNSIGNED_INT, nindexesIB);
 		    break;
 		    
 		    case(LINES):
@@ -353,6 +359,7 @@ public class OBJModel implements PConstants{
 		    
 		    case(TRIANGLES):
 		    	gl.glDrawElements(GL.GL_TRIANGLES, vertind.length, GL.GL_UNSIGNED_INT, indexesIB);
+//		    	gl.glDrawElements(GL.GL_TRIANGLES, normind.length, GL.GL_UNSIGNED_INT, nindexesIB);
 		    break;
 		    
 		    case(TRIANGLE_STRIP):
@@ -816,7 +823,7 @@ public class OBJModel implements PConstants{
 						ModelSegment newModelSegment = new ModelSegment();
 
 						modelSegments.add(newModelSegment);
-
+						
 						currentModelSegment = newModelSegment;
 
 						currentModelSegment.mtlName = currentMaterial;
@@ -913,6 +920,7 @@ public class OBJModel implements PConstants{
 									tmpf.indexes.add(Integer.valueOf(seg));
 								}
 							}
+							
 						}
 						
 						currentModelSegment.elements.add(tmpf);

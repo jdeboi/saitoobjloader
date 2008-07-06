@@ -15,8 +15,12 @@ public class ModelSegment {
 	public String getMtlname() {
 		return mtlName;
 	}
+	
+	public Object getElement(int index){
+		return elements.elementAt(index);
+	}
 
-	public int getFacetsize() {
+	public int getSize() {
 		return elements.size();
 	}
 }
