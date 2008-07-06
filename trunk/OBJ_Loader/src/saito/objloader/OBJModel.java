@@ -10,17 +10,16 @@ package saito.objloader;
  */
 
 import processing.core.*;
+import processing.opengl.*;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.io.BufferedReader; // import java.io.File;
-// import java.io.FileReader;
-// import java.io.IOException;
+import java.io.BufferedReader; 
 import java.io.InputStream;
-import java.io.InputStreamReader; // import java.net.MalformedURLException;
-// import java.net.URL;
+import java.io.InputStreamReader; 
 import java.util.Hashtable;
 import java.util.Vector;
+import java.nio.*;
+
+import javax.media.opengl.*;
 
 /**
  * 
@@ -80,6 +79,25 @@ public class OBJModel implements PConstants{
 	Debug debug;
 
 	String originalTexture;
+	
+	//OPENGL variables
+	FloatBuffer vertFB,normFB,texFB;
+	
+	public IntBuffer indexesIB;
+	public IntBuffer tindexesIB;
+	public IntBuffer nindexesIB;
+	
+	float[] vert,norm,tex;
+	int[] glbuf;
+	
+	int[] vertind = new int[0];
+	
+	int[] texind = new int[0];
+	
+	int[] normind = new int[0];
+	
+	GL gl;
+	PGraphicsOpenGL pgl;
 
 	// -------------------------------------------------------------------------
 	// ------------------------------------------------------------ Constructors
@@ -122,13 +140,250 @@ public class OBJModel implements PConstants{
 
 		debug = new Debug(parent);
 
-		//debug.enabled = true; // use this for pre release builds
-
 		debug.enabled = false;
 		
 	}
 
+	public void setupOPENGL(){
+		
+		if(!(parent.g instanceof PGraphicsOpenGL))
+		{
 
+			throw new RuntimeException("This feature requires OpenGL");
+
+		}
+		
+		gl = ((PGraphicsOpenGL) parent.g).gl;
+		
+		debug.println("Setting up OPENGL buffers");
+		
+		debug.println("Getting verts " + vertexes.size());
+		vert = getFloatArrayFromVector(vertexes, 3); 
+		
+		debug.println("Getting normals " + normv.size());
+		norm = getFloatArrayFromVector(normv, 3); 
+		
+		debug.println("Getting UV's "  + texturev.size());
+		tex = getFloatArrayFromVector(texturev, 2); 
+		
+	    if(vert!=null && vert.length>0)
+	    {
+	    	
+	    	vertFB = setupFloatBuffer(vert);
+
+			debug.println("Created vert FloatBuffers, there are this many = " + vertFB.capacity());
+
+	    }
+	    if(norm!=null && norm.length>0)
+	    {
+	    	normFB = setupFloatBuffer(norm);
+
+			debug.println("Created norm FloatBuffers, there are this many = " + normFB.capacity());
+			
+	    }
+	    if(tex!=null && tex.length>0)
+	    {
+	    	texFB = setupFloatBuffer(tex);
+
+			debug.println("Created texture FloatBuffers, there are this many = " + texFB.capacity());
+	      
+	    }
+	    
+
+	
+		debug.println("number of model segments = " + modelSegments.size());
+		
+		// Why are there empty model segments? Should I kill them off? - MD
+		
+		for (int i = 0; i < modelSegments.size(); i ++){
+			
+			ModelSegment tmpModelSegment = (ModelSegment) modelSegments.elementAt(i);
+			
+			debug.println("number of model elements = " + tmpModelSegment.elements.size());
+			debug.println("model element uses this mtl = " + tmpModelSegment.getMtlname());
+			
+			if(tmpModelSegment.elements.size() > 0){
+				
+				for (int j = 0; j <  tmpModelSegment.elements.size(); j ++){
+					
+					ModelElement tmpf = (ModelElement) (tmpModelSegment.elements.elementAt(j));
+					
+					vertind = PApplet.concat(vertind, tmpf.getVertexIndexArray());
+					normind = PApplet.concat(normind, tmpf.getNormalIndexArray());
+					texind =  PApplet.concat(texind,  tmpf.getTextureIndexArray());
+					
+//					if(j == 12){
+//						debug.println(tmpf.getVertexIndexArray());
+//						debug.println(tmpf.getNormalIndexArray());
+//						debug.println(tmpf.getTextureIndexArray());
+//					}
+					
+				}
+			}
+		}
+		
+		debug.println("Number of vert indexes = " + vertind.length);
+		debug.println("Number of Normal indexes = " + normind.length);
+		debug.println("Number of Texture indexes = " + texind.length);
+				
+		indexesIB = setupIntBuffer(vertind);
+		
+		nindexesIB = setupIntBuffer(normind);
+		
+		tindexesIB = setupIntBuffer(texind);
+	    
+	    debug.println("Generated Buffers");
+	    
+	    glbuf=new int[9];
+	    
+	    gl.glGenBuffers(3,glbuf,0);
+	    
+	    gl.glBindBuffer(GL.GL_ARRAY_BUFFER, glbuf[0]);
+	    gl.glBufferData(GL.GL_ARRAY_BUFFER, 4*vert.length, vertFB, GL.GL_STATIC_DRAW); 
+	    
+	    gl.glBindBuffer(GL.GL_ARRAY_BUFFER, glbuf[1]);
+	    gl.glBufferData(GL.GL_ARRAY_BUFFER, 4*norm.length, normFB, GL.GL_STATIC_DRAW);  
+	    
+	    if(tex != null && tex.length > 0)  
+	    {
+	      gl.glBindBuffer(GL.GL_ARRAY_BUFFER, glbuf[2]);
+	      gl.glBufferData(GL.GL_ARRAY_BUFFER, 4*tex.length, texFB, GL.GL_STATIC_DRAW);
+	    }
+	    
+	    debug.println("leaving setup function");
+		
+	}
+	
+	private FloatBuffer setupFloatBuffer(float[] f){
+		
+		FloatBuffer fb = ByteBuffer.allocateDirect(4 * f.length).order(ByteOrder.nativeOrder()).asFloatBuffer();
+		fb.put(f);
+		fb.rewind();
+		
+		return fb;
+		
+	}
+	
+	private IntBuffer setupIntBuffer(int[] i){
+		
+		IntBuffer fb = ByteBuffer.allocateDirect(4 * i.length).order(ByteOrder.nativeOrder()).asIntBuffer();
+		fb.put(i);
+		fb.rewind();
+		
+		return fb;
+		
+	}
+	
+	
+//	private int[] getIntArrayFromVector(Vector v){
+//		
+//		int[] intArray = new int[ v.size() ];
+//		
+//		for(int i = 0; i < intArray.length; i ++){
+//			
+//			intArray[i]  = ((Integer) (v.elementAt(i))).intValue();
+//			
+//		}
+//		
+//		return intArray;
+//	}
+
+	private float[] getFloatArrayFromVector(Vector v, int stride){
+		
+		float[] f = new float[ v.size() * stride];
+		
+		int count = 0;
+		
+		for(int i = 0; i < f.length - stride; i += stride ){
+			
+			Vertex p = (Vertex)v.elementAt(count);	
+			
+			count++;
+			
+			f[i] = p.vx;
+			
+			if(stride > 1){
+				f[i+1] = p.vy;
+			}
+			
+			if(stride > 2){
+				f[i+2] = p.vz;
+			}
+			
+		}
+		
+		return f;
+	}
+	
+	
+	public void drawOPENGL()
+	{
+		
+		gl=((PGraphicsOpenGL)parent.g).beginGL();
+		
+		gl.glEnableClientState(GL.GL_VERTEX_ARRAY);  // Enable Vertex Arrays
+		
+		gl.glEnableClientState(GL.GL_NORMAL_ARRAY);
+
+		gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);  
+		
+		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, glbuf[0]); 
+		
+	    gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0); 
+	    
+	    gl.glBindBuffer(GL.GL_ARRAY_BUFFER,glbuf[1]); 
+	    
+	    gl.glNormalPointer(GL.GL_FLOAT, 0, 0);   
+	    
+	    gl.glBindBuffer(GL.GL_ARRAY_BUFFER,glbuf[2]); 
+	    
+	    gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0); 
+
+
+	    
+	    switch(mode){
+	    
+		    case(POINTS):
+		    	gl.glDrawElements(GL.GL_POINTS, vertind.length, GL.GL_UNSIGNED_INT, indexesIB);
+		    break;
+		    
+		    case(LINES):
+		    	gl.glDrawElements(GL.GL_LINES, vertind.length, GL.GL_UNSIGNED_INT, indexesIB);
+		    break;
+		    
+		    case(TRIANGLES):
+		    	gl.glDrawElements(GL.GL_TRIANGLES, vertind.length, GL.GL_UNSIGNED_INT, indexesIB);
+		    break;
+		    
+		    case(TRIANGLE_STRIP):
+		    	gl.glDrawElements(GL.GL_TRIANGLE_STRIP, vertind.length, GL.GL_UNSIGNED_INT, indexesIB);
+		    break;
+		    
+		    case(QUADS):
+		    	gl.glDrawElements(GL.GL_QUADS, vertind.length, GL.GL_UNSIGNED_INT, indexesIB);
+		    break;
+		    
+		    case(QUAD_STRIP):
+		    	gl.glDrawElements(GL.GL_QUAD_STRIP, vertind.length, GL.GL_UNSIGNED_INT, indexesIB);
+		    break;
+		    
+		    case(POLYGON):
+		    	gl.glDrawElements(GL.GL_POLYGON, vertind.length, GL.GL_UNSIGNED_INT, indexesIB);
+		    break;
+	    	
+	    }
+
+
+	    gl.glDisableClientState(GL.GL_VERTEX_ARRAY);  
+	    
+	    gl.glDisableClientState(GL.GL_NORMAL_ARRAY);  
+
+	    gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
+	    
+		((PGraphicsOpenGL)parent.g).endGL();
+	
+	}
+	
 	
 	// -------------------------------------------------------------------------
 	// ------------------------------------------------------------------- Utils
@@ -146,18 +401,6 @@ public class OBJModel implements PConstants{
 		debug.println("");
 	}
 	
-	public void clear() {
-		vertexes.clear();
-		texturev.clear();
-		normv.clear();
-		groups.clear();
-		modelSegments.clear();
-		materials.clear();
-		debug.println("OBJModel is empty");
-		debug.println("");
-
-	}
-	
 	public void debugMode() {
 		debug.enabled = true;
 		debug.println("");
@@ -166,7 +409,18 @@ public class OBJModel implements PConstants{
 		//debug.println("http://users.design.ucla.edu/~tatsuyas/tools/objloader/index.htm");
 		//debug.println("http://www.polymonkey.com/2008/page.asp?obj_loader");
 		debug.println("");
-
+		
+	}
+	
+	public void clear() {
+		vertexes.clear();
+		texturev.clear();
+		normv.clear();
+		groups.clear();
+		modelSegments.clear();
+		materials.clear();
+		debug.println("OBJModel is empty");
+		
 	}
 	
 	// -------------------------------------------------------------------------
@@ -614,32 +868,32 @@ public class OBJModel implements PConstants{
 
 								if (forder.length > 2) {
 									
+									if (forder[0].length() > 0){
+										
+										tmpf.indexes.add(Integer.valueOf(forder[0]));
+									}
+									
+									if (forder[1].length() > 0){
+										
+										tmpf.tindexes.add(Integer.valueOf(forder[1]));
+									}
+									
 									if (forder[2].length() > 0){
 										
 										tmpf.nindexes.add(Integer.valueOf(forder[2]));
 									}
 									
-									if (forder[1].length() > 0){
-										
-										tmpf.tindexes.add(Integer.valueOf(forder[1]));
-									}
-									
-									if (forder[0].length() > 0){
-										
-										tmpf.indexes.add(Integer.valueOf(forder[0]));
-									}
-									
 								} 
 								else if (forder.length > 1) {
 									
-									if (forder[1].length() > 0){
-										
-										tmpf.tindexes.add(Integer.valueOf(forder[1]));
-									}
-									
 									if (forder[0].length() > 0){
 										
 										tmpf.indexes.add(Integer.valueOf(forder[0]));
+									}
+									
+									if (forder[1].length() > 0){
+										
+										tmpf.tindexes.add(Integer.valueOf(forder[1]));
 									}
 									
 								} 
@@ -834,12 +1088,15 @@ public class OBJModel implements PConstants{
 	
 	public void size(int w, int h) {
 	}
-
-	public void mouse(MouseEvent event) {
-	}
-
-	public void key(KeyEvent e) {
-	}
+	
+//	if the mouse and keyboard functions ever get used, these imports will be needed at the top of the package
+//	import java.awt.event.KeyEvent;
+//	import java.awt.event.MouseEvent;
+//	public void mouse(MouseEvent event) {
+//	}
+//
+//	public void key(KeyEvent e) {
+//	}
 
 	public void dispose() {
 		// System.gc();

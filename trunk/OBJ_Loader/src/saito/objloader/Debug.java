@@ -15,6 +15,14 @@ public class Debug {
 		if(enabled)
 			PApplet.println(str);
 	}
+	public void println(int[] i){
+		if(enabled)
+			PApplet.println(i);
+	}
+	public void println(float[] f){
+		if(enabled)
+			PApplet.println(f);
+	}
 	public void print(String str){
 		if(enabled)
 			PApplet.print(str);
