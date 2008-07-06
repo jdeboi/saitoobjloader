@@ -358,8 +358,10 @@ public class OBJModel implements PConstants{
 		    break;
 		    
 		    case(TRIANGLES):
+		    
 		    	gl.glDrawElements(GL.GL_TRIANGLES, vertind.length, GL.GL_UNSIGNED_INT, indexesIB);
 //		    	gl.glDrawElements(GL.GL_TRIANGLES, normind.length, GL.GL_UNSIGNED_INT, nindexesIB);
+		    	 
 		    break;
 		    
 		    case(TRIANGLE_STRIP):
@@ -595,9 +597,9 @@ public class OBJModel implements PConstants{
 
 						for (int fp = 0; fp < tmpf.indexes.size(); fp++) {
 
-							vidx = ((Integer) (tmpf.indexes.elementAt(fp))).intValue();
+							vidx = tmpf.getVertexIndex(fp);
 
-							v = (Vertex) vertexes.elementAt(vidx - 1);
+							v = (Vertex) vertexes.elementAt(vidx);
 
 							if (v != null) {
 
@@ -605,18 +607,19 @@ public class OBJModel implements PConstants{
 
 									if (tmpf.nindexes.size() > 0) {
 
-										vnidx = ((Integer) (tmpf.nindexes.elementAt(fp))).intValue();
+										vnidx = tmpf.getNormalIndex(fp);
 
-										vn = (Vertex) normv.elementAt(vnidx - 1);
+										vn = (Vertex) normv.elementAt(vnidx);
 
 										parent.normal(vn.vx, vn.vy, vn.vz);
 									}
 
 									if (bTexture) {
 
-										vtidx = ((Integer) (tmpf.tindexes.elementAt(fp))).intValue();
+										vtidx = tmpf.getTextureIndex(fp);
+										
 
-										vt = (Vertex) texturev.elementAt(vtidx - 1);
+										vt = (Vertex) texturev.elementAt(vtidx);
 
 										parent.vertex(v.vx, -v.vy, v.vz, vt.vx, 1.0f - vt.vy);
 
