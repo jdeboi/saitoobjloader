@@ -158,13 +158,13 @@ public class OBJModel implements PConstants{
 		debug.println("Setting up OPENGL buffers");
 		
 		debug.println("Getting verts " + vertexes.size());
-		vert = getFloatArrayFromVector(vertexes, 3); 
+		vert = getFloatArrayFromVector(vertexes, 3, true); 
 		
 		debug.println("Getting normals " + normv.size());
-		norm = getFloatArrayFromVector(normv, 3); 
+		norm = getFloatArrayFromVector(normv, 3, false); 
 		
 		debug.println("Getting UV's "  + texturev.size());
-		tex = getFloatArrayFromVector(texturev, 2); 
+		tex = getFloatArrayFromVector(texturev, 2, false); 
 		
 	    if(vert!=null && vert.length>0)
 	    {
@@ -189,57 +189,24 @@ public class OBJModel implements PConstants{
 	      
 	    }
 	    
-	    debug.println("number of model groups = " + groups.size());
-	    
-	    debug.println(" " + groups.toString());
-	    
-	    
-	    groups.keys();
-
-	    
 		debug.println("number of model segments = " + modelSegments.size());
-		
-		// Why are there empty model segments? Should I kill them off? - MD
-		
 		
 		for (int i = 0; i < modelSegments.size(); i ++){
 			
 			ModelSegment tmpModelSegment = (ModelSegment) modelSegments.elementAt(i);
 			
-			debug.println("number of model elements = " + tmpModelSegment.getSize());
-			debug.println("model element uses this mtl = " + tmpModelSegment.getMtlname());
 			
-			if(tmpModelSegment.getSize() > 0){
+			if(tmpModelSegment.getSize() != 0){ // Why are there empty model segments? KAHN!!!  - MD
 				
-				for (int j = 0; j <  tmpModelSegment.getSize(); j ++){
-					
-					ModelElement tmpf = (ModelElement) (tmpModelSegment.getElement(j));
-					
-					if(j == 0){
-						vertind = tmpf.getVertexIndexArray();
-						normind = tmpf.getNormalIndexArray();
-						texind =  tmpf.getTextureIndexArray();
-					}
-					else{
-						vertind = PApplet.concat(vertind, tmpf.getVertexIndexArray());
-						normind = PApplet.concat(normind, tmpf.getNormalIndexArray());
-						texind =  PApplet.concat(texind,  tmpf.getTextureIndexArray());
-					}
-				}
+				debug.println("number of model elements = " + tmpModelSegment.getSize());
+				debug.println("model element uses this mtl = " + tmpModelSegment.getMtlname());
+				
+				tmpModelSegment.setupOPENGL(debug);
+				
 			}
 		}
-		
-		debug.println("Number of vert indexes = " + vertind.length);
-		debug.println("Number of Normal indexes = " + normind.length);
-		debug.println("Number of Texture indexes = " + texind.length);
-				
-		indexesIB = setupIntBuffer(vertind);
-		
-		nindexesIB = setupIntBuffer(normind);
-		
-		tindexesIB = setupIntBuffer(texind);
-	    
-	    debug.println("Generated Buffers");
+			    
+	    debug.println("Generating Buffers");
 	    
 	    glbuf=new int[9];
 	    
@@ -270,17 +237,7 @@ public class OBJModel implements PConstants{
 		return fb;
 		
 	}
-	
-	private IntBuffer setupIntBuffer(int[] i){
 		
-		IntBuffer fb = ByteBuffer.allocateDirect(4 * i.length).order(ByteOrder.nativeOrder()).asIntBuffer();
-		fb.put(i);
-		fb.rewind();
-		
-		return fb;
-		
-	}
-	
 	
 //	private int[] getIntArrayFromVector(Vector v){
 //		
@@ -295,7 +252,7 @@ public class OBJModel implements PConstants{
 //		return intArray;
 //	}
 
-	private float[] getFloatArrayFromVector(Vector v, int stride){
+	private float[] getFloatArrayFromVector(Vector v, int stride, boolean flipY){
 		
 		float[] f = new float[ v.size() * stride ];
 		
@@ -310,7 +267,12 @@ public class OBJModel implements PConstants{
 			f[i] = p.vx;
 			
 			if(stride > 1){
-				f[i+1] = p.vy;
+				if(flipY){
+					f[i+1] = -p.vy;
+				}
+				else{
+					f[i+1] = p.vy;
+				}
 			}
 			
 			if(stride > 2){
@@ -345,42 +307,47 @@ public class OBJModel implements PConstants{
 	    gl.glBindBuffer(GL.GL_ARRAY_BUFFER,glbuf[2]); 
 	    
 	    gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0); 
-
-	    switch(mode){
 	    
-		    case(POINTS):
-		    	gl.glDrawElements(GL.GL_POINTS, vertind.length, GL.GL_UNSIGNED_INT, indexesIB);
-//		    	gl.glDrawElements(GL.GL_POINTS, normind.length, GL.GL_UNSIGNED_INT, nindexesIB);
-		    break;
+
+	    for (int i = 0; i < modelSegments.size(); i ++){
+			
+			ModelSegment tmpModelSegment = (ModelSegment) modelSegments.elementAt(i);
+			
+			if(tmpModelSegment.getSize() != 0){
+					
+			    switch(mode){
 		    
-		    case(LINES):
-		    	gl.glDrawElements(GL.GL_LINES, vertind.length, GL.GL_UNSIGNED_INT, indexesIB);
-		    break;
-		    
-		    case(TRIANGLES):
-		    
-		    	gl.glDrawElements(GL.GL_TRIANGLES, vertind.length, GL.GL_UNSIGNED_INT, indexesIB);
-//		    	gl.glDrawElements(GL.GL_TRIANGLES, normind.length, GL.GL_UNSIGNED_INT, nindexesIB);
-		    	 
-		    break;
-		    
-		    case(TRIANGLE_STRIP):
-		    	gl.glDrawElements(GL.GL_TRIANGLE_STRIP, vertind.length, GL.GL_UNSIGNED_INT, indexesIB);
-		    break;
-		    
-		    case(QUADS):
-		    	gl.glDrawElements(GL.GL_QUADS, vertind.length, GL.GL_UNSIGNED_INT, indexesIB);
-		    break;
-		    
-		    case(QUAD_STRIP):
-		    	gl.glDrawElements(GL.GL_QUAD_STRIP, vertind.length, GL.GL_UNSIGNED_INT, indexesIB);
-		    break;
-		    
-		    case(POLYGON):
-		    	gl.glDrawElements(GL.GL_POLYGON, vertind.length, GL.GL_UNSIGNED_INT, indexesIB);
-		    break;
-	    	
-	    }
+				    case(POINTS):
+				    	gl.glDrawElements(GL.GL_POINTS, tmpModelSegment.vindexesIB.capacity(), GL.GL_UNSIGNED_INT, tmpModelSegment.vindexesIB);
+				    break;
+				    
+				    case(LINES):
+				    	gl.glDrawElements(GL.GL_LINES, tmpModelSegment.vindexesIB.capacity(), GL.GL_UNSIGNED_INT, tmpModelSegment.vindexesIB);
+				    break;
+				    
+				    case(TRIANGLES):				    	
+				    	gl.glDrawElements(GL.GL_TRIANGLES, tmpModelSegment.vindexesIB.capacity(), GL.GL_UNSIGNED_INT, tmpModelSegment.vindexesIB);
+				    break;
+				    
+				    case(TRIANGLE_STRIP):
+				    	gl.glDrawElements(GL.GL_TRIANGLE_STRIP, tmpModelSegment.vindexesIB.capacity(), GL.GL_UNSIGNED_INT, tmpModelSegment.vindexesIB);
+				    break;
+				    
+				    case(QUADS):
+				    	gl.glDrawElements(GL.GL_QUADS, tmpModelSegment.vindexesIB.capacity(), GL.GL_UNSIGNED_INT, tmpModelSegment.vindexesIB);
+				    break;
+				    
+				    case(QUAD_STRIP):
+				    	gl.glDrawElements(GL.GL_QUAD_STRIP, tmpModelSegment.vindexesIB.capacity(), GL.GL_UNSIGNED_INT, tmpModelSegment.vindexesIB);
+				    break;
+				    
+				    case(POLYGON):
+				    	gl.glDrawElements(GL.GL_POLYGON, tmpModelSegment.vindexesIB.capacity(), GL.GL_UNSIGNED_INT, tmpModelSegment.vindexesIB);
+				    break;
+			    	
+			    }
+			}
+		}
 
 
 	    gl.glDisableClientState(GL.GL_VERTEX_ARRAY);  
@@ -557,21 +524,21 @@ public class OBJModel implements PConstants{
 					
 				}
 
-				for (int f = 0; f < tmpModelSegment.elements.size(); f++) {
+				for (int f = 0; f < tmpModelSegment.getSize(); f++) {
 
-					ModelElement tmpf = (ModelElement) (tmpModelSegment.elements.elementAt(f));
+					ModelElement tmpf = (ModelElement) (tmpModelSegment.getElement(f));
 
 					parent.textureMode(PApplet.NORMALIZED);
 
 					parent.beginShape(mode); // specify render mode
 
-					if (flagTexture == false){
-
-						bTexture = false;
+					if (tmpf.getSize() == 0){
+						
+						continue;
 					}
 
-					if (tmpf.tindexes.size() == 0){
-					
+					if (flagTexture == false){
+						
 						bTexture = false;
 					}
 
@@ -593,9 +560,9 @@ public class OBJModel implements PConstants{
 						}							
 					}
 					
-					if (tmpf.indexes.size() > 0) {
+					if (tmpf.getSize() > 0) {
 
-						for (int fp = 0; fp < tmpf.indexes.size(); fp++) {
+						for (int fp = 0; fp < tmpf.getSize(); fp++) {
 
 							vidx = tmpf.getVertexIndex(fp);
 

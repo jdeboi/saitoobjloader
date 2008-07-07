@@ -9,6 +9,8 @@ package saito.objloader;
  *  
  */
 
+import javax.media.opengl.GL;
+
 import processing.core.PImage;
 
 /**
@@ -37,5 +39,20 @@ public class Material {
 		d = 1.0f;
 		
 		mtlName = "default";
+	}
+	
+	public void useMtlOPENGL(GL gl){
+		
+        gl.glMaterialfv(GL.GL_FRONT_AND_BACK,GL.GL_AMBIENT,Ka,0);
+        
+	    if(Kd[3]==1){
+	    	gl.glMaterialfv(GL.GL_FRONT_AND_BACK,GL.GL_AMBIENT_AND_DIFFUSE,Kd,0);
+	    }
+	    
+	    else{
+			gl.glMaterialfv(GL.GL_FRONT_AND_BACK,GL.GL_AMBIENT_AND_DIFFUSE,Kd,0);
+		    gl.glMaterialfv(GL.GL_FRONT_AND_BACK,GL.GL_SPECULAR,Ks,0);
+	    }
+		
 	}
 }
