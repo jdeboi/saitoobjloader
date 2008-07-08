@@ -390,7 +390,8 @@ public class OBJModel implements PConstants{
 	public void debugMode() {
 		debug.enabled = true;
 		debug.println("");
-		debug.println("objloader version 014");
+		debug.println("objloader version 014 - BETA");
+		debug.println("08 July 2008");
 		debug.println("http://code.google.com/p/saitoobjloader/");		
 		//debug.println("http://users.design.ucla.edu/~tatsuyas/tools/objloader/index.htm");
 		//debug.println("http://www.polymonkey.com/2008/page.asp?obj_loader");
