@@ -201,6 +201,10 @@ public class OBJModel implements PConstants{
 				
 				tmpModelSegment.setupOPENGL(debug);
 				
+				Material mtl = (Material) materials.get(tmpModelSegment.mtlName);
+				
+				mtl.setupOPENGL(gl, debug);
+				
 			}
 		}
 			    
@@ -312,15 +316,12 @@ public class OBJModel implements PConstants{
 			
 			ModelSegment tmpModelSegment = (ModelSegment) modelSegments.elementAt(i);
 			
-			Material mtl = (Material) materials.get(tmpModelSegment.mtlName);
-//			debug.println(tmpModelSegment.mtlName);
-//			debug.println(mtl.Ka);
-//			debug.println(mtl.Kd);
-//			debug.println(mtl.Ks);
-//			debug.println("" + mtl.d);
-			
 			if(tmpModelSegment.getSize() != 0){ //again with the empty model segments WTF?
-					
+			
+				Material mtl = (Material) materials.get(tmpModelSegment.mtlName);
+
+				mtl.useOPENGLStart(gl, debug);
+				
 			    switch(mode){
 		    
 				    case(POINTS):
@@ -333,7 +334,6 @@ public class OBJModel implements PConstants{
 				    
 				    case(TRIANGLES):
 				    	
-				    	mtl.useMtlOPENGL(gl, debug);
 				    	gl.glDrawElements(GL.GL_TRIANGLES, tmpModelSegment.vindexesIB.capacity(), GL.GL_UNSIGNED_INT, tmpModelSegment.vindexesIB);
 				    
 				    
@@ -356,6 +356,9 @@ public class OBJModel implements PConstants{
 				    break;
 			    	
 			    }
+			    
+			    mtl.useOPENGLFinish(gl, debug);
+			    
 			}
 		}
 

@@ -10,6 +10,8 @@ package saito.objloader;
  */
 
 import javax.media.opengl.GL;
+import com.sun.opengl.util.texture.*;
+
 
 import processing.core.PImage;
 
@@ -20,6 +22,7 @@ import processing.core.PImage;
 public class Material {
 	public PImage map_Ka;
 	public PImage map_Kd;
+	private Texture map_Kd_Gl;
 	public float[] Ka;
 	public float[] Kd;
 	public float[] Ks;
@@ -48,7 +51,19 @@ public class Material {
 		mtlName = "default";
 	}
 	
-	public void useMtlOPENGL(GL gl, Debug debug){
+	public void setupOPENGL(GL gl, Debug debug){
+		
+		// make magic here that turns a PImage into an OPENGL texture
+		
+	    if(map_Kd_Gl!=null)
+	    {
+	    	map_Kd_Gl.setTexParameteri(GL.GL_TEXTURE_WRAP_R,GL.GL_REPEAT);    
+	    	map_Kd_Gl.setTexParameteri(GL.GL_TEXTURE_WRAP_S,GL.GL_REPEAT);
+	    	map_Kd_Gl.setTexParameteri(GL.GL_TEXTURE_WRAP_T,GL.GL_REPEAT);
+	    }
+	}
+	
+	public void useOPENGLStart(GL gl, Debug debug){
 		
 		//debug.println("Ambient");
         gl.glMaterialfv(GL.GL_FRONT_AND_BACK,GL.GL_AMBIENT,Ka,0);
@@ -64,6 +79,22 @@ public class Material {
 			gl.glMaterialfv(GL.GL_FRONT_AND_BACK,GL.GL_AMBIENT_AND_DIFFUSE,Kd,0);
 		    gl.glMaterialfv(GL.GL_FRONT_AND_BACK,GL.GL_SPECULAR,Ks,0);
 		    
+	    }
+	    
+	    if(map_Kd_Gl!=null)
+	    {
+	    	map_Kd_Gl.bind();
+	    	map_Kd_Gl.enable();
+	    }
+
+	}
+	
+	public void useOPENGLFinish(GL gl, Debug debug){
+		
+		if(map_Kd_Gl!=null)
+	    {
+			map_Kd_Gl.disable();
+//	      	map_Kd_Gl.unbind();
 	    }
 	}
 }
