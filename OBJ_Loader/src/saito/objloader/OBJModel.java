@@ -1,5 +1,4 @@
 package saito.objloader;
-
 /*
  * Alias .obj loader for processing
  * programmed by Tatsuya SAITO / UCLA Design | Media Arts 
@@ -8,6 +7,7 @@ package saito.objloader;
  * 
  *
  */
+
 
 import processing.core.*;
 import processing.opengl.*;
@@ -97,7 +97,6 @@ public class OBJModel implements PConstants{
 	int[] normind = new int[0];
 	
 	GL gl;
-	PGraphicsOpenGL pgl;
 
 	// -------------------------------------------------------------------------
 	// ------------------------------------------------------------ Constructors
@@ -148,9 +147,9 @@ public class OBJModel implements PConstants{
 		
 		if(!(parent.g instanceof PGraphicsOpenGL))
 		{
-
+			
 			throw new RuntimeException("This feature requires OpenGL");
-
+			// I mean seriously, the function is called setupOPENGL!!!
 		}
 		
 		gl = ((PGraphicsOpenGL) parent.g).gl;
@@ -195,10 +194,9 @@ public class OBJModel implements PConstants{
 			
 			ModelSegment tmpModelSegment = (ModelSegment) modelSegments.elementAt(i);
 			
-			
 			if(tmpModelSegment.getSize() != 0){ // Why are there empty model segments? KAHN!!!  - MD
 				
-				debug.println("number of model elements = " + tmpModelSegment.getSize());
+				debug.println("number of model elements = "    + tmpModelSegment.getSize());
 				debug.println("model element uses this mtl = " + tmpModelSegment.getMtlname());
 				
 				tmpModelSegment.setupOPENGL(debug);
@@ -208,7 +206,7 @@ public class OBJModel implements PConstants{
 			    
 	    debug.println("Generating Buffers");
 	    
-	    glbuf=new int[9];
+	    glbuf=new int[3];
 	    
 	    gl.glGenBuffers(3,glbuf,0);
 	    
@@ -308,12 +306,20 @@ public class OBJModel implements PConstants{
 	    
 	    gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0); 
 	    
+	    gl.glEnable(GL.GL_LIGHTING);
 
 	    for (int i = 0; i < modelSegments.size(); i ++){
 			
 			ModelSegment tmpModelSegment = (ModelSegment) modelSegments.elementAt(i);
 			
-			if(tmpModelSegment.getSize() != 0){
+			Material mtl = (Material) materials.get(tmpModelSegment.mtlName);
+//			debug.println(tmpModelSegment.mtlName);
+//			debug.println(mtl.Ka);
+//			debug.println(mtl.Kd);
+//			debug.println(mtl.Ks);
+//			debug.println("" + mtl.d);
+			
+			if(tmpModelSegment.getSize() != 0){ //again with the empty model segments WTF?
 					
 			    switch(mode){
 		    
@@ -325,8 +331,12 @@ public class OBJModel implements PConstants{
 				    	gl.glDrawElements(GL.GL_LINES, tmpModelSegment.vindexesIB.capacity(), GL.GL_UNSIGNED_INT, tmpModelSegment.vindexesIB);
 				    break;
 				    
-				    case(TRIANGLES):				    	
+				    case(TRIANGLES):
+				    	
+				    	mtl.useMtlOPENGL(gl, debug);
 				    	gl.glDrawElements(GL.GL_TRIANGLES, tmpModelSegment.vindexesIB.capacity(), GL.GL_UNSIGNED_INT, tmpModelSegment.vindexesIB);
+				    
+				    
 				    break;
 				    
 				    case(TRIANGLE_STRIP):
@@ -532,7 +542,7 @@ public class OBJModel implements PConstants{
 
 					parent.beginShape(mode); // specify render mode
 
-					if (tmpf.getSize() == 0){
+					if (tmpf.getSize() == 0){  // look more empty f'ing model segments
 						
 						continue;
 					}
@@ -917,6 +927,16 @@ public class OBJModel implements PConstants{
 						currentModelSegment.elements.add(tmpf);
 
 					}
+				}
+			}
+			// until I figure out where the empty model Segments are coming from this will have to do.
+			for(int i = 0; i < modelSegments.size(); i ++){
+				
+				ModelSegment tmpModelSegment = (ModelSegment) modelSegments.elementAt(i);
+				
+				if(tmpModelSegment.getSize() == 0 ){ //again with the empty model segments WTF?
+					
+					modelSegments.remove(i);
 				}
 			}
 		} 
