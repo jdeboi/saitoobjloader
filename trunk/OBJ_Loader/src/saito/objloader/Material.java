@@ -9,10 +9,11 @@ package saito.objloader;
  *  
  */
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
+
 import javax.media.opengl.GL;
-import com.sun.opengl.util.texture.*;
-
-
 import processing.core.PImage;
 
 /**
@@ -22,7 +23,7 @@ import processing.core.PImage;
 public class Material {
 	public PImage map_Ka;
 	public PImage map_Kd;
-	private Texture map_Kd_Gl;
+//	private Texture map_Kd_Gl;
 	public float[] Ka;
 	public float[] Kd;
 	public float[] Ks;
@@ -54,47 +55,78 @@ public class Material {
 	public void setupOPENGL(GL gl, Debug debug){
 		
 		// make magic here that turns a PImage into an OPENGL texture
-		
-	    if(map_Kd_Gl!=null)
-	    {
-	    	map_Kd_Gl.setTexParameteri(GL.GL_TEXTURE_WRAP_R,GL.GL_REPEAT);    
-	    	map_Kd_Gl.setTexParameteri(GL.GL_TEXTURE_WRAP_S,GL.GL_REPEAT);
-	    	map_Kd_Gl.setTexParameteri(GL.GL_TEXTURE_WRAP_T,GL.GL_REPEAT);
-	    }
+		if(map_Kd != null){
+			
+			map_Kd.loadPixels();
+			
+			IntBuffer glPixels = setupIntBuffer(map_Kd.pixels);
+			
+			gl.glGenTextures(1, tex, 0);
+
+	        gl.glBindTexture(GL.GL_TEXTURE_2D, tex[0]);
+	        
+	        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+	        
+	        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+	        
+	        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP);
+	        
+	        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP);
+	        
+	        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, map_Kd.width, map_Kd.height, 0, GL.GL_BGRA, GL.GL_UNSIGNED_BYTE, glPixels);
+
+	        
+		}
+
 	}
 	
-	public void useOPENGLStart(GL gl, Debug debug){
+	public void useOPENGLStart(GL gl){
 		
-		//debug.println("Ambient");
         gl.glMaterialfv(GL.GL_FRONT_AND_BACK,GL.GL_AMBIENT,Ka,0);
         
 	    if(Kd[3]==1){
-	    	//debug.println("Diffuse");
+
 	    	gl.glMaterialfv(GL.GL_FRONT_AND_BACK,GL.GL_AMBIENT_AND_DIFFUSE,Kd,0);
 	    	
 	    }
 	    
 	    else{
-	    	//debug.println("Diffuse & Spec");
+
 			gl.glMaterialfv(GL.GL_FRONT_AND_BACK,GL.GL_AMBIENT_AND_DIFFUSE,Kd,0);
+			
 		    gl.glMaterialfv(GL.GL_FRONT_AND_BACK,GL.GL_SPECULAR,Ks,0);
 		    
 	    }
 	    
-	    if(map_Kd_Gl!=null)
+	    
+	    if(map_Kd!=null)
 	    {
-	    	map_Kd_Gl.bind();
-	    	map_Kd_Gl.enable();
-	    }
+	    	
+	    	gl.glBindTexture(GL.GL_TEXTURE_2D, tex[0]);  
 
+	    	gl.glEnable(GL.GL_TEXTURE_2D);
+		  
+	    }
 	}
 	
-	public void useOPENGLFinish(GL gl, Debug debug){
+	public void useOPENGLFinish(GL gl){
 		
-		if(map_Kd_Gl!=null)
+		if(map_Kd!=null)
 	    {
-			map_Kd_Gl.disable();
-//	      	map_Kd_Gl.unbind();
+			//gl.glDisable(GL.GL_TEXTURE_2D);
 	    }
 	}
+	
+	private IntBuffer setupIntBuffer(int[] i){
+		
+		IntBuffer fb = ByteBuffer.allocateDirect(4 * i.length ).order(ByteOrder.nativeOrder()).asIntBuffer();
+		fb.put(i);
+		fb.rewind();
+		
+		return fb;
+		
+	}
+	
+	protected int[] tex = { 0 }; 
+	
 }
