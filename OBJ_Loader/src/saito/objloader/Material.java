@@ -69,9 +69,9 @@ public class Material {
 	        
 	        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
 	        
-	        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP);
+	        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
 	        
-	        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP);
+	        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
 	        
 	        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, map_Kd.width, map_Kd.height, 0, GL.GL_BGRA, GL.GL_UNSIGNED_BYTE, glPixels);
 

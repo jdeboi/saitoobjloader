@@ -154,7 +154,7 @@ public class OBJModel implements PConstants{
 		
 		
 		debug.println("Getting verts " + vertexes.size());
-		float[] vert = getFloatArrayFromVertex(vertexes, 3, true, false); 
+		float[] vert = getFloatArrayFromVertex(vertexes, 3, true, false, false); 
 		
 		if(vert!=null && vert.length>0)
 		{
@@ -168,7 +168,7 @@ public class OBJModel implements PConstants{
 		
 		
 		debug.println("Getting normals " + normv.size());
-		float[] norm = getFloatArrayFromVertex(normv, 3, false, true); 
+		float[] norm = getFloatArrayFromVertex(normv, 3, false, true, false); 
 		
 		if(norm!=null && norm.length>0)
 		{
@@ -182,16 +182,18 @@ public class OBJModel implements PConstants{
 		
 		
 		debug.println("Getting UV's "  + texturev.size());
-		float[] tex = getFloatArrayFromVertex(texturev, 2, false, false); 
+		float[] tex = getFloatArrayFromVertex(texturev, 2, false, false, true); 
 		
 		if(tex!=null && tex.length>0)
 		{
 			texFB = setupFloatBuffer(tex);
 			
-			bindThisBuffer(gl, glbuf[2], tex, texFB, 2);
+			bindThisBuffer(gl, glbuf[2], tex, texFB, 4);
 			
 			debug.println("Created texture FloatBuffers, there are this many = " + texFB.capacity());
 		}
+		
+		
 	    
 		debug.println("number of model segments = " + modelSegments.size());
 		
@@ -234,7 +236,7 @@ public class OBJModel implements PConstants{
 		
 	}
 		
-	private float[] getFloatArrayFromVertex(Vector v, int stride, boolean bflipY, boolean bnormalize){
+	private float[] getFloatArrayFromVertex(Vector v, int stride, boolean bflipY, boolean bnormalize, boolean crap){
 		
 		float[] f = new float[ v.size() * stride ];
 		
@@ -268,6 +270,12 @@ public class OBJModel implements PConstants{
 				f[i+2] = p.vz;
 			}
 			
+			if(crap){
+				f[i] = 1.0f- p.vy;
+				f[i+1] = p.vx;
+				
+			}
+			
 		}
 		
 		return f;
@@ -299,21 +307,21 @@ public class OBJModel implements PConstants{
 		
 		gl.glEnableClientState(GL.GL_VERTEX_ARRAY);  // Enable Vertex Arrays
 		
-		gl.glEnableClientState(GL.GL_NORMAL_ARRAY);
-
-		gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);  
-		
 		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, glbuf[0]); 
 		
-	    gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0); 
+		gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0); 
+		
+		gl.glEnableClientState(GL.GL_NORMAL_ARRAY);
+		
+		gl.glBindBuffer(GL.GL_ARRAY_BUFFER,glbuf[1]); 
+		
+		gl.glNormalPointer(GL.GL_FLOAT, 0, 0);   
 	    
-	    gl.glBindBuffer(GL.GL_ARRAY_BUFFER,glbuf[1]); 
-	    
-	    gl.glNormalPointer(GL.GL_FLOAT, 0, 0);   
-	    
-	    gl.glBindBuffer(GL.GL_ARRAY_BUFFER,glbuf[2]); 
+		gl.glBindBuffer(GL.GL_ARRAY_BUFFER,glbuf[2]); 
 	    
 	    gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0); 
+	    
+	    gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);  
 	    
 	    //gl.glEnable(GL.GL_LIGHTING);
 	    
@@ -367,11 +375,11 @@ public class OBJModel implements PConstants{
 		}
 
 
-	    gl.glDisableClientState(GL.GL_VERTEX_ARRAY);  
+	    gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
 	    
 	    gl.glDisableClientState(GL.GL_NORMAL_ARRAY);  
 
-	    gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
+	    gl.glDisableClientState(GL.GL_VERTEX_ARRAY);  
 	    
 	    restoreGLState();
 	    
