@@ -23,6 +23,10 @@ public class Debug {
 		if(enabled)
 			PApplet.println(f);
 	}
+	public void println(Vertex v){
+		if(enabled)
+			PApplet.println(v.vx + " : " + v.vy + " : " + v.vz);
+	}
 	public void print(String str){
 		if(enabled)
 			PApplet.print(str);

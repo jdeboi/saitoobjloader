@@ -83,18 +83,7 @@ public class OBJModel implements PConstants{
 	//OPENGL variables
 	FloatBuffer vertFB,normFB,texFB;
 	
-	public IntBuffer indexesIB;
-	public IntBuffer tindexesIB;
-	public IntBuffer nindexesIB;
-	
-	float[] vert,norm,tex;
 	int[] glbuf;
-	
-	int[] vertind = new int[0];
-	
-	int[] texind = new int[0];
-	
-	int[] normind = new int[0];
 	
 	GL gl;
 
@@ -156,37 +145,53 @@ public class OBJModel implements PConstants{
 		
 		debug.println("Setting up OPENGL buffers");
 		
+		debug.println("Generating Buffers");
+		
+		glbuf = new int[3];
+		
+		gl.glGenBuffers(3,glbuf,0);
+		
+		
+		
 		debug.println("Getting verts " + vertexes.size());
-		vert = getFloatArrayFromVector(vertexes, 3, true); 
+		float[] vert = getFloatArrayFromVertex(vertexes, 3, true, false); 
+		
+		if(vert!=null && vert.length>0)
+		{
+			vertFB = setupFloatBuffer(vert);
+			
+			bindThisBuffer(gl, glbuf[0], vert, vertFB, 4 );
+			
+			debug.println("Created vert FloatBuffers, there are this many = " + vertFB.capacity());			
+		}
+		
+		
 		
 		debug.println("Getting normals " + normv.size());
-		norm = getFloatArrayFromVector(normv, 3, false); 
+		float[] norm = getFloatArrayFromVertex(normv, 3, false, true); 
+		
+		if(norm!=null && norm.length>0)
+		{
+			normFB = setupFloatBuffer(norm);
+			
+			bindThisBuffer(gl, glbuf[1], norm, normFB, 4);
+			
+			debug.println("Created norm FloatBuffers, there are this many = " + normFB.capacity());	
+		}
+		
+		
 		
 		debug.println("Getting UV's "  + texturev.size());
-		tex = getFloatArrayFromVector(texturev, 2, false); 
+		float[] tex = getFloatArrayFromVertex(texturev, 2, false, false); 
 		
-	    if(vert!=null && vert.length>0)
-	    {
-	    	
-	    	vertFB = setupFloatBuffer(vert);
-
-			debug.println("Created vert FloatBuffers, there are this many = " + vertFB.capacity());
-
-	    }
-	    if(norm!=null && norm.length>0)
-	    {
-	    	normFB = setupFloatBuffer(norm);
-
-			debug.println("Created norm FloatBuffers, there are this many = " + normFB.capacity());
+		if(tex!=null && tex.length>0)
+		{
+			texFB = setupFloatBuffer(tex);
 			
-	    }
-	    if(tex!=null && tex.length>0)
-	    {
-	    	texFB = setupFloatBuffer(tex);
-
+			bindThisBuffer(gl, glbuf[2], tex, texFB, 2);
+			
 			debug.println("Created texture FloatBuffers, there are this many = " + texFB.capacity());
-	      
-	    }
+		}
 	    
 		debug.println("number of model segments = " + modelSegments.size());
 		
@@ -207,27 +212,8 @@ public class OBJModel implements PConstants{
 				
 			}
 		}
-			    
-	    debug.println("Generating Buffers");
-	    
-	    glbuf=new int[3];
-	    
-	    gl.glGenBuffers(3,glbuf,0);
-	    
-	    gl.glBindBuffer(GL.GL_ARRAY_BUFFER, glbuf[0]);
-	    gl.glBufferData(GL.GL_ARRAY_BUFFER, 4*vert.length, vertFB, GL.GL_STATIC_DRAW); 
-	    
-	    gl.glBindBuffer(GL.GL_ARRAY_BUFFER, glbuf[1]);
-	    gl.glBufferData(GL.GL_ARRAY_BUFFER, 4*norm.length, normFB, GL.GL_STATIC_DRAW);  
-	    
-	    if(tex != null && tex.length > 0)  
-	    {
-	      gl.glBindBuffer(GL.GL_ARRAY_BUFFER, glbuf[2]);
-	      gl.glBufferData(GL.GL_ARRAY_BUFFER, 4*tex.length, texFB, GL.GL_STATIC_DRAW);
-	    }
 	    
 	    debug.println("leaving setup function");
-		
 	}
 	
 	private FloatBuffer setupFloatBuffer(float[] f){
@@ -239,22 +225,16 @@ public class OBJModel implements PConstants{
 		return fb;
 		
 	}
-		
 	
-//	private int[] getIntArrayFromVector(Vector v){
-//		
-//		int[] intArray = new int[ v.size() ];
-//		
-//		for(int i = 0; i < intArray.length; i ++){
-//			
-//			intArray[i]  = ((Integer) (v.elementAt(i))).intValue();
-//			
-//		}
-//		
-//		return intArray;
-//	}
-
-	private float[] getFloatArrayFromVector(Vector v, int stride, boolean flipY){
+	private void bindThisBuffer(GL gl, int num, float[] f, FloatBuffer FB, int bytes){
+		
+		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, num);
+		
+	    gl.glBufferData(GL.GL_ARRAY_BUFFER, bytes * f.length, FB, GL.GL_STATIC_DRAW); 
+		
+	}
+		
+	private float[] getFloatArrayFromVertex(Vector v, int stride, boolean bflipY, boolean bnormalize){
 		
 		float[] f = new float[ v.size() * stride ];
 		
@@ -264,12 +244,19 @@ public class OBJModel implements PConstants{
 			
 			Vertex p = (Vertex)v.elementAt(count);	
 			
+//			if(bnormalize){
+//				debug.println(p);
+//				normalize(p);
+//				debug.println(p);
+//				debug.println("");
+//			}
+			
 			count++;
 			
 			f[i] = p.vx;
 			
 			if(stride > 1){
-				if(flipY){
+				if(bflipY){
 					f[i+1] = -p.vy;
 				}
 				else{
@@ -286,11 +273,29 @@ public class OBJModel implements PConstants{
 		return f;
 	}
 	
+	void  normalize (Vertex v)
+	{
+	    // calculate the length of the vector
+	    float len = (float)(Math.sqrt((v.vx * v.vx) + (v.vy * v.vy) + (v.vz * v.vz)));
+
+	    // avoid division by 0
+	    if (len == 0.0f)
+	        len = 1.0f;
+
+	    // reduce to unit size
+	    v.vx /= len;
+	    v.vy /= len;
+	    v.vz /= len;
+	}
+
+	
 	
 	public void drawOPENGL()
 	{
 		
 		gl=((PGraphicsOpenGL)parent.g).beginGL();
+		
+		saveGLState();
 		
 		gl.glEnableClientState(GL.GL_VERTEX_ARRAY);  // Enable Vertex Arrays
 		
@@ -310,17 +315,19 @@ public class OBJModel implements PConstants{
 	    
 	    gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0); 
 	    
-	    gl.glEnable(GL.GL_LIGHTING);
-
+	    //gl.glEnable(GL.GL_LIGHTING);
+	    
+	    ModelSegment tmpModelSegment;
+	    
 	    for (int i = 0; i < modelSegments.size(); i ++){
 			
-			ModelSegment tmpModelSegment = (ModelSegment) modelSegments.elementAt(i);
+			tmpModelSegment = (ModelSegment) modelSegments.elementAt(i);
 			
 			if(tmpModelSegment.getSize() != 0){ //again with the empty model segments WTF?
 			
 				Material mtl = (Material) materials.get(tmpModelSegment.mtlName);
 
-				mtl.useOPENGLStart(gl, debug);
+				mtl.useOPENGLStart(gl);
 				
 			    switch(mode){
 		    
@@ -333,10 +340,7 @@ public class OBJModel implements PConstants{
 				    break;
 				    
 				    case(TRIANGLES):
-				    	
 				    	gl.glDrawElements(GL.GL_TRIANGLES, tmpModelSegment.vindexesIB.capacity(), GL.GL_UNSIGNED_INT, tmpModelSegment.vindexesIB);
-				    
-				    
 				    break;
 				    
 				    case(TRIANGLE_STRIP):
@@ -357,7 +361,7 @@ public class OBJModel implements PConstants{
 			    	
 			    }
 			    
-			    mtl.useOPENGLFinish(gl, debug);
+			    mtl.useOPENGLFinish(gl);
 			    
 			}
 		}
@@ -369,9 +373,45 @@ public class OBJModel implements PConstants{
 
 	    gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
 	    
+	    restoreGLState();
+	    
 		((PGraphicsOpenGL)parent.g).endGL();
 	
 	}
+	
+	private void saveGLState()
+
+    {
+
+        gl.glPushAttrib(GL.GL_ALL_ATTRIB_BITS);
+
+		gl.glMatrixMode(GL.GL_MODELVIEW);
+
+        gl.glPushMatrix();
+
+        gl.glMatrixMode(GL.GL_PROJECTION);
+
+        gl.glPushMatrix();
+
+    }      
+
+   
+
+	private void restoreGLState()
+
+    {
+
+        gl.glMatrixMode(GL.GL_PROJECTION);
+
+        gl.glPopMatrix();
+
+        gl.glMatrixMode(GL.GL_MODELVIEW);
+
+        gl.glPopMatrix();
+
+        gl.glPopAttrib();
+
+    }
 	
 	
 	// -------------------------------------------------------------------------
