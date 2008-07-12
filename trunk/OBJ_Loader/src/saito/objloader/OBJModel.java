@@ -31,7 +31,6 @@ import javax.media.opengl.*;
  * TODO: Add vertex normals and face normals from Collada Loader
  * TODO: Add getNormal() function
  * TODO: Use getNormal to push verts along normals in example
- * TODO: Add drawOPENGL() draw mode. Move model data into array lists see this for example http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1206221585;start=1#1
  * 
  * google code address (because I always forget)
  * 
@@ -81,9 +80,9 @@ public class OBJModel implements PConstants{
 	String originalTexture;
 	
 	//OPENGL variables
-	FloatBuffer vertFB,normFB,texFB;
+	FloatBuffer vertFB, normFB, texFB, dataFB;
 	
-	int[] glbuf;
+	
 	
 	GL gl;
 
@@ -146,55 +145,7 @@ public class OBJModel implements PConstants{
 		debug.println("Setting up OPENGL buffers");
 		
 		debug.println("Generating Buffers");
-		
-		glbuf = new int[3];
-		
-		gl.glGenBuffers(3,glbuf,0);
-		
-		
-		
-		debug.println("Getting verts " + vertexes.size());
-		float[] vert = getFloatArrayFromVertex(vertexes, 3, true, false, false); 
-		
-		if(vert!=null && vert.length>0)
-		{
-			vertFB = setupFloatBuffer(vert);
-			
-			bindThisBuffer(gl, glbuf[0], vert, vertFB, 4 );
-			
-			debug.println("Created vert FloatBuffers, there are this many = " + vertFB.capacity());			
-		}
-		
-		
-		
-		debug.println("Getting normals " + normv.size());
-		float[] norm = getFloatArrayFromVertex(normv, 3, false, true, false); 
-		
-		if(norm!=null && norm.length>0)
-		{
-			normFB = setupFloatBuffer(norm);
-			
-			bindThisBuffer(gl, glbuf[1], norm, normFB, 4);
-			
-			debug.println("Created norm FloatBuffers, there are this many = " + normFB.capacity());	
-		}
-		
-		
-		
-		debug.println("Getting UV's "  + texturev.size());
-		float[] tex = getFloatArrayFromVertex(texturev, 2, false, false, true); 
-		
-		if(tex!=null && tex.length>0)
-		{
-			texFB = setupFloatBuffer(tex);
-			
-			bindThisBuffer(gl, glbuf[2], tex, texFB, 4);
-			
-			debug.println("Created texture FloatBuffers, there are this many = " + texFB.capacity());
-		}
-		
-		
-	    
+			    
 		debug.println("number of model segments = " + modelSegments.size());
 		
 		for (int i = 0; i < modelSegments.size(); i ++){
@@ -206,7 +157,7 @@ public class OBJModel implements PConstants{
 				debug.println("number of model elements = "    + tmpModelSegment.getSize());
 				debug.println("model element uses this mtl = " + tmpModelSegment.getMtlname());
 				
-				tmpModelSegment.setupOPENGL(debug);
+				tmpModelSegment.setupOPENGL(gl, debug , vertexes, texturev, normv);
 				
 				Material mtl = (Material) materials.get(tmpModelSegment.mtlName);
 				
@@ -218,68 +169,6 @@ public class OBJModel implements PConstants{
 	    debug.println("leaving setup function");
 	}
 	
-	private FloatBuffer setupFloatBuffer(float[] f){
-		
-		FloatBuffer fb = ByteBuffer.allocateDirect(4 * f.length).order(ByteOrder.nativeOrder()).asFloatBuffer();
-		fb.put(f);
-		fb.rewind();
-		
-		return fb;
-		
-	}
-	
-	private void bindThisBuffer(GL gl, int num, float[] f, FloatBuffer FB, int bytes){
-		
-		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, num);
-		
-	    gl.glBufferData(GL.GL_ARRAY_BUFFER, bytes * f.length, FB, GL.GL_STATIC_DRAW); 
-		
-	}
-		
-	private float[] getFloatArrayFromVertex(Vector v, int stride, boolean bflipY, boolean bnormalize, boolean crap){
-		
-		float[] f = new float[ v.size() * stride ];
-		
-		int count = 0;
-		
-		for(int i = 0; i < f.length - stride + 1; i += stride ){
-			
-			Vertex p = (Vertex)v.elementAt(count);	
-			
-//			if(bnormalize){
-//				debug.println(p);
-//				normalize(p);
-//				debug.println(p);
-//				debug.println("");
-//			}
-			
-			count++;
-			
-			f[i] = p.vx;
-			
-			if(stride > 1){
-				if(bflipY){
-					f[i+1] = -p.vy;
-				}
-				else{
-					f[i+1] = p.vy;
-				}
-			}
-			
-			if(stride > 2){
-				f[i+2] = p.vz;
-			}
-			
-			if(crap){
-				f[i] = 1.0f- p.vy;
-				f[i+1] = p.vx;
-				
-			}
-			
-		}
-		
-		return f;
-	}
 	
 	void  normalize (Vertex v)
 	{
@@ -295,8 +184,6 @@ public class OBJModel implements PConstants{
 	    v.vy /= len;
 	    v.vz /= len;
 	}
-
-	
 	
 	public void drawOPENGL()
 	{
@@ -305,27 +192,8 @@ public class OBJModel implements PConstants{
 		
 		saveGLState();
 		
-		gl.glEnableClientState(GL.GL_VERTEX_ARRAY);  // Enable Vertex Arrays
-		
-		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, glbuf[0]); 
-		
-		gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0); 
-		
-		gl.glEnableClientState(GL.GL_NORMAL_ARRAY);
-		
-		gl.glBindBuffer(GL.GL_ARRAY_BUFFER,glbuf[1]); 
-		
-		gl.glNormalPointer(GL.GL_FLOAT, 0, 0);   
-	    
-		gl.glBindBuffer(GL.GL_ARRAY_BUFFER,glbuf[2]); 
-	    
-	    gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0); 
-	    
-	    gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);  
-	    
-	    //gl.glEnable(GL.GL_LIGHTING);
-	    
 	    ModelSegment tmpModelSegment;
+	    Material mtl;
 	    
 	    for (int i = 0; i < modelSegments.size(); i ++){
 			
@@ -333,53 +201,45 @@ public class OBJModel implements PConstants{
 			
 			if(tmpModelSegment.getSize() != 0){ //again with the empty model segments WTF?
 			
-				Material mtl = (Material) materials.get(tmpModelSegment.mtlName);
-
-				mtl.useOPENGLStart(gl);
+				mtl = (Material) materials.get(tmpModelSegment.mtlName);
 				
+				mtl.useOPENGLStart(gl);
+	
 			    switch(mode){
 		    
 				    case(POINTS):
-				    	gl.glDrawElements(GL.GL_POINTS, tmpModelSegment.vindexesIB.capacity(), GL.GL_UNSIGNED_INT, tmpModelSegment.vindexesIB);
+			    		tmpModelSegment.drawOPENGL(gl, GL.GL_POINTS);
 				    break;
 				    
 				    case(LINES):
-				    	gl.glDrawElements(GL.GL_LINES, tmpModelSegment.vindexesIB.capacity(), GL.GL_UNSIGNED_INT, tmpModelSegment.vindexesIB);
+				    	tmpModelSegment.drawOPENGL(gl, GL.GL_LINES);
 				    break;
 				    
 				    case(TRIANGLES):
-				    	gl.glDrawElements(GL.GL_TRIANGLES, tmpModelSegment.vindexesIB.capacity(), GL.GL_UNSIGNED_INT, tmpModelSegment.vindexesIB);
+				    	tmpModelSegment.drawOPENGL(gl, GL.GL_TRIANGLES);
 				    break;
 				    
 				    case(TRIANGLE_STRIP):
-				    	gl.glDrawElements(GL.GL_TRIANGLE_STRIP, tmpModelSegment.vindexesIB.capacity(), GL.GL_UNSIGNED_INT, tmpModelSegment.vindexesIB);
+				    	tmpModelSegment.drawOPENGL(gl, GL.GL_TRIANGLE_STRIP);
 				    break;
 				    
 				    case(QUADS):
-				    	gl.glDrawElements(GL.GL_QUADS, tmpModelSegment.vindexesIB.capacity(), GL.GL_UNSIGNED_INT, tmpModelSegment.vindexesIB);
+				    	tmpModelSegment.drawOPENGL(gl, GL.GL_QUADS);
 				    break;
 				    
 				    case(QUAD_STRIP):
-				    	gl.glDrawElements(GL.GL_QUAD_STRIP, tmpModelSegment.vindexesIB.capacity(), GL.GL_UNSIGNED_INT, tmpModelSegment.vindexesIB);
+				    	tmpModelSegment.drawOPENGL(gl, GL.GL_QUAD_STRIP);
 				    break;
 				    
 				    case(POLYGON):
-				    	gl.glDrawElements(GL.GL_POLYGON, tmpModelSegment.vindexesIB.capacity(), GL.GL_UNSIGNED_INT, tmpModelSegment.vindexesIB);
+				    	tmpModelSegment.drawOPENGL(gl, GL.GL_POLYGON);
 				    break;
 			    	
 			    }
 			    
-			    mtl.useOPENGLFinish(gl);
-			    
+			    mtl.useOPENGLFinish(gl);	    
 			}
-		}
-
-
-	    gl.glDisableClientState(GL.GL_TEXTURE_COORD_ARRAY);
-	    
-	    gl.glDisableClientState(GL.GL_NORMAL_ARRAY);  
-
-	    gl.glDisableClientState(GL.GL_VERTEX_ARRAY);  
+		}    
 	    
 	    restoreGLState();
 	    
@@ -442,7 +302,7 @@ public class OBJModel implements PConstants{
 		debug.enabled = true;
 		debug.println("");
 		debug.println("objloader version 014 - BETA");
-		debug.println("08 July 2008");
+		debug.println("12 July 2008");
 		debug.println("http://code.google.com/p/saitoobjloader/");		
 		//debug.println("http://users.design.ucla.edu/~tatsuyas/tools/objloader/index.htm");
 		//debug.println("http://www.polymonkey.com/2008/page.asp?obj_loader");
@@ -698,7 +558,7 @@ public class OBJModel implements PConstants{
 
 	}
 	
-	//Pretty sure I could kill this off and use PApplet.loadStrings - MD
+	//TODO: Pretty sure I could kill this off and use PApplet.loadStrings - MD
 	public BufferedReader getBufferedReader(String filename) {
 
 		BufferedReader retval = null;
