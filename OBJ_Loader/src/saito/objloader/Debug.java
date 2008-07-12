@@ -15,6 +15,11 @@ public class Debug {
 		if(enabled)
 			PApplet.println(str);
 	}
+	
+	public void println(int i){
+		if(enabled)
+			PApplet.println(i);
+	}
 	public void println(int[] i){
 		if(enabled)
 			PApplet.println(i);
