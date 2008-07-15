@@ -80,41 +80,47 @@ public class Material {
 
 	}
 	
-	public void useOPENGLStart(GL gl){
+	public void useOPENGLStart(GL gl, boolean materialBool, boolean textureBool){
 		
-        gl.glMaterialfv(GL.GL_FRONT_AND_BACK,GL.GL_AMBIENT,Ka,0);
-        
-	    if(Kd[3]==1){
-
-	    	gl.glMaterialfv(GL.GL_FRONT_AND_BACK,GL.GL_AMBIENT_AND_DIFFUSE,Kd,0);
-	    	
-	    }
-	    
-	    else{
-
-			gl.glMaterialfv(GL.GL_FRONT_AND_BACK,GL.GL_AMBIENT_AND_DIFFUSE,Kd,0);
+		if(materialBool){
 			
-		    gl.glMaterialfv(GL.GL_FRONT_AND_BACK,GL.GL_SPECULAR,Ks,0);
+			gl.glMaterialfv(GL.GL_FRONT,GL.GL_AMBIENT,Ka,0);
+        
+		    if(Kd[3]==1){
+	
+		    	gl.glMaterialfv(GL.GL_FRONT,GL.GL_AMBIENT_AND_DIFFUSE,Kd,0);
+		    	
+		    }
 		    
-	    }
-	    
-	    
-	    if(map_Kd!=null)
-	    {
-	    	
-	    	gl.glBindTexture(GL.GL_TEXTURE_2D, tex[0]);  
+		    else{
+	
+				gl.glMaterialfv(GL.GL_FRONT,GL.GL_AMBIENT_AND_DIFFUSE,Kd,0);
+				
+			    gl.glMaterialfv(GL.GL_FRONT,GL.GL_SPECULAR,Ks,0);
+			    
+		    }
+		    
+		    
+		    if(map_Kd!=null && textureBool)
+		    {
+		    	
+		    	gl.glBindTexture(GL.GL_TEXTURE_2D, tex[0]);  
+	
+		    	gl.glEnable(GL.GL_TEXTURE_2D);
 
-	    	gl.glEnable(GL.GL_TEXTURE_2D);
-		  
-	    }
+		    }
+		}
 	}
 	
-	public void useOPENGLFinish(GL gl){
+	public void useOPENGLFinish(GL gl, boolean materialBool, boolean textureBool){
 		
-		if(map_Kd!=null)
-	    {
-			//gl.glDisable(GL.GL_TEXTURE_2D);
-	    }
+		if(materialBool){
+			
+			if(map_Kd!=null && textureBool)
+		    {
+				gl.glDisable(GL.GL_TEXTURE_2D);
+		    }
+		}
 	}
 	
 	private IntBuffer setupIntBuffer(int[] i){

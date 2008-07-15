@@ -17,7 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader; 
 import java.util.Hashtable;
 import java.util.Vector;
-import java.nio.*;
+//import java.nio.*;
 
 import javax.media.opengl.*;
 
@@ -37,6 +37,7 @@ import javax.media.opengl.*;
  * http://code.google.com/p/saitoobjloader/
  * 
  */
+
 
 public class OBJModel implements PConstants{
 
@@ -79,16 +80,12 @@ public class OBJModel implements PConstants{
 
 	String originalTexture;
 	
-	//OPENGL variables
-	FloatBuffer vertFB, normFB, texFB, dataFB;
-	
-	
-	
 	GL gl;
 
 	// -------------------------------------------------------------------------
 	// ------------------------------------------------------------ Constructors
 	// -------------------------------------------------------------------------
+
 	public OBJModel(PApplet parent) {
 		
 		setup(parent);
@@ -148,9 +145,13 @@ public class OBJModel implements PConstants{
 			    
 		debug.println("number of model segments = " + modelSegments.size());
 		
+		ModelSegment tmpModelSegment;
+		
+		Material mtl;
+		
 		for (int i = 0; i < modelSegments.size(); i ++){
 			
-			ModelSegment tmpModelSegment = (ModelSegment) modelSegments.elementAt(i);
+			tmpModelSegment = (ModelSegment) modelSegments.elementAt(i);
 			
 			if(tmpModelSegment.getSize() != 0){ // Why are there empty model segments? KAHN!!!  - MD
 				
@@ -159,7 +160,7 @@ public class OBJModel implements PConstants{
 				
 				tmpModelSegment.setupOPENGL(gl, debug , vertexes, texturev, normv);
 				
-				Material mtl = (Material) materials.get(tmpModelSegment.mtlName);
+				mtl = (Material) materials.get(tmpModelSegment.mtlName);
 				
 				mtl.setupOPENGL(gl, debug);
 				
@@ -169,24 +170,32 @@ public class OBJModel implements PConstants{
 	    debug.println("leaving setup function");
 	}
 	
-	
-	void  normalize (Vertex v)
-	{
-	    // calculate the length of the vector
-	    float len = (float)(Math.sqrt((v.vx * v.vx) + (v.vy * v.vy) + (v.vz * v.vz)));
-
-	    // avoid division by 0
-	    if (len == 0.0f)
-	        len = 1.0f;
-
-	    // reduce to unit size
-	    v.vx /= len;
-	    v.vy /= len;
-	    v.vz /= len;
-	}
+//  simple normaize function. Might need this for the OPENGL normals	
+//	private void  normalize (Vertex v)
+//	{
+//	    // calculate the length of the vector
+//	    float len = (float)(Math.sqrt((v.vx * v.vx) + (v.vy * v.vy) + (v.vz * v.vz)));
+//
+//	    // avoid division by 0
+//	    if (len == 0.0f)
+//	        len = 1.0f;
+//
+//	    // reduce to unit size
+//	    v.vx /= len;
+//	    v.vy /= len;
+//	    v.vz /= len;
+//	}
 	
 	public void drawOPENGL()
 	{
+
+		boolean fill = parent.g.fill;
+		boolean stroke = parent.g.stroke;
+		
+		parent.fill(255);
+		parent.stroke(255);
+		parent.noFill();
+		parent.noStroke();
 		
 		gl=((PGraphicsOpenGL)parent.g).beginGL();
 		
@@ -200,10 +209,10 @@ public class OBJModel implements PConstants{
 			tmpModelSegment = (ModelSegment) modelSegments.elementAt(i);
 			
 			if(tmpModelSegment.getSize() != 0){ //again with the empty model segments WTF?
-			
+
 				mtl = (Material) materials.get(tmpModelSegment.mtlName);
 				
-				mtl.useOPENGLStart(gl);
+				mtl.useOPENGLStart(gl, flagMaterial, flagTexture);
 	
 			    switch(mode){
 		    
@@ -236,21 +245,24 @@ public class OBJModel implements PConstants{
 				    break;
 			    	
 			    }
-			    
-			    mtl.useOPENGLFinish(gl);	    
+
+		    	mtl.useOPENGLFinish(gl, flagMaterial, flagTexture);	    
+
 			}
 		}    
 	    
 	    restoreGLState();
 	    
 		((PGraphicsOpenGL)parent.g).endGL();
-	
+		
+		parent.g.fill = fill;
+		parent.g.stroke = stroke;
 	}
 	
 	private void saveGLState()
 
     {
-
+		
         gl.glPushAttrib(GL.GL_ALL_ATTRIB_BITS);
 
 		gl.glMatrixMode(GL.GL_MODELVIEW);
@@ -841,21 +853,20 @@ public class OBJModel implements PConstants{
 					}
 				}
 			}
-			// until I figure out where the empty model Segments are coming from this will have to do.
-			for(int i = 0; i < modelSegments.size(); i ++){
-				
-				ModelSegment tmpModelSegment = (ModelSegment) modelSegments.elementAt(i);
-				
-				if(tmpModelSegment.getSize() == 0 ){ //again with the empty model segments WTF?
-					
-					modelSegments.remove(i);
-				}
-			}
+			
 		} 
 		catch (Exception e) {
 			
 			e.printStackTrace();
 			
+		}
+		// until I figure out where the empty model Segments are coming from this will have to do.
+		for(int i = 0; i < getSegmentSize(); i ++){
+			
+			if(getIndexCountInSegment(i) == 0 ){ //again with the empty model segments WTF?
+				
+				modelSegments.remove(i);
+			}
 		}
 	}
 
@@ -962,6 +973,27 @@ public class OBJModel implements PConstants{
 	public Group getGroup(String groupName) {
 		return (Group) this.groups.get(groupName);
 	}
+	
+	public int getSegmentSize() {
+		return this.modelSegments.size();
+	}
+	
+	public int getIndexCountInSegment(int i){
+		return  ((ModelSegment)modelSegments.elementAt(i)).getSize();
+	}
+	
+	// there are just to many casts here. It feels very muddy. 
+	public int[] getVertIndexArrayInSegment(int i, int num){
+		return ((ModelElement)((ModelSegment)modelSegments.elementAt(i)).getElement(num)).getVertexIndexArray();
+	}
+	
+	public int[] getNormalIndexArrayInSegment(int i, int num){
+		return ((ModelElement)((ModelSegment)modelSegments.elementAt(i)).getElement(num)).getNormalIndexArray();
+	}
+	
+	public int[] getTextureIndexArrayInSegment(int i, int num){
+		return ((ModelElement)((ModelSegment)modelSegments.elementAt(i)).getElement(num)).getTextureIndexArray();
+	}
 
 	public int getVertexsize() {
 		return this.vertexes.size();
@@ -976,6 +1008,13 @@ public class OBJModel implements PConstants{
 		tmpv.vx = vertex.vx;
 		tmpv.vy = vertex.vy;
 		tmpv.vz = vertex.vz;
+	}
+	
+	public void setVertex(int i, float x, float y, float z ) {
+		Vertex tmpv = (Vertex) vertexes.elementAt(i);
+		tmpv.vx = x;
+		tmpv.vy = y;
+		tmpv.vz = z;
 	}
 
 	public void setTexture(PImage textureName) {

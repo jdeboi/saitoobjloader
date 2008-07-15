@@ -33,6 +33,17 @@ public class ModelSegment {
 		return elements.size();
 	}
 	
+	public int getTotalIndexCount() {
+		
+		int count = 0;
+		
+		for(int i = 0; i < getSize(); i++){
+			count += ((ModelElement)getElement(i)).getSize();
+		}
+		
+		return count;
+	}
+	
 	
 	/* The Plan
 	 * each model segment  maintains it's own  data Float buffer. 
@@ -104,7 +115,7 @@ public class ModelSegment {
 		}
 		
 		
-		glbuf = new int[1];
+		glbuf = new int[2];
 		
 		gl.glGenBuffers(1,glbuf,0);
 		
@@ -116,7 +127,7 @@ public class ModelSegment {
 		int[] index = new int[f.length / 8];
 		
 		for(int i = 0; i < index.length; i++){
-			index[i]   = i;
+			index[i]  = i;
 			
 		}
 		
@@ -129,17 +140,30 @@ public class ModelSegment {
 		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, glbuf[0]); 
 	
 		gl.glEnableClientState(GL.GL_VERTEX_ARRAY);  // Enable Vertex Arrays
+		gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);  
+		gl.glEnableClientState(GL.GL_NORMAL_ARRAY);
 		
 		// AAARRRGGGG Stride is in BYTES motherf-----
 		gl.glVertexPointer(3, GL.GL_FLOAT, 32, 0); 
 		
-		gl.glEnableClientState(GL.GL_TEXTURE_COORD_ARRAY);  
 		
 		gl.glTexCoordPointer(2, GL.GL_FLOAT, 32, 12);
 		
-		gl.glEnableClientState(GL.GL_NORMAL_ARRAY);
 		
 		gl.glNormalPointer(GL.GL_FLOAT, 32, 20);   
+		
+		
+		// turn on backface culling
+		
+		gl.glFrontFace(GL.GL_CCW);
+		
+		gl.glPolygonMode(GL.GL_FRONT, GL.GL_FILL);
+		
+//		gl.glPolygonMode(GL.GL_BACK, GL.GL_POINTS);
+		
+//		gl.glEnable(GL.GL_CULL_FACE);
+//		
+//		gl.glCullFace(GL.GL_BACK);
 		
 	
 	}
@@ -148,7 +172,9 @@ public class ModelSegment {
 		
 		glstart(gl);
 		
-		gl.glDrawElements(GLTYPE , indexIB.capacity(), GL.GL_UNSIGNED_INT, indexIB);
+		//once I get the indexing better I'll use glDrawElements
+		//gl.glDrawElements(GLTYPE , indexIB.capacity(), GL.GL_UNSIGNED_INT, indexIB);
+		gl.glDrawArrays(GLTYPE , 0, indexIB.capacity());
 		
 		glend(gl);
 	}
@@ -190,5 +216,6 @@ public class ModelSegment {
 	    gl.glBufferData(GL.GL_ARRAY_BUFFER, 4 * f.length, FB, GL.GL_STATIC_DRAW); 
 		
 	}
+
 }
  
