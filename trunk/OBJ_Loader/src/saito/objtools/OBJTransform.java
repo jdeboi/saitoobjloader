@@ -24,7 +24,7 @@ public class OBJTransform {
 		
 		if(numberOfVerts == 0){
 			
-			PApplet.println("OBJTransform - \tThe model has no verts. Have you loaded it yet?");
+			model.debug.println("OBJTransform - \tThe model has no verts. Have you loaded it yet?");
 			
 		}
 		else{
@@ -49,7 +49,7 @@ public class OBJTransform {
 		
 		if(numberOfVerts == 0){
 			
-			PApplet.println("OBJTransform - \tThe model has no verts. Have you loaded it yet?");
+			model.debug.println("OBJTransform - \tThe model has no verts. Have you loaded it yet?");
 			
 		}
 		else{

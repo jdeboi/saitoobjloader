@@ -15,13 +15,13 @@ public class OBJBoundingBox  implements PConstants{
 		
 		this.parent = parent;
 		
-		PApplet.println("OBJBoundingBox - \tGetting the Bounding Box");
+		model.debug.println("OBJBoundingBox - \tGetting the Bounding Box");
 		
 		int numberOfVerts = model.getVertexsize();
 		
 		if(numberOfVerts == 0){
 			
-			PApplet.println("OBJBoundingBox - \tThe model has no verts. Have you loaded it yet?");
+			model.debug.println("OBJBoundingBox - \tThe model has no verts. Have you loaded it yet?");
 			
 		}
 		else{

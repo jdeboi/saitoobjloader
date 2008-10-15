@@ -70,13 +70,13 @@ public class OBJModel implements PConstants{
 	// runtime rendering variables
 	int mode = TRIANGLES; // render mode (ex. POLYGON, POINTS ..)
 
-	boolean flagTexture = true;
+	private boolean flagTexture = true;
 
-	boolean flagMaterial = true;
+	private boolean flagMaterial = true;
 
-	boolean flagLocalTexture = false;
+	private boolean flagLocalTexture = false;
 
-	Debug debug;
+	public Debug debug;
 
 	String originalTexture;
 	
