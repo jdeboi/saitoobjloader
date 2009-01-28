@@ -26,11 +26,11 @@ import javax.media.opengl.*;
  * @author tatsuyas
  * @author mditton
  * 
- * TODO: Add documentation and examples to the google code repository
- * TODO: Add java doc commenting
- * TODO: Add vertex normals and face normals from Collada Loader
- * TODO: Add getNormal() function
- * TODO: Use getNormal to push verts along normals in example
+ * @TODO: Add documentation and examples to the google code repository
+ * @TODO: Add java doc commenting
+ * @TODO: Add vertex normals and face normals from Collada Loader
+ * @TODO: Add getNormal() function
+ * @TODO: Use getNormal to push verts along normals in example
  * 
  * google code address (because I always forget)
  * 
@@ -85,7 +85,9 @@ public class OBJModel implements PConstants{
 	// -------------------------------------------------------------------------
 	// ------------------------------------------------------------ Constructors
 	// -------------------------------------------------------------------------
-
+	/**
+	 * Class Constructor to setup an empty obj model
+	 */
 	public OBJModel(PApplet parent) {
 		
 		setup(parent);
@@ -93,6 +95,9 @@ public class OBJModel implements PConstants{
 	}
 	
 	//extra constructor because I got sick of having two lines to create and load the model. - MD
+	/**
+	 * Class Constructor, loads the string as an obj from the data directory
+	 */
 	public OBJModel(PApplet parent, String s) {
 		
 		setup(parent);
@@ -127,6 +132,10 @@ public class OBJModel implements PConstants{
 		debug.enabled = false;
 		
 	}
+	
+	/*
+	 * Called after loading the obj model. This will setup the Vertex buffer objects ready for the drawOPENGL method
+	 */
 
 	public void setupOPENGL(){
 		
@@ -186,6 +195,9 @@ public class OBJModel implements PConstants{
 //	    v.vz /= len;
 //	}
 	
+	/*
+	 * Draws the obj model using the Vertex Buffers that were made in the setupOPENGL method
+	 */
 	public void drawOPENGL()
 	{
 
