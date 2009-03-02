@@ -131,6 +131,8 @@ public class OBJModel implements PConstants{
 
 		debug.enabled = false;
 		
+		mode = TRIANGLES;
+		
 	}
 	
 	/*
@@ -474,7 +476,7 @@ public class OBJModel implements PConstants{
 
 					ModelElement tmpf = (ModelElement) (tmpModelSegment.getElement(f));
 
-					parent.textureMode(PApplet.NORMALIZED);
+					parent.textureMode(PApplet.NORMAL);
 
 					parent.beginShape(mode); // specify render mode
 
