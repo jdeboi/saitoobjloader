@@ -26,19 +26,19 @@ public class OBJBoundingBox  implements PConstants{
 		}
 		else{
 		
-			Vertex v;
+			PVector v;
 			
 			for(int i = 0; i < numberOfVerts; i++){
 				
 				v = model.getVertex(i);
 				
-				x1 = Math.min(x1,v.vx);
-				y1 = Math.min(y1,v.vy);
-				z1 = Math.min(z1,v.vz);
+				x1 = Math.min(x1,v.x);
+				y1 = Math.min(y1,v.y);
+				z1 = Math.min(z1,v.z);
 				
-				x2 = Math.max(x2,v.vx);
-				y2 = Math.max(y2,v.vy);
-				z2 = Math.max(z2,v.vz);
+				x2 = Math.max(x2,v.x);
+				y2 = Math.max(y2,v.y);
+				z2 = Math.max(z2,v.z);
 				
 			}
 			

@@ -8,13 +8,13 @@ import processing.core.*;
 
 /**
  * @author SAITO
- *
+ * 
  */
 public class SModel extends OBJModel {
-	
-	public SModel(PApplet applet){
-	
+
+	public SModel(PApplet applet) {
+
 		super(applet);
-		
+
 	}
 }

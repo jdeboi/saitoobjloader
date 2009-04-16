@@ -15,7 +15,8 @@ package saito.objloader;
  *
  */
 
-public class Vertex {
+public class Vertex 
+{
 	public float vx;
 
 	public float vy;
