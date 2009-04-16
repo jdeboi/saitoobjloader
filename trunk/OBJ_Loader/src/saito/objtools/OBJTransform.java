@@ -3,7 +3,8 @@ package saito.objtools;
 import processing.core.*;
 import saito.objloader.*;
 
-public class OBJTransform {
+public class OBJTransform 
+{
 	
 	PApplet parent;
 
@@ -12,7 +13,8 @@ public class OBJTransform {
 		this.parent = parent;
 	}
 	
-	public void scaleOBJ(OBJModel model, float scale){
+	public void scaleOBJ(OBJModel model, float scale)
+	{
 		
 		scaleOBJ(model, scale, scale, scale);
 		
@@ -22,47 +24,53 @@ public class OBJTransform {
 		
 		int numberOfVerts = model.getVertexsize();
 		
-		if(numberOfVerts == 0){
+		if(numberOfVerts == 0)
+		{
 			
 			model.debug.println("OBJTransform - \tThe model has no verts. Have you loaded it yet?");
 			
 		}
-		else{
+		else
+		{
 		
-			Vertex v;
+			PVector v;
 			
-			for(int i = 0; i < numberOfVerts; i++){
+			for(int i = 0; i < numberOfVerts; i++)
+			{
 				
 				v = model.getVertex(i);
 				
-				v.vx *= scaleX;
-				v.vy *= scaleY;
-				v.vz *= scaleZ;
+				v.x *= scaleX;
+				v.y *= scaleY;
+				v.z *= scaleZ;
 				
 			}
 		}
 	}
 	
-	public void moveOBJ(OBJModel model, float moveX, float moveY, float moveZ){
+	public void moveOBJ(OBJModel model, float moveX, float moveY, float moveZ)
+	{
 		
 		int numberOfVerts = model.getVertexsize();
 		
-		if(numberOfVerts == 0){
+		if(numberOfVerts == 0)
+		{
 			
 			model.debug.println("OBJTransform - \tThe model has no verts. Have you loaded it yet?");
 			
 		}
-		else{
+		else
+		{
 		
-			Vertex v;
+			PVector v;
+			
+			PVector m = new PVector(moveX, moveY, moveZ);
 			
 			for(int i = 0; i < numberOfVerts; i++){
 				
 				v = model.getVertex(i);
 				
-				v.vx += moveX;
-				v.vy += moveY;
-				v.vz += moveZ;
+				v.add(m);
 				
 			}
 		}

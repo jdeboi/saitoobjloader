@@ -5,16 +5,19 @@ import java.nio.*;
 
 import javax.media.opengl.GL;
 
-import processing.core.PApplet;
+import processing.core.*;
  
 
-public class ModelSegment {
+public class ModelSegment 
+{
 	public Vector elements; 
  
 	public String mtlName;
 	
 	public IntBuffer indexIB;
+	
 	public FloatBuffer dataFB;
+	
 	int[] glbuf;
 	
 	public ModelSegment() {
@@ -69,7 +72,8 @@ public class ModelSegment {
 		
 			ModelElement tmpf = (ModelElement) (getElement(j));
 			
-			if(j == 0){
+			if(j == 0)
+			{
 				
 				vertind = tmpf.getVertexIndexArray();
 				
@@ -79,8 +83,8 @@ public class ModelSegment {
 				
 				
 			}
-			else{
-				
+			else
+			{	
 				vertind = PApplet.concat(vertind, tmpf.getVertexIndexArray());
 				
 				texind =  PApplet.concat(texind,  tmpf.getTextureIndexArray());
@@ -95,22 +99,23 @@ public class ModelSegment {
 		
 		debug.println("there are this many floats = " + f.length);
 		
-		for(int i = 0; i < f.length/stride; i++){
+		for(int i = 0; i < f.length/stride; i++)
+		{
 			
-			Vertex points    = (Vertex)p.elementAt(vertind[i]);
-			Vertex textureUV = (Vertex)t.elementAt(texind[i]);
-			Vertex normals   = (Vertex)n.elementAt(normind[i]);
+			PVector points    = (PVector)p.elementAt(vertind[i]);
+			PVector textureUV = (PVector)t.elementAt(texind[i]);
+			PVector normals   = (PVector)n.elementAt(normind[i]);
 			
-			f[i*stride]   = points.vx;
-			f[i*stride+1] = - points.vy;
-			f[i*stride+2] = points.vz;
+			f[i*stride]   = points.x;
+			f[i*stride+1] = - points.y; // negative to account for processing top left 0,0,0
+			f[i*stride+2] = points.z;
 			
-			f[i*stride+3] = textureUV.vx;
-			f[i*stride+4] = 1.0f - textureUV.vy;
+			f[i*stride+3] = textureUV.x;
+			f[i*stride+4] = 1.0f - textureUV.y; // flipped to account for top left
 			
-			f[i*stride+5] = normals.vx;
-			f[i*stride+6] = normals.vy;
-			f[i*stride+7] = normals.vz;
+			f[i*stride+5] = normals.x;
+			f[i*stride+6] = normals.y;
+			f[i*stride+7] = normals.z;
 						
 		}
 		
@@ -123,12 +128,11 @@ public class ModelSegment {
 		
 		bindThisBuffer(gl, glbuf[0], f, dataFB);
 	 
-		
 		int[] index = new int[f.length / 8];
 		
-		for(int i = 0; i < index.length; i++){
-			index[i]  = i;
-			
+		for(int i = 0; i < index.length; i++)
+		{
+			index[i]  = i;	
 		}
 		
 		indexIB = setupIntBuffer(index);

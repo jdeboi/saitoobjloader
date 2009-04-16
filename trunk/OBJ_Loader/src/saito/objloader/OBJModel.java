@@ -441,7 +441,7 @@ public class OBJModel implements PConstants{
 	public void drawModel() {
 		
 		try {
-			Vertex v = null, vt = null, vn = null;
+			PVector v = null, vt = null, vn = null;
 
 			int vtidx = 0, vnidx = 0, vidx = 0;
 
@@ -514,7 +514,7 @@ public class OBJModel implements PConstants{
 
 							vidx = tmpf.getVertexIndex(fp);
 
-							v = (Vertex) vertexes.elementAt(vidx);
+							v = (PVector) vertexes.elementAt(vidx);
 
 							if (v != null) {
 
@@ -524,9 +524,9 @@ public class OBJModel implements PConstants{
 
 										vnidx = tmpf.getNormalIndex(fp);
 
-										vn = (Vertex) normv.elementAt(vnidx);
+										vn = (PVector) normv.elementAt(vnidx);
 
-										parent.normal(vn.vx, vn.vy, vn.vz);
+										parent.normal(vn.x, vn.y, vn.z);
 									}
 
 									if (bTexture) {
@@ -534,14 +534,14 @@ public class OBJModel implements PConstants{
 										vtidx = tmpf.getTextureIndex(fp);
 										
 
-										vt = (Vertex) texturev.elementAt(vtidx);
+										vt = (PVector) texturev.elementAt(vtidx);
 
-										parent.vertex(v.vx, -v.vy, v.vz, vt.vx, 1.0f - vt.vy);
+										parent.vertex(v.x, -v.y, v.z, vt.x, 1.0f - vt.y);
 
 									} 
 									else{
 
-										parent.vertex(v.vx, -v.vy, v.vz);
+										parent.vertex(v.x, -v.y, v.z);
 									}
 
 								} 
@@ -553,7 +553,7 @@ public class OBJModel implements PConstants{
 
 							else {
 								
-								parent.vertex(v.vx, -v.vy, v.vz);
+								parent.vertex(v.x, -v.y, v.z);
 							}
 
 						}
@@ -706,23 +706,23 @@ public class OBJModel implements PConstants{
 
 					// analyze the format
 					if (elements[0].equals("v")) { // point vector
-						Vertex tmpv = new Vertex();
-						tmpv.vx = Float.valueOf(elements[1]).floatValue();
-						tmpv.vy = Float.valueOf(elements[2]).floatValue();
-						tmpv.vz = Float.valueOf(elements[3]).floatValue();
+						PVector tmpv = new PVector();
+						tmpv.x = Float.valueOf(elements[1]).floatValue();
+						tmpv.y = Float.valueOf(elements[2]).floatValue();
+						tmpv.z = Float.valueOf(elements[3]).floatValue();
 						vertexes.add(tmpv);
 					} 
 					else if (elements[0].equals("vn")) { // normal vector
-						Vertex tmpv = new Vertex();
-						tmpv.vx = Float.valueOf(elements[1]).floatValue();
-						tmpv.vy = Float.valueOf(elements[2]).floatValue();
-						tmpv.vz = Float.valueOf(elements[3]).floatValue();
+						PVector tmpv = new PVector();
+						tmpv.x = Float.valueOf(elements[1]).floatValue();
+						tmpv.y = Float.valueOf(elements[2]).floatValue();
+						tmpv.z = Float.valueOf(elements[3]).floatValue();
 						normv.add(tmpv);
 					} 
 					else if (elements[0].equals("vt")) {
-						Vertex tmpv = new Vertex();
-						tmpv.vx = Float.valueOf(elements[1]).floatValue();
-						tmpv.vy = Float.valueOf(elements[2]).floatValue();
+						PVector tmpv = new PVector();
+						tmpv.x = Float.valueOf(elements[1]).floatValue();
+						tmpv.y = Float.valueOf(elements[2]).floatValue();
 						texturev.add(tmpv);
 					} 
 					else if (elements[0].equals("o")) {
@@ -997,38 +997,43 @@ public class OBJModel implements PConstants{
 	}
 	
 	// there are just to many casts here. It feels very muddy. 
-	public int[] getVertIndexArrayInSegment(int i, int num){
+	public int[] getVertIndexArrayInSegment(int i, int num)
+	{
 		return ((ModelElement)((ModelSegment)modelSegments.elementAt(i)).getElement(num)).getVertexIndexArray();
 	}
 	
-	public int[] getNormalIndexArrayInSegment(int i, int num){
+	public int[] getNormalIndexArrayInSegment(int i, int num)
+	{
 		return ((ModelElement)((ModelSegment)modelSegments.elementAt(i)).getElement(num)).getNormalIndexArray();
 	}
 	
-	public int[] getTextureIndexArrayInSegment(int i, int num){
+	public int[] getTextureIndexArrayInSegment(int i, int num)
+	{
 		return ((ModelElement)((ModelSegment)modelSegments.elementAt(i)).getElement(num)).getTextureIndexArray();
 	}
 
-	public int getVertexsize() {
+	public int getVertexsize() 
+	{
 		return this.vertexes.size();
 	}
 
-	public Vertex getVertex(int i) {
-		return (Vertex) vertexes.elementAt(i);
+	public PVector getVertex(int i) 
+	{
+		return (PVector) vertexes.elementAt(i);
 	}
 
-	public void setVertex(int i, Vertex vertex) {
-		Vertex tmpv = (Vertex) vertexes.elementAt(i);
-		tmpv.vx = vertex.vx;
-		tmpv.vy = vertex.vy;
-		tmpv.vz = vertex.vz;
+	public void setVertex(int i, PVector vertex) 
+	{
+		PVector tmpv = (PVector) vertexes.elementAt(i);
+		
+		tmpv.set(vertex);
 	}
 	
-	public void setVertex(int i, float x, float y, float z ) {
-		Vertex tmpv = (Vertex) vertexes.elementAt(i);
-		tmpv.vx = x;
-		tmpv.vy = y;
-		tmpv.vz = z;
+	public void setVertex(int i, float x, float y, float z ) 
+	{
+		PVector tmpv = (PVector) vertexes.elementAt(i);
+		
+		tmpv.set(x,y,z);	
 	}
 
 	public void setTexture(PImage textureName) {
