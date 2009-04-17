@@ -328,7 +328,7 @@ public class OBJModel implements PConstants{
 		debug.enabled = true;
 		debug.println("");
 		debug.println("objloader version 015");
-		debug.println("17 October 2008");
+		debug.println("16 April 2009");
 		debug.println("http://code.google.com/p/saitoobjloader/");		
 		//debug.println("http://users.design.ucla.edu/~tatsuyas/tools/objloader/index.htm");
 		//debug.println("http://www.polymonkey.com/2008/page.asp?obj_loader");
@@ -1016,25 +1016,62 @@ public class OBJModel implements PConstants{
 	{
 		return this.vertexes.size();
 	}
+	
+	public int getVertexSize() 
+	{
+		return this.vertexes.size();
+	}
+	
+	public int getNormalSize() 
+	{
+		return this.normv.size();
+	}
+	
+	public int getUVSize() 
+	{
+		return this.texturev.size();
+	}	
 
 	public PVector getVertex(int i) 
 	{
 		return (PVector) vertexes.elementAt(i);
 	}
+	
+	public PVector getNormal(int i) 
+	{
+		return (PVector) normv.elementAt(i);
+	}	
+	
+	public PVector getUV(int i) 
+	{
+		return (PVector) texturev.elementAt(i);
+	}		
 
 	public void setVertex(int i, PVector vertex) 
 	{
-		PVector tmpv = (PVector) vertexes.elementAt(i);
-		
-		tmpv.set(vertex);
+		((PVector) vertexes.elementAt(i)).set(vertex);
 	}
 	
 	public void setVertex(int i, float x, float y, float z ) 
 	{
-		PVector tmpv = (PVector) vertexes.elementAt(i);
 		
-		tmpv.set(x,y,z);	
+		((PVector) vertexes.elementAt(i)).set(x,y,z);
+		
+//		PVector tmpv = (PVector) vertexes.elementAt(i);
+//		
+//		tmpv.set(x,y,z);	
 	}
+	
+	public void setNormal(int i, PVector normal) 
+	{
+		((PVector) normv.elementAt(i)).set(normal);
+	}
+	
+	public void setUV(int i, PVector uv) 
+	{
+		((PVector) texturev.elementAt(i)).set(uv);
+	}	
+	
 
 	public void setTexture(PImage textureName) {
 		texture = textureName;
