@@ -12,9 +12,7 @@ package saito.objloader;
 import processing.core.*;
 import processing.opengl.*;
 
-import java.io.BufferedReader; 
-import java.io.InputStream;
-import java.io.InputStreamReader; 
+import java.io.BufferedReader;  
 import java.util.Hashtable;
 import java.util.Vector;
 //import java.nio.*;
@@ -29,11 +27,8 @@ import javax.media.opengl.*;
  * @TODO: Add documentation and examples to the google code repository
  * @TODO: Add java doc commenting
  * @TODO: Add vertex normals and face normals from Collada Loader
- * @TODO: Add getNormal() function
- * @TODO: Use getNormal to push verts along normals in example
  * 
  * google code address (because I always forget)
- * 
  * http://code.google.com/p/saitoobjloader/
  * 
  */
@@ -320,7 +315,7 @@ public class OBJModel implements PConstants{
 		debug.println("Vt Size: \t\t" + texturev.size());
 		debug.println("Vn Size: \t\t" + normv.size());
 		debug.println("G  Size: \t\t" + groups.size());
-		debug.println("S  Size: \t\t" + modelSegments.size());
+		debug.println("S  Size: \t\t" + getSegmentSize());
 		debug.println("");
 	}
 	
@@ -578,7 +573,8 @@ public class OBJModel implements PConstants{
 		
 		parseOBJ(getBufferedReader(filename));
 
-		if (debug.enabled) {
+		if (debug.enabled) 
+		{
 			this.showModelInfo();
 		}
 
@@ -586,76 +582,21 @@ public class OBJModel implements PConstants{
 	
 	//TODO: Pretty sure I could kill this off and use PApplet.loadStrings - MD
 	public BufferedReader getBufferedReader(String filename) {
+		
+		PApplet.println(filename);
+		
+		BufferedReader retval = parent.createReader(filename);
+		
+		if(retval != null)
+		{
+			return retval;
+		}
+		else
+		{
+			PApplet.println("Could not find .OBJ file " + filename);
+			return null;
+		}
 
-		BufferedReader retval = null;
-
-		try {
-
-			// URL url = null;
-			InputStream is = null;
-
-			/*
-			 * parent.openStream(arg0); if (filename.startsWith("http://")) {
-			 * try { url = new URL(filename); retval = new BufferedReader(new
-			 * InputStreamReader(parent.openStream(filename))); return retval; }
-			 * catch (MalformedURLException e) { e.printStackTrace(); return
-			 * null; } catch (IOException ioe) { ioe.printStackTrace(); return
-			 * null; } }
-			 */
-
-			is = parent.openStream(filename);
-			if (is != null) {
-				try {
-					retval = new BufferedReader(new InputStreamReader(is));
-					return retval;
-				}
-
-				catch (Exception ioe) {
-					ioe.printStackTrace();
-					return null;
-				}
-			}
-
-			/*
-			 * is = getClass().getResourceAsStream("/data/" + filename); if (is !=
-			 * null) { try { retval = new BufferedReader(new
-			 * InputStreamReader(is)); return retval; } catch (Exception ioe) {
-			 * ioe.printStackTrace(); return null; } }
-			 * 
-			 * url = getClass().getResource("/" + filename); if (url != null) {
-			 * System.out.println(url.toString()); try { url = new
-			 * URL(filename); retval = new BufferedReader(new
-			 * InputStreamReader(parent.openStream())); return retval; } catch
-			 * (MalformedURLException e) { e.printStackTrace(); return null; }
-			 * catch (IOException ioe) { ioe.printStackTrace(); return null; } }
-			 * 
-			 * url = getClass().getResource("/data/" + filename); if (url !=
-			 * null) { System.out.println(url.toString()); try { url = new
-			 * URL(filename); retval = new BufferedReader(new
-			 * InputStreamReader(url .openStream())); return retval; } catch
-			 * (MalformedURLException e) { e.printStackTrace(); return null; }
-			 * catch (IOException ioe) { ioe.printStackTrace(); return null; } }
-			 * 
-			 * try { // look inside the sketch folder (if set) String location =
-			 * parent.sketchPath + File.separator + "data"; File file = new
-			 * File(location, filename); if (file.exists()) { retval = new
-			 * BufferedReader(new FileReader(file)); return retval; } } catch
-			 * (IOException e) { e.printStackTrace(); return null; } // ignored
-			 * 
-			 * try { File file = new File("data", filename); if (file.exists()) {
-			 * retval = new BufferedReader(new FileReader(file)); return retval; } }
-			 * catch (IOException ioe) { ioe.printStackTrace(); }
-			 * 
-			 * try { File file = new File(filename); if (file.exists()) { retval =
-			 * new BufferedReader(new FileReader(file)); return retval; } }
-			 * catch (IOException ioe) { ioe.printStackTrace(); return null; }
-			 */
-		} catch (SecurityException se) {
-		} // online, whups
-
-		parent.die("Could not find .OBJ file " + filename, null);
-
-		return retval;
 	}
 	
 	// -------------------------------------------------------------------------
@@ -874,14 +815,17 @@ public class OBJModel implements PConstants{
 			e.printStackTrace();
 			
 		}
+
 		// until I figure out where the empty model Segments are coming from this will have to do.
-		for(int i = 0; i < getSegmentSize(); i ++){
+		for(int i = getSegmentSize()-1; i >= 0; i --){
 			
-			if(getIndexCountInSegment(i) == 0 ){ //again with the empty model segments WTF?
+			if(getIndexCountInSegment(i) == 0 )
+			{ //again with the empty model segments WTF?
 				
 				modelSegments.remove(i);
 			}
 		}
+		
 	}
 
 	// -------------------------------------------------------------------------
@@ -962,6 +906,20 @@ public class OBJModel implements PConstants{
 						currentMtl.Ka[1] = Float.valueOf(elements[2]).floatValue();
 						currentMtl.Ka[2] = Float.valueOf(elements[3]).floatValue();
 						
+					}
+					else if (elements[0].equals("Kd") && elements.length > 1) {
+						
+						currentMtl.Kd[0] = Float.valueOf(elements[1]).floatValue();
+						currentMtl.Kd[1] = Float.valueOf(elements[2]).floatValue();
+						currentMtl.Kd[2] = Float.valueOf(elements[3]).floatValue();
+						
+					}
+					else if (elements[0].equals("Ks") && elements.length > 1) {
+	
+						currentMtl.Ks[0] = Float.valueOf(elements[1]).floatValue();
+						currentMtl.Ks[1] = Float.valueOf(elements[2]).floatValue();
+						currentMtl.Ks[2] = Float.valueOf(elements[3]).floatValue();
+	
 					}
 					else if (elements[0].equals("d") && elements.length > 1) {
 						
