@@ -463,7 +463,10 @@ public class OBJModel implements PConstants{
 
 				if (flagMaterial) {
 					
-					parent.fill(255.0f * mtl.Ka[0], 255.0f * mtl.Ka[1], 255.0f * mtl.Ka[2], 255.0f * mtl.d);
+					
+					parent.ambient(255.0f * mtl.Ka[0], 255.0f * mtl.Ka[1], 255.0f * mtl.Ka[2]);
+					parent.specular(255.0f * mtl.Ks[0], 255.0f * mtl.Ks[1], 255.0f * mtl.Ks[2]);
+					parent.fill(255.0f * mtl.Kd[0], 255.0f * mtl.Kd[1], 255.0f * mtl.Kd[2], 255.0f * mtl.d);
 					
 				}
 
