@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM 1.4.2"/>
-	<classpathentry kind="lib" path="/Applications/Processing 0135/lib/core.jar" sourcepath="/Users/polymonkey/processing/core/src/processing/core"/>
+	<classpathentry kind="lib" path="/Users/matt/Documents/eclipse/processing_2009/Resources/Java/core.jar" sourcepath="/Users/polymonkey/processing/core/src/processing/core"/>
+	<classpathentry kind="lib" path="/Users/matt/Documents/eclipse/processing_2009/Resources/Java/libraries/opengl/library/opengl.jar"/>
+	<classpathentry kind="lib" path="/Users/matt/Documents/eclipse/processing_2009/Resources/Java/libraries/opengl/library/jogl.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM 1.5"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
