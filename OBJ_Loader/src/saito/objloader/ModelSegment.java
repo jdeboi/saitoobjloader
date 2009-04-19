@@ -20,6 +20,9 @@ public class ModelSegment
 	
 	int[] glbuf;
 	
+	/**
+	 * Constructor for the ModelSegment, each Segment holds a Vector of Elements. each element is a collection of indexes to the vert, normal, and UV arrays that make up a single face.
+	 */
 	public ModelSegment() {
 		elements = new Vector();
 	}

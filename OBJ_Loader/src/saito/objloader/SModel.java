@@ -8,7 +8,7 @@ import processing.core.*;
 
 /**
  * @author SAITO
- * 
+ * @deprecated Unused in OBJLoader.
  */
 public class SModel extends OBJModel {
 

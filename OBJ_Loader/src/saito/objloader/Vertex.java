@@ -12,7 +12,7 @@ package saito.objloader;
 
 /**
  * @author tatsuyas
- *
+ * @deprecated This is not longer used, kept around for history, all verts, normal, and UV's are in PVectors
  */
 
 public class Vertex 
