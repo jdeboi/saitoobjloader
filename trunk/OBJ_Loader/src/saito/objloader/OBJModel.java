@@ -3,9 +3,6 @@ package saito.objloader;
  * Alias .obj loader for processing
  * programmed by Tatsuya SAITO / UCLA Design | Media Arts 
  * Created on 2005/04/17
- *
- * 
- *
  */
 
 
@@ -34,16 +31,16 @@ import javax.media.opengl.*;
  */
 
 
-public class OBJModel implements PConstants{
+public class OBJModel{
 
 	// global variables
 	Vector vertexes; // vertexes
 
 	Vector texturev; // texture coordinates
 
-	Vector normv;
+	Vector normv;    // normals
 
-	Vector modelSegments;
+	Vector modelSegments; 
 
 	Hashtable materials;
 	
@@ -63,7 +60,7 @@ public class OBJModel implements PConstants{
 	PImage texture; // texture image applied from the code.
 
 	// runtime rendering variables
-	int mode = TRIANGLES; // render mode (ex. POLYGON, POINTS ..)
+	int mode = PConstants.TRIANGLES; // render mode (ex. POLYGON, POINTS ..)
 
 	private boolean flagTexture = true;
 
@@ -93,11 +90,42 @@ public class OBJModel implements PConstants{
 	/**
 	 * Class Constructor, loads the string as an obj from the data directory
 	 */
-	public OBJModel(PApplet parent, String s) {
+	public OBJModel(PApplet parent, String filename) {
 		
 		setup(parent);
 		
-		load(s);
+		load(filename);
+		
+	}
+	
+	/**
+	 * Class Constructor, loads the string as an obj from the data directory.<br></br>
+	 * The boolean decides if local paths should be used when loading the mtl and textures in the mtl.<br></br>
+	 */
+	public OBJModel(PApplet parent, String filename, boolean localpaths) {
+		
+		setup(parent);
+		
+		flagLocalTexture = localpaths;
+		
+		load(filename);
+		
+	}
+	
+	/**
+	 * Class Constructor, loads the string as an obj from the data directory. <br></br>
+	 * The boolean decides if local paths should be used when loading the mtl and textures in the mtl.<br></br>
+	 * The int sets the draw mode, to the processing draw mode, eg. TRIANGLES, POINTS, POLYGON, LINES, TRIANGLE_STRIP, QUAD_STRIP, QUADS.<br></br>
+	 */
+	public OBJModel(PApplet parent, String filename, boolean localpaths, int _mode) {
+		
+		setup(parent);
+		
+		flagLocalTexture = localpaths;
+		
+		drawMode(_mode);
+		
+		load(filename);
 		
 	}
 	
@@ -126,12 +154,14 @@ public class OBJModel implements PConstants{
 
 		debug.enabled = false;
 		
-		mode = TRIANGLES;
+		mode = PConstants.TRIANGLES;
 		
 	}
 	
-	/*
-	 * Called after loading the obj model. This will setup the Vertex buffer objects ready for the drawOPENGL method
+	/**
+	 * Called after loading the obj model. <br></br>
+	 * This will setup the Vertex buffer objects ready for the drawOPENGL method.<br></br>
+	 * The obj file must be loaded for this method to work. <br></br>
 	 */
 
 	public void setupOPENGL(){
@@ -176,24 +206,9 @@ public class OBJModel implements PConstants{
 	    debug.println("leaving setup function");
 	}
 	
-//  simple normaize function. Might need this for the OPENGL normals	
-//	private void  normalize (Vertex v)
-//	{
-//	    // calculate the length of the vector
-//	    float len = (float)(Math.sqrt((v.vx * v.vx) + (v.vy * v.vy) + (v.vz * v.vz)));
-//
-//	    // avoid division by 0
-//	    if (len == 0.0f)
-//	        len = 1.0f;
-//
-//	    // reduce to unit size
-//	    v.vx /= len;
-//	    v.vy /= len;
-//	    v.vz /= len;
-//	}
 	
-	/*
-	 * Draws the obj model using the Vertex Buffers that were made in the setupOPENGL method
+	/**
+	 * Draws the obj model using the Vertex Buffers that were made in the setupOPENGL method<br></br>
 	 */
 	public void drawOPENGL()
 	{
@@ -225,31 +240,31 @@ public class OBJModel implements PConstants{
 	
 			    switch(mode){
 		    
-				    case(POINTS):
+				    case(PConstants.POINTS):
 			    		tmpModelSegment.drawOPENGL(gl, GL.GL_POINTS);
 				    break;
 				    
-				    case(LINES):
+				    case(PConstants.LINES):
 				    	tmpModelSegment.drawOPENGL(gl, GL.GL_LINES);
 				    break;
 				    
-				    case(TRIANGLES):
+				    case(PConstants.TRIANGLES):
 				    	tmpModelSegment.drawOPENGL(gl, GL.GL_TRIANGLES);
 				    break;
 				    
-				    case(TRIANGLE_STRIP):
+				    case(PConstants.TRIANGLE_STRIP):
 				    	tmpModelSegment.drawOPENGL(gl, GL.GL_TRIANGLE_STRIP);
 				    break;
 				    
-				    case(QUADS):
+				    case(PConstants.QUADS):
 				    	tmpModelSegment.drawOPENGL(gl, GL.GL_QUADS);
 				    break;
 				    
-				    case(QUAD_STRIP):
+				    case(PConstants.QUAD_STRIP):
 				    	tmpModelSegment.drawOPENGL(gl, GL.GL_QUAD_STRIP);
 				    break;
 				    
-				    case(POLYGON):
+				    case(PConstants.POLYGON):
 				    	tmpModelSegment.drawOPENGL(gl, GL.GL_POLYGON);
 				    break;
 			    	
@@ -268,8 +283,12 @@ public class OBJModel implements PConstants{
 		parent.g.stroke = stroke;
 	}
 	
+	/**
+	 * Called at the start of drawOPENGL.<br></br>
+	 * This saves the current state ready so it doesn't get hammered from the objModel.<br></br> 
+	 */
+	
 	private void saveGLState()
-
     {
 		
         gl.glPushAttrib(GL.GL_ALL_ATTRIB_BITS);
@@ -284,10 +303,10 @@ public class OBJModel implements PConstants{
 
     }      
 
-   
-
+   /**
+    * Returns back to original opengl state that Processing was in.<br></br>
+    */
 	private void restoreGLState()
-
     {
 
         gl.glMatrixMode(GL.GL_PROJECTION);
@@ -307,6 +326,15 @@ public class OBJModel implements PConstants{
 	// ------------------------------------------------------------------- Utils
 	// -------------------------------------------------------------------------
 	
+	/**
+	 * A Debug method that prints information about the loaded model<br></br>
+	 * This method only prints information if the debugMode is true.<br></br>
+	 * V Size  = The number of vertex positions<br></br>
+	 * Vt Size = The number of UV positions<br></br>
+	 * Vn Size = The number of normals <br></br>
+	 * G Size = the number of Groups in the model <br></br>
+	 * S Size = the number of segments in the model, this should directly equate to the number of unique materials in the mtl file<br></br>
+	 */
 	public void showModelInfo() {
 
 		debug.println("Obj Name: \t\t" + objName);
@@ -319,18 +347,39 @@ public class OBJModel implements PConstants{
 		debug.println("");
 	}
 	
+	/**
+	 * Enables the debug mode.<br></br>
+	 * Prints version and contact information to the console.<br></br>
+	 */
 	public void debugMode() {
 		debug.enabled = true;
 		debug.println("");
-		debug.println("objloader version 015");
+		debug.println("objloader version 016");
 		debug.println("16 April 2009");
 		debug.println("http://code.google.com/p/saitoobjloader/");		
-		//debug.println("http://users.design.ucla.edu/~tatsuyas/tools/objloader/index.htm");
-		//debug.println("http://www.polymonkey.com/2008/page.asp?obj_loader");
 		debug.println("");
 		
 	}
 	
+	/**
+	 * Clears all Vectors ready for loading in a new model.<br></br>
+	 * Doing something like this<br></br> 
+	 * <br></br>
+	 *  OBJModel model = new OBJModel(this, "myobj.obj");<br></br>
+	 * // do something with model<br></br>
+	 * model.clear();<br></br>
+	 * model.load("myobj.obj");<br></br>
+	 * <br></br>
+	 * is vastly better for memory use than doing something like this<br></br>
+	 * <br></br>
+	 * OBJModel model = new OBJModel(this, "myobj.obj");<br></br>
+	 * // do something with model<br></br>
+	 * model = new OBJModel(this, "myOtherObj.obj");<br></br>
+	 * <br></br>
+	 * The second example is really bad because the original model is still in memory but nothing is pointing to it.<br></br> 
+	 * We would have to wait for the Garbage Collector to do the clean up before freeing the memory. <br></br>
+	 * If loading in lots of stuff is important then using the model.clear() could help a lot.<br></br>
+	 */
 	public void clear() {
 		vertexes.clear();
 		texturev.clear();
@@ -350,75 +399,120 @@ public class OBJModel implements PConstants{
 	// ------------------------------------------------------ -----Nice work XSI
 	// ------ If this is true the texture will be loaded from the data directory
 	
-	public void disableLocalTexture() {
-		flagLocalTexture = false;
-		debug.println("local tex:\t\toff");
-	}
-
+	/**
+	 * This is an option if your obj exporter includes hard coded paths to images listed in the mtl file.<br></br>
+	 * This option must be set before loading mtl files.<br></br>
+	 */
+	
 	public void enableLocalTexture() {
 		flagLocalTexture = true;
 		debug.println("local tex:\t\ton");
 	}
 	
+	/**
+	 * Turns off the local texture loading. <br></br>
+	 * This will use the full path in the mtl file for loading the tga.<br></br>
+	 */
+	public void disableLocalTexture() {
+		flagLocalTexture = false;
+		debug.println("local tex:\t\toff");
+	}
+
+	
 	// -------------------------------------------------------------------------
 	// ----------------------------------------------------------- Draw Booleans
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Turns off the use of the textures in mtl file. <br></br>
+	 * Only the ambient, diffuse and specular values will be used. <br></br> 
+	 */
 	public void disableTexture() {
 		flagTexture = false;
 		debug.println("texture:\t\toff");
 	}
-
+	
+	/**
+	 * Turns on the use of textures that are listed in the mtl file<br></br>
+	 */
 	public void enableTexture() {
 		flagTexture = true;
 		debug.println("texture:\t\ton");
 	}
 
+	/**
+	 * Disables the material completely.<br></br>
+	 * With this on you can set the appearance of the model in processing before calling model.draw();<br></br>
+	 * <br></br>
+	 * background(32);<br></br>
+	 * stroke(255);<br></br>
+	 * noFill();<br></br>
+	 * model.draw();<br></br>
+	 * 
+	 */
 	public void disableMaterial() {
 		flagMaterial = false;
 		debug.println("material:\t\toff");
 	}
-
+	
+	/**
+	 * Turns back on the use of the material that came from the mtl file<br></br>
+	 */
 	public void enableMaterial() {
 		flagMaterial = true;
 		debug.println("material:\t\ton");
 	}
 
+	/**
+	 * Sets an override texture for the drawing of the model.<br></br>
+	 * Any PImage supplied will be used over all model segments<br></br>
+	 * @param PImage<br></br>
+	 * <br></br>
+	 * NOTE: I think this method will be changing in the future to allow for more direct control over each modelSegment<br></br>
+	 */
 	public void texture(PImage tex) {
 
 		texture = tex;
 		debug.println("Using new texture");
 	}
 	
+	/**
+	 * Set's the beginShape mode for drawing the model. <br></br>
+	 * This will vary depending on the model and the export settings.<br></br> 
+	 * A safe bet is to triangulate the model before exporting and set the drawmode to TRANGLES.<br></br>
+	 * Also due to inconsistencies in OPENGL points, the POINTS mode may draw nothing in OPENGL.<br></br>
+	 * A common misconception is that LINES will result in a wireframe. For this effect you should leave the drawmode as the correct mode and disable the material and use sroke() to get a wireframe<br></br>
+	 * @param TRIANGLES, POINTS, POLYGON, LINES, TRIANGLE_STRIP, QUAD_STRIP, QUADS<br></br>
+	 */
 	public void drawMode(int mode) {
 		this.mode = mode;
 		
 		switch(mode){
-			case(POINTS):
+			case(PConstants.POINTS):
 				debug.println("draw mode:\t\tPOINTS");
 				break;
 			
-			case(LINES):
+			case(PConstants.LINES):
 				debug.println("draw mode:\t\tLINES");
 				break;
 				
-			case(POLYGON):
+			case(PConstants.POLYGON):
 				debug.println("draw mode:\t\tPOLYGON");
 				break;
 				
-			case(TRIANGLES):
+			case(PConstants.TRIANGLES):
 				debug.println("draw mode:\t\tTRIANGLES");
 				break;
 				
-			case(TRIANGLE_STRIP):
+			case(PConstants.TRIANGLE_STRIP):
 				debug.println("draw mode:\t\tTRIANGLE_STRIP");
 				break;
 				
-			case(QUADS):
+			case(PConstants.QUADS):
 				debug.println("draw mode:\t\tQUADS");
 				break;
 				
-			case(QUAD_STRIP):
+			case(PConstants.QUAD_STRIP):
 				debug.println("draw mode:\t\t");
 				break;
 		}
@@ -427,142 +521,152 @@ public class OBJModel implements PConstants{
 	// -------------------------------------------------------------------------
 	// -------------------------------------------------------------------- Draw
 	// -------------------------------------------------------------------------
-	public void draw() {
+	/**
+	 * The draw method of the OBJModel.<br></br> 
+	 * This method used the standard Processing system of beginShape, endShape to draw the model.<br></br>
+	 */
+	
+	public void draw() 
+	{
 		
 		drawModel();
 		
 	}
 
-	public void drawModel() {
+	private void drawModel() {
 		
 		try {
 			PVector v = null, vt = null, vn = null;
 
-			int vtidx = 0, vnidx = 0, vidx = 0;
+//			int vtidx = 0, vnidx = 0, vidx = 0;
 
-			Material mtl = null;
+			Material tmpMaterial = null;
 
+			boolean useTexture;
+			
+			ModelSegment tmpModelSegment;
+			
+			ModelElement tmpModelElement;
+			
 			// render all triangles
-			for (int s = 0; s < modelSegments.size(); s++) {
+			for (int s = 0; s < getSegmentSize(); s++) {
 
-				boolean bTexture = true;
+				useTexture = true;
 
-				ModelSegment tmpModelSegment = (ModelSegment) modelSegments.elementAt(s);
+				tmpModelSegment = (ModelSegment) modelSegments.elementAt(s);
 
-				mtl = (Material) materials.get(tmpModelSegment.mtlName);
+				tmpMaterial = (Material) materials.get(tmpModelSegment.mtlName);
 				
 				// if the material is not assigned for some
-				// reason, it uses the default material
-				// setting
-				if (mtl == null) 
+				// reason, it uses the default material setting
+				if (tmpMaterial == null) 
 				{
-					mtl = (Material) materials.get(defaultMaterialName);
+					tmpMaterial = (Material) materials.get(defaultMaterialName);
 
 					debug.println("Material '" + tmpModelSegment.mtlName + "' not defined");
 				}
 
-				if (flagMaterial) {
+				if (flagMaterial) 
+				{	
 					
-					
-					parent.ambient(255.0f * mtl.Ka[0], 255.0f * mtl.Ka[1], 255.0f * mtl.Ka[2]);
-					parent.specular(255.0f * mtl.Ks[0], 255.0f * mtl.Ks[1], 255.0f * mtl.Ks[2]);
-					parent.fill(255.0f * mtl.Kd[0], 255.0f * mtl.Kd[1], 255.0f * mtl.Kd[2], 255.0f * mtl.d);
+					parent.ambient(  255.0f * tmpMaterial.Ka[0], 255.0f * tmpMaterial.Ka[1], 255.0f * tmpMaterial.Ka[2]);
+					parent.specular( 255.0f * tmpMaterial.Ks[0], 255.0f * tmpMaterial.Ks[1], 255.0f * tmpMaterial.Ks[2]);
+					parent.fill(     255.0f * tmpMaterial.Kd[0], 255.0f * tmpMaterial.Kd[1], 255.0f * tmpMaterial.Kd[2], 255.0f * tmpMaterial.d);
 					
 				}
 
-				for (int f = 0; f < tmpModelSegment.getSize(); f++) {
+				for (int f = 0; f < tmpModelSegment.getSize(); f++) 
+				{
+					tmpModelElement = (ModelElement) (tmpModelSegment.getElement(f));
 
-					ModelElement tmpf = (ModelElement) (tmpModelSegment.getElement(f));
-
-					parent.textureMode(PApplet.NORMAL);
-
-					parent.beginShape(mode); // specify render mode
-
-					if (tmpf.getSize() == 0){  // look more empty f'ing model segments
+					if (tmpModelElement.getSize() > 0) 
+					{
 						
-						continue;
-					}
-
-					if (flagTexture == false){
-						
-						bTexture = false;
-					}
-
-					if (mtl.map_Kd == null){
-
-						bTexture = false;
-					}
-
-					if (bTexture){
-
-						if (texture != null){
-
-							parent.texture(texture); // setting applied texture
+						parent.textureMode(PApplet.NORMAL);
+	
+						parent.beginShape(mode); // specify render mode
+	
+						if (flagTexture == false || tmpMaterial.map_Kd == null)
+						{	
+							useTexture = false;
 						}
-
-						else{
-
-							parent.texture(mtl.map_Kd); // setting texture from mtl info
-						}							
-					}
+	
+						if (useTexture)
+						{
+							if (texture != null)
+							{
+								parent.texture(texture); // setting applied texture
+							}
+							else
+							{
+								parent.texture(tmpMaterial.map_Kd); // setting texture from mtl info
+							}							
+						}
 					
-					if (tmpf.getSize() > 0) {
 
-						for (int fp = 0; fp < tmpf.getSize(); fp++) {
+						for (int fp = 0; fp < tmpModelElement.getSize(); fp++) 
+						{
+//							vidx = tmpModelElement.getVertexIndex(fp);
+//
+//							v = (PVector) vertexes.elementAt(vidx);
 
-							vidx = tmpf.getVertexIndex(fp);
+							v = (PVector) vertexes.elementAt(tmpModelElement.getVertexIndex(fp));
+							
+							if (v != null) 
+							{
+								try 
+								{
 
-							v = (PVector) vertexes.elementAt(vidx);
+									if (tmpModelElement.nindexes.size() > 0) {
 
-							if (v != null) {
+//										vnidx = tmpModelElement.getNormalIndex(fp);
+//
+//										vn = (PVector) normv.elementAt(vnidx);
 
-								try {
-
-									if (tmpf.nindexes.size() > 0) {
-
-										vnidx = tmpf.getNormalIndex(fp);
-
-										vn = (PVector) normv.elementAt(vnidx);
-
+										vn = (PVector) normv.elementAt( tmpModelElement.getNormalIndex(fp) );										
+										
 										parent.normal(vn.x, vn.y, vn.z);
 									}
 
-									if (bTexture) {
+									if (useTexture) 
+									{
+//										vtidx = tmpModelElement.getTextureIndex(fp);
+//										
+//										vt = (PVector) texturev.elementAt(vtidx);
 
-										vtidx = tmpf.getTextureIndex(fp);
+										vt = (PVector) texturev.elementAt( tmpModelElement.getTextureIndex(fp) );										
 										
-
-										vt = (PVector) texturev.elementAt(vtidx);
-
 										parent.vertex(v.x, -v.y, v.z, vt.x, 1.0f - vt.y);
 
 									} 
-									else{
-
+									else
+									{
 										parent.vertex(v.x, -v.y, v.z);
 									}
 
 								} 
-								catch (Exception e) {
-
+								catch (Exception e) 
+								{
 									e.printStackTrace();
 								}
 							}
 
-							else {
-								
+							else 
+							{	
 								parent.vertex(v.x, -v.y, v.z);
 							}
 
 						}
-					}
-					parent.endShape();
 					
-					parent.textureMode(PApplet.IMAGE);
+						parent.endShape();
+						
+						parent.textureMode(PApplet.IMAGE);
+					}
 				}
 			}
 		} 
-		catch (Exception e) {
+		catch (Exception e) 
+		{
 			e.printStackTrace();
 		}
 	}
@@ -571,22 +675,30 @@ public class OBJModel implements PConstants{
 	// -------------------------------------------------------------------------
 	// ------------------------------------------------------------- Obj Loading 
 	// -------------------------------------------------------------------------
-
-	public void load(String filename) {
-		
+	
+	/**
+	 * The manual load method for obj files. This method is automaticly called when using Constructors that include the file name<br></br>
+	 * The method uses the Processing createReader() function to get a BufferedReader object in order to read the file one line at a time.<br></br>
+	 * This is slightly better method than loadStrings() as it's less memory intensive for large obj files.  <br></br>
+	 */
+	public void load(String filename) 
+	{	
 		parseOBJ(getBufferedReader(filename));
 
 		if (debug.enabled) 
 		{
 			this.showModelInfo();
 		}
-
 	}
 	
-	//TODO: Pretty sure I could kill this off and use PApplet.loadStrings - MD
-	public BufferedReader getBufferedReader(String filename) {
-		
-		PApplet.println(filename);
+	/**
+	 * Used in the loading of obj files and mtl files that come from mtl files.<br></br>
+	 * @param The filename. A String containing the location of the obj file. The createReader function should take care of finding the file in all the usual Processing places.<br></br>
+	 * @return a BufferedReader<br></br>
+	 */
+	private BufferedReader getBufferedReader(String filename) 
+	{	
+		debug.println("Loading this file = " + filename);
 		
 		BufferedReader retval = parent.createReader(filename);
 		
@@ -596,7 +708,7 @@ public class OBJModel implements PConstants{
 		}
 		else
 		{
-			PApplet.println("Could not find .OBJ file " + filename);
+			PApplet.println("Could not find this file " + filename);
 			return null;
 		}
 
@@ -606,10 +718,13 @@ public class OBJModel implements PConstants{
 	// ------------------------------------------------------------- Obj Parsing 
 	// -------------------------------------------------------------------------
 	
-	// read this as b-read not bread like the bakery - MD
-	private void parseOBJ(BufferedReader bread) {
-		try {
-
+	/**
+	 * The method that does all the grunt work in reading and processing the obj file.<br></br>
+	 */
+	private void parseOBJ(BufferedReader bread) 
+	{
+		try 
+		{
 			// adding default variables to the global data table
 			// creating the default group
 
@@ -639,41 +754,48 @@ public class OBJModel implements PConstants{
 
 			String line;
 
-			while ((line = bread.readLine()) != null) {
+			while ((line = bread.readLine()) != null) 
+			{
 				// debug.println(line);
 				// parse the line
 
 				String[] elements = line.split("\\s+");
 
 				// if not a blank line, process the line.
-				if (elements.length > 0) {
+				if (elements.length > 0) 
+				{
 
 					// analyze the format
-					if (elements[0].equals("v")) { // point vector
+					if (elements[0].equals("v")) // point 
+					{ 
 						PVector tmpv = new PVector();
 						tmpv.x = Float.valueOf(elements[1]).floatValue();
 						tmpv.y = Float.valueOf(elements[2]).floatValue();
 						tmpv.z = Float.valueOf(elements[3]).floatValue();
 						vertexes.add(tmpv);
 					} 
-					else if (elements[0].equals("vn")) { // normal vector
+					else if (elements[0].equals("vn")) // normal
+					{ 
 						PVector tmpv = new PVector();
 						tmpv.x = Float.valueOf(elements[1]).floatValue();
 						tmpv.y = Float.valueOf(elements[2]).floatValue();
 						tmpv.z = Float.valueOf(elements[3]).floatValue();
 						normv.add(tmpv);
 					} 
-					else if (elements[0].equals("vt")) {
+					else if (elements[0].equals("vt")) // uv 
+					{
 						PVector tmpv = new PVector();
 						tmpv.x = Float.valueOf(elements[1]).floatValue();
 						tmpv.y = Float.valueOf(elements[2]).floatValue();
 						texturev.add(tmpv);
 					} 
-					else if (elements[0].equals("o")) {
+					else if (elements[0].equals("o")) 
+					{
 						if (elements[1] != null)
 							objName = elements[1];
 					} 
-					else if (elements[0].equals("mtllib")) {
+					else if (elements[0].equals("mtllib")) 
+					{
 						if (elements[1] != null)
 							this.parseMTL(this.getBufferedReader(elements[1]));
 					}
@@ -703,8 +825,8 @@ public class OBJModel implements PConstants{
 						}
 					} 
 					
-					else if (elements[0].equals("usemtl")) { 
-
+					else if (elements[0].equals("usemtl")) 
+					{ 
 						// material setting
 						
 						ModelSegment newModelSegment = new ModelSegment();
@@ -717,7 +839,8 @@ public class OBJModel implements PConstants{
 
 					} 
 					
-					else if (elements[0].equals("f")) { // Element
+					else if (elements[0].equals("f")) // Element 
+					{ 
 						
 						ModelElement tmpf = new ModelElement();
 
@@ -735,54 +858,57 @@ public class OBJModel implements PConstants{
 								
 								String[] forder = seg.split("/");
 
-								if (forder.length > 2) {
+								if (forder.length > 2) 
+								{
 									
-									if (forder[0].length() > 0){
-										
+									if (forder[0].length() > 0)
+									{
 										tmpf.indexes.add(Integer.valueOf(forder[0]));
 									}
 									
-									if (forder[1].length() > 0){
-										
+									if (forder[1].length() > 0)
+									{
 										tmpf.tindexes.add(Integer.valueOf(forder[1]));
 									}
 									
-									if (forder[2].length() > 0){
-										
+									if (forder[2].length() > 0)
+									{	
 										tmpf.nindexes.add(Integer.valueOf(forder[2]));
 									}
 									
 								} 
-								else if (forder.length > 1) {
+								else if (forder.length > 1) 
+								{
 									
-									if (forder[0].length() > 0){
-										
+									if (forder[0].length() > 0)
+									{	
 										tmpf.indexes.add(Integer.valueOf(forder[0]));
 									}
 									
-									if (forder[1].length() > 0){
-										
+									if (forder[1].length() > 0)
+									{
 										tmpf.tindexes.add(Integer.valueOf(forder[1]));
 									}
 									
 								} 
-								else if (forder.length > 0) {
+								else if (forder.length > 0) 
+								{
 									
-									if (forder[0].length() > 0){
-										
+									if (forder[0].length() > 0)
+									{
 										tmpf.indexes.add(Integer.valueOf(forder[0]));
 									}
 									
 								}
 							} 
-							else {
+							else 
+							{
 								
-								if (seg.length() > 0){
-									
+								if (seg.length() > 0)
+								{
 									tmpf.indexes.add(Integer.valueOf(seg));
 								}
 							}
-							
 						}
 						
 						currentModelSegment.elements.add(tmpf);
@@ -792,18 +918,16 @@ public class OBJModel implements PConstants{
 						
 						ModelElement tmpf = new ModelElement();
 						
-						tmpf.iType = ModelElement.POLYGON;
+						tmpf.iType = PConstants.POLYGON;
 
-						if (elements.length < 2) {
-							
-							debug.println("Warning: potential model data error");
-							
+						if (elements.length < 2) 
+						{	
+							debug.println("Warning: potential model data error");	
 						}
 
-						for (int i = 1; i < elements.length; i++) {
-							
-							tmpf.indexes.add(Integer.valueOf(elements[i]));
-							
+						for (int i = 1; i < elements.length; i++) 
+						{
+							tmpf.indexes.add(Integer.valueOf(elements[i]));	
 						}
 
 						currentModelSegment.elements.add(tmpf);
@@ -811,16 +935,17 @@ public class OBJModel implements PConstants{
 					}
 				}
 			}
-			
 		} 
-		catch (Exception e) {
-			
-			e.printStackTrace();
-			
+		catch (Exception e) 
+		{
+			e.printStackTrace();	
 		}
 
-		// until I figure out where the empty model Segments are coming from this will have to do.
-		for(int i = getSegmentSize()-1; i >= 0; i --){
+		// Depending on the layout of the obj file, extra empty modeSegments can be created.
+		// Here I check each segment to ensure it contains indexes. 
+		// If there aren't any then the Segment will draw no faces so it's fine to kill it off.
+		for(int i = getSegmentSize()-1; i >= 0; i--)
+		{
 			
 			if(getIndexCountInSegment(i) == 0 )
 			{ //again with the empty model segments WTF?
@@ -834,6 +959,13 @@ public class OBJModel implements PConstants{
 	// -------------------------------------------------------------------------
 	// ------------------------------------------------------------- MTL Parsing 
 	// -------------------------------------------------------------------------
+	
+	/**
+	 * The method that does the work of parsing the mtl file. <br></br>
+	 * This method is called automaticly when an mtl reference is found in obj. <br></br>
+	 * This can cause issues when the mtl file location is a hard coded path.<br></br> 
+	 * I'll try to fix this up in the future by turning that into an option.<br></br>
+	 */
 	
 	private void parseMTL(BufferedReader bread) {
 		try {
@@ -864,15 +996,16 @@ public class OBJModel implements PConstants{
 						materials.put(mtlName, tmpMtl);
 						
 					}
-					else if (elements[0].equals("map_Ka") && elements.length > 1) {
-
-						debug.println("texture ambient \t\t'" + elements[1] + "'");
-
-						// String texname = elements[1];
-						// currentMtl.map_Ka = parent.loadImage(texname);
-						
-
-					}
+					// I'd like to do something with this but at the moment it'd only be supported in the OPENGL mode
+//					else if (elements[0].equals("map_Ka") && elements.length > 1) {
+//
+//						debug.println("texture ambient \t\t'" + elements[1] + "'");
+//
+//						// String texname = elements[1];
+//						// currentMtl.map_Ka = parent.loadImage(texname);
+//						
+//
+//					}
 					else if (elements[0].equals("map_Kd") && elements.length > 1) {
 
 						if (!flagLocalTexture) {
@@ -888,8 +1021,8 @@ public class OBJModel implements PConstants{
 							// TODO get the system folder slash. (where is that pocket java guide when you need it) 
 							String slash = "\\";
 							
-							while (p1 != -1) {
-								
+							while (p1 != -1) 
+							{	
 								p1 = texname.indexOf(slash);
 								texname = texname.substring(p1 + 1);
 							}
@@ -903,29 +1036,26 @@ public class OBJModel implements PConstants{
 						originalTexture = texname;
 
 					} 
-					else if (elements[0].equals("Ka") && elements.length > 1) {
-						
+					else if (elements[0].equals("Ka") && elements.length > 1) 
+					{	
 						currentMtl.Ka[0] = Float.valueOf(elements[1]).floatValue();
 						currentMtl.Ka[1] = Float.valueOf(elements[2]).floatValue();
 						currentMtl.Ka[2] = Float.valueOf(elements[3]).floatValue();
-						
 					}
-					else if (elements[0].equals("Kd") && elements.length > 1) {
-						
+					else if (elements[0].equals("Kd") && elements.length > 1) 
+					{
 						currentMtl.Kd[0] = Float.valueOf(elements[1]).floatValue();
 						currentMtl.Kd[1] = Float.valueOf(elements[2]).floatValue();
 						currentMtl.Kd[2] = Float.valueOf(elements[3]).floatValue();
-						
 					}
-					else if (elements[0].equals("Ks") && elements.length > 1) {
-	
+					else if (elements[0].equals("Ks") && elements.length > 1) 
+					{
 						currentMtl.Ks[0] = Float.valueOf(elements[1]).floatValue();
 						currentMtl.Ks[1] = Float.valueOf(elements[2]).floatValue();
 						currentMtl.Ks[2] = Float.valueOf(elements[3]).floatValue();
-	
 					}
-					else if (elements[0].equals("d") && elements.length > 1) {
-						
+					else if (elements[0].equals("d") && elements.length > 1) 
+					{	
 						currentMtl.d = Float.valueOf(elements[1]).floatValue();
 						
 					}
@@ -940,123 +1070,238 @@ public class OBJModel implements PConstants{
 	// -------------------------------------------------------------------------
 	// --------------------------------------------------- Get and Set Functions 
 	// -------------------------------------------------------------------------
-
-	public int getGroupsize() {
+	
+	/**
+	 * Gets the size of the Groups from the obj Model. <br></br>
+	 * At the moment groups are an unexplored feature.<br></br>
+	 * So you can get the size, but it's not going to do much for you.<br></br>
+	 * @return int count of the group<br></br>
+	 */
+	public int getGroupsize() 
+	{
 		return this.groups.size();
 	}
-
-	public Group getGroup(String groupName) {
+	
+	/**
+	 * Returns the group via name <br></br>
+	 * Until I find a practical use for Groups this feature isn't going anywhere. <br></br>
+	 * @param A String of the group name that was in the obj file <br></br> 
+	 * @return a Group <br></br>
+	 */
+	public Group getGroup(String groupName) 
+	{
 		return (Group) this.groups.get(groupName);
 	}
 	
+	/**
+	 * Gets the number of segments in the model.<br></br>
+	 * A segment is a unique material and an array of indexes into the vert, norm and uv Vectors<br></br>
+	 * @return int
+	 */
 	public int getSegmentSize() {
 		return this.modelSegments.size();
 	}
 	
-	public int getIndexCountInSegment(int i){
+	/**
+	 * Gets the number of Index count in the Segment. <br></br>
+	 * In effect this is the number of faces in the Segment. <br></br>
+	 * As each Index is an Array of ints to the vert, normal, or uv Array <br></br>
+	 * @param a number between 0 and the number of segments <br></br>
+	 * @return int <br></br>
+	 */
+	public int getIndexCountInSegment(int i)
+	{
 		return  ((ModelSegment)modelSegments.elementAt(i)).getSize();
 	}
 	
-	// there are just to many casts here. It feels very muddy. 
+	// there are just to many casts here. It feels very muddy.
+	/**
+	 * Returns an array of ints. Use these ints to get the verts of a single face.<br></br>
+	 * @param the segment number<br></br>
+	 * @param the face number<br></br>
+	 * @return int[] of indexes<br></br>
+	 */
 	public int[] getVertIndexArrayInSegment(int i, int num)
 	{
 		return ((ModelElement)((ModelSegment)modelSegments.elementAt(i)).getElement(num)).getVertexIndexArray();
 	}
 	
+	/**
+	 * Returns an array of ints. Use these ints to get the normals of a single face.<br></br>
+	 * @param the segment number<br></br>
+	 * @param the face number<br></br>
+	 * @return int[] of indexes<br></br>
+	 */
 	public int[] getNormalIndexArrayInSegment(int i, int num)
 	{
 		return ((ModelElement)((ModelSegment)modelSegments.elementAt(i)).getElement(num)).getNormalIndexArray();
 	}
 	
+	/**
+	 * Returns an array of ints. Use these ints to get the UV's of a single face.<br></br>
+	 * @param the segment number<br></br>
+	 * @param the face number<br></br>
+	 * @return int[] of indexes<br></br>
+	 */
 	public int[] getTextureIndexArrayInSegment(int i, int num)
 	{
 		return ((ModelElement)((ModelSegment)modelSegments.elementAt(i)).getElement(num)).getTextureIndexArray();
 	}
 
+	/**
+	 * Get's the total number of Verts in the model.<br></br> 
+	 * @return an int of the number of verts<br></br>
+	 */
 	public int getVertexsize() 
 	{
 		return this.vertexes.size();
 	}
-	
+
+	/**
+	 * Get's the total number of Verts in the model.<br></br> 
+	 * @return an int of the number of verts<br></br>
+	 */
 	public int getVertexSize() 
 	{
 		return this.vertexes.size();
 	}
-	
+
+	/**
+	 * Get's the total number of Normals in the model. <br></br>
+	 * It can happen that the Normal count is identical to the Vert count. This will depend on the effecency of the exporter that has been used.<br></br>
+	 * In a situation where the count is identical often there is a relationship between a certain numbered Normal and the same numbered Vert.<br></br>
+	 * However this can also be total luck. The correct method of getting the normal for the correct vert is to go through the ModelSegment to ModelElement to VertIndex and NormalIndex.<br></br>  
+	 * @return an int of the number of normals<br></br>
+	 */
 	public int getNormalSize() 
 	{
 		return this.normv.size();
 	}
 	
+	/**
+	 * Get's the total number of UVs in the model.<br></br> 
+	 * @return an int of the number of UV's<br></br>
+	 */
 	public int getUVSize() 
 	{
 		return this.texturev.size();
 	}	
 
+	/**
+	 * Returns a reference to a numbered Vertex. As this is a reference to the original vertex you can directly manipulate the PVector without having to set it back.<br></br>
+	 * PVector tmp = model.getVertex(0);<br></br>
+	 * tmp.x += 10;<br></br>
+	 * @param an index to the vert<br></br>
+	 * @return a PVector<br></br>
+	 */
 	public PVector getVertex(int i) 
 	{
 		return (PVector) vertexes.elementAt(i);
 	}
 	
+	/**
+	 * Returns a reference to a numbered Normal. As this is a reference to the original normal you can directly manipulate the PVector without having to set it back.<br></br>
+	 * PVector tmp = model.getNormal(0);<br></br>
+	 * tmp.mult(-1);<br></br>
+	 * @param an index to the normal<br></br>
+	 * @return a PVector<br></br>
+	 */	
 	public PVector getNormal(int i) 
 	{
 		return (PVector) normv.elementAt(i);
 	}	
 	
+	/**
+	 * Returns a reference to a numbered Textured Coordinate. As this is a reference to the original UV you can directly manipulate the PVector without having to set it back.<br></br>
+	 * It is important to note that the UV's of an obj model are in a NORMALIZED space (between 0-1).<br></br>
+	 * Another important issue is that the native processing renderer does not tile textures that are outside 0-1<br></br>
+	 * This can have the effect of streaking pixel lines at the edges of the texture.<br></br> 
+	 * PVector tmp = model.getUV(0);<br></br>
+	 * tmp.x += 0.01;<br></br>
+	 * @param an index to the normal<br></br>
+	 * @return a PVector<br></br>
+	 */	
 	public PVector getUV(int i) 
 	{
 		return (PVector) texturev.elementAt(i);
 	}		
 
+	/**
+	 * Sets the vert at index i to the PVector supplied
+	 * @param index into the vert array
+	 * @param A supplied PVector
+	 */
 	public void setVertex(int i, PVector vertex) 
 	{
 		((PVector) vertexes.elementAt(i)).set(vertex);
 	}
 	
+	/**
+	 * Sets the vert at index i to the x,y,z values supplied
+	 * @param i
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
 	public void setVertex(int i, float x, float y, float z ) 
 	{
-		
 		((PVector) vertexes.elementAt(i)).set(x,y,z);
-		
-//		PVector tmpv = (PVector) vertexes.elementAt(i);
-//		
-//		tmpv.set(x,y,z);	
 	}
 	
+	/**
+	 * Sets the Normal at index i to the PVector supplied
+	 * @param index into the normal array
+	 * @param A supplied PVector
+	 */
 	public void setNormal(int i, PVector normal) 
 	{
 		((PVector) normv.elementAt(i)).set(normal);
 	}
 	
+	/**
+	 * Sets the UV at index i to the PVector supplied
+	 * @param index into the uv array
+	 * @param A supplied PVector
+	 */
 	public void setUV(int i, PVector uv) 
 	{
 		((PVector) texturev.elementAt(i)).set(uv);
 	}	
 	
-
+	/**
+	 * Sets an override texture for the drawing of the model.<br></br>
+	 * Any PImage supplied will be used over all model segments<br></br>
+	 * @param PImage<br></br>
+	 * <br></br>
+	 * NOTE: This method is identical to texture(), It has the better syntax.
+	 */
 	public void setTexture(PImage textureName) {
 		texture = textureName;
 	}
 
+	/**
+	 * Sets the override texture back to null. This sends the model back to original method of drawing the segment with the texture contained in the segments material
+	 */
 	public void originalTexture() {
-		texture = parent.loadImage(originalTexture);
+		texture = null;
 	}
 	
 	// -------------------------------------------------------------------------
 	// -------------------------------------------- Processing Library functions
 	// -------------- I'm not using them, but I didn't want to forget about them
 	
-	public void pre() {
-	}
-	
-	public void post() {
-	}
-	
-	public void size(int w, int h) {
-	}
+//	public void pre() {
+//	}
+//	
+//	public void post() {
+//	}
+//	
+//	public void size(int w, int h) {
+//	}
 	
 //	if the mouse and keyboard functions ever get used, these imports will be needed at the top of the package
 //	import java.awt.event.KeyEvent;
+	
 //	import java.awt.event.MouseEvent;
 //	public void mouse(MouseEvent event) {
 //	}

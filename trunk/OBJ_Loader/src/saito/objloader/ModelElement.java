@@ -15,6 +15,9 @@ import processing.core.PConstants;
 
 /**
  * @author tatsuyas
+ * @author mattDitton
+ * 
+ * Each model element contains the indexes to the verts, normals and UV's needed to make a face
  */
 
 public class ModelElement implements PConstants{
@@ -25,7 +28,11 @@ public class ModelElement implements PConstants{
 	public Vector tindexes;
 	public Vector nindexes;
 	
-	public ModelElement() {
+	/**
+	 * Constructor for the ModelElement. A model element is all the indexes needed to draw a face.
+	 */
+	public ModelElement() 
+	{
 		indexes = new Vector();
 		tindexes = new Vector();
 		nindexes = new Vector();
@@ -39,7 +46,7 @@ public class ModelElement implements PConstants{
 		
 		int[] v = new int[getSize()];
 		
-		for(int i = 0; i < getSize(); i ++){
+		for(int i = 0; i < v.length; i ++){
 			v[i] = getVertexIndex(i);
 		}
 		                  
@@ -50,7 +57,7 @@ public class ModelElement implements PConstants{
 		
 		int[] v = new int[getSize()];
 		
-		for(int i = 0; i < getSize(); i ++){
+		for(int i = 0; i < v.length; i ++){
 			v[i] = getNormalIndex(i);
 		}
 		                  
@@ -61,7 +68,7 @@ public class ModelElement implements PConstants{
 		
 		int[] v = new int[getSize()];
 		
-		for(int i = 0; i < getSize(); i ++){
+		for(int i = 0; i < v.length; i ++){
 			v[i] = getTextureIndex(i);
 		}
 		                  
@@ -69,7 +76,7 @@ public class ModelElement implements PConstants{
 	}
 	
 	
-	//remember kids arrays start at 0 (hence the -1)
+	//remember kids arrays start at 0 (hence the -1) But OBJ files start the indexes at 1.
 	public int getVertexIndex(int i){
 		return ((Integer)indexes.elementAt(i)).intValue() -1;
 	}

@@ -21,7 +21,8 @@ import processing.core.PImage;
  * 
  */
 public class Material {
-	public PImage map_Ka;
+	// this should be turned back on for OPENGL support
+//	public PImage map_Ka;
 	public PImage map_Kd;
 //	private Texture map_Kd_Gl;
 	public float[] Ka;
@@ -31,6 +32,9 @@ public class Material {
 
 	public String mtlName;
 	
+	/**
+	 * Constructs a default Material object.
+	 */
 	public Material() {
 		Ka = new float[4];
 		Kd = new float[4];
@@ -52,6 +56,11 @@ public class Material {
 		mtlName = "default";
 	}
 	
+	/**
+	 * Sets up the OPENGL material as a series of float and int buffers
+	 * @param gl
+	 * @param debug
+	 */
 	public void setupOPENGL(GL gl, Debug debug){
 		
 		// make magic here that turns a PImage into an OPENGL texture

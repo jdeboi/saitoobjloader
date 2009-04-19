@@ -1,6 +1,6 @@
 package saito.objloader;
 
-import processing.core.PApplet;
+import processing.core.*;
 
 public class Debug {
 	
@@ -11,9 +11,9 @@ public class Debug {
 	public Debug(PApplet parent){
 		this.parent = parent;
 	}
+
 	public void println(String str){
-		if(enabled)
-			PApplet.println(str);
+		if(enabled){ PApplet.println(str); }
 	}
 	public void println(int i){
 		if(enabled)
@@ -27,10 +27,14 @@ public class Debug {
 		if(enabled)
 			PApplet.println(f);
 	}
-	public void println(Vertex v){
+	public void println(PVector v){
 		if(enabled)
-			PApplet.println(v.vx + " : " + v.vy + " : " + v.vz);
-	}
+			PApplet.println(v.x + " : " + v.y + " : " + v.z);
+	}	
+//	public void println(Vertex v){
+//		if(enabled)
+//			PApplet.println(v.vx + " : " + v.vy + " : " + v.vz);
+//	}
 	public void print(String str){
 		if(enabled)
 			PApplet.print(str);
