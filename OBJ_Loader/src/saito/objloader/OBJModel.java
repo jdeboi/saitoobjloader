@@ -354,8 +354,8 @@ public class OBJModel{
 	public void debugMode() {
 		debug.enabled = true;
 		debug.println("");
-		debug.println("objloader version 016");
-		debug.println("16 April 2009");
+		debug.println("objloader version 017");
+		debug.println("14 June 2009");
 		debug.println("http://code.google.com/p/saitoobjloader/");		
 		debug.println("");
 		
@@ -1128,25 +1128,33 @@ public class OBJModel{
 	 * This is mostly used when you need raw verts for physics simulation<br></br>
 	 * @return PVector[]
 	 */
-	public PVector[] getFaceVerts(int faceNumber) 
+	public PVector[] getFaceVertArray(int faceNumber) 
 	{
 		
 		int segmentNumber = 0;
 		
 		int indexNumber = faceNumber;
 		
-		while (indexNumber > getIndexCountInSegment(segmentNumber))
+		debug.println("segmentNumber, indexNumber = " + segmentNumber + " " + indexNumber);
+		
+		while (indexNumber >= getIndexCountInSegment(segmentNumber))
 		{
-			indexNumber -= getIndexCountInSegment(segmentNumber++);
+			indexNumber -= getIndexCountInSegment(segmentNumber);
+			segmentNumber++;
 		}
 		
+		debug.println("segmentNumber, indexNumber = " + segmentNumber + " " + indexNumber);
+		
 		int[] vertindexes = getVertIndexArrayInSegment(segmentNumber, indexNumber);
+		
+		//parent.println(vertindexes);
 		
 		PVector[] tmp = new PVector[vertindexes.length];
 		
 		for(int i = 0; i < tmp.length; i ++)
 		{
-			tmp[i] = getVertex(vertindexes[i]);
+			tmp[i] = new PVector();
+			tmp[i].set(getVertex(vertindexes[i]));
 		}
 		
 		return tmp;
