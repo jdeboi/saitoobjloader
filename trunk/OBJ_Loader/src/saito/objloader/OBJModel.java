@@ -1098,8 +1098,58 @@ public class OBJModel{
 	 * A segment is a unique material and an array of indexes into the vert, norm and uv Vectors<br></br>
 	 * @return int
 	 */
-	public int getSegmentSize() {
+	public int getSegmentSize() 
+	{
 		return this.modelSegments.size();
+	}
+	
+	/**
+	 * Gets the total number of faces in the model.<br></br>
+	 * This is the total of the index count across all segments<br></br>
+	 * This is mostly used when you need raw verts for physics simulation<br></br>
+	 * @return int
+	 */
+	public int getTotalFaceCount() 
+	{
+		
+		int tmp = 0;
+		
+		for(int i = 0; i < getSegmentSize(); i ++)
+		{
+			tmp += getIndexCountInSegment(i);
+		}
+		
+		return tmp;
+	}
+	
+	/**
+	 * Gets an array of PVectors that make up the position co-ordinates of the face.<br></br>
+	 * This method needs one int that must be between 0 and the getTotalFaceCount()<br></br>
+	 * This is mostly used when you need raw verts for physics simulation<br></br>
+	 * @return PVector[]
+	 */
+	public PVector[] getFaceVerts(int faceNumber) 
+	{
+		
+		int segmentNumber = 0;
+		
+		int indexNumber = faceNumber;
+		
+		while (indexNumber > getIndexCountInSegment(segmentNumber))
+		{
+			indexNumber -= getIndexCountInSegment(segmentNumber++);
+		}
+		
+		int[] vertindexes = getVertIndexArrayInSegment(segmentNumber, indexNumber);
+		
+		PVector[] tmp = new PVector[vertindexes.length];
+		
+		for(int i = 0; i < tmp.length; i ++)
+		{
+			tmp[i] = getVertex(vertindexes[i]);
+		}
+		
+		return tmp;
 	}
 	
 	/**
