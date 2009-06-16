@@ -110,7 +110,7 @@ public class ModelSegment
 			PVector normals   = (PVector)n.elementAt(normind[i]);
 			
 			f[i*stride]   = points.x;
-			f[i*stride+1] = - points.y; // negative to account for processing top left 0,0,0
+			f[i*stride+1] = points.y; // negative to account for processing top left 0,0,0
 			f[i*stride+2] = points.z;
 			
 			f[i*stride+3] = textureUV.x;

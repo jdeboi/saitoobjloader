@@ -636,12 +636,12 @@ public class OBJModel{
 
 										vt = (PVector) texturev.elementAt( tmpModelElement.getTextureIndex(fp) );										
 										
-										parent.vertex(v.x, -v.y, v.z, vt.x, 1.0f - vt.y);
+										parent.vertex(v.x, v.y, v.z, vt.x, 1.0f - vt.y);
 
 									} 
 									else
 									{
-										parent.vertex(v.x, -v.y, v.z);
+										parent.vertex(v.x, v.y, v.z);
 									}
 
 								} 
@@ -653,7 +653,7 @@ public class OBJModel{
 
 							else 
 							{	
-								parent.vertex(v.x, -v.y, v.z);
+								parent.vertex(v.x, v.y, v.z);
 							}
 
 						}
@@ -772,6 +772,7 @@ public class OBJModel{
 						tmpv.x = Float.valueOf(elements[1]).floatValue();
 						tmpv.y = Float.valueOf(elements[2]).floatValue();
 						tmpv.z = Float.valueOf(elements[3]).floatValue();
+						tmpv.y = -tmpv.y; 
 						vertexes.add(tmpv);
 					} 
 					else if (elements[0].equals("vn")) // normal
@@ -1135,7 +1136,7 @@ public class OBJModel{
 		
 		int indexNumber = faceNumber;
 		
-		debug.println("segmentNumber, indexNumber = " + segmentNumber + " " + indexNumber);
+		//debug.println("segmentNumber, indexNumber = " + segmentNumber + " " + indexNumber);
 		
 		while (indexNumber >= getIndexCountInSegment(segmentNumber))
 		{
@@ -1143,7 +1144,7 @@ public class OBJModel{
 			segmentNumber++;
 		}
 		
-		debug.println("segmentNumber, indexNumber = " + segmentNumber + " " + indexNumber);
+		//debug.println("segmentNumber, indexNumber = " + segmentNumber + " " + indexNumber);
 		
 		int[] vertindexes = getVertIndexArrayInSegment(segmentNumber, indexNumber);
 		
