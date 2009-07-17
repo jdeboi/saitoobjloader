@@ -979,6 +979,8 @@ public class OBJModel{
 				
 				// parse the line
 				
+				line = line.trim();
+				
 				String elements[] = line.split("\\s+");
 				
 				if (elements.length > 0) {
