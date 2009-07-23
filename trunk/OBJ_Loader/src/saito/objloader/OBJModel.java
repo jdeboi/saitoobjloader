@@ -354,8 +354,8 @@ public class OBJModel{
 	public void debugMode() {
 		debug.enabled = true;
 		debug.println("");
-		debug.println("objloader version 016");
-		debug.println("14 June 2009");
+		debug.println("objloader version 018");
+		debug.println("23 July 2009");
 		debug.println("http://code.google.com/p/saitoobjloader/");		
 		debug.println("");
 		
@@ -636,7 +636,7 @@ public class OBJModel{
 
 										vt = (PVector) texturev.elementAt( tmpModelElement.getTextureIndex(fp) );										
 										
-										parent.vertex(v.x, v.y, v.z, vt.x, 1.0f - vt.y);
+										parent.vertex(v.x, v.y, v.z, vt.x, 1.0f- (vt.y));
 
 									} 
 									else
