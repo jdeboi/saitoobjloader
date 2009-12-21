@@ -758,6 +758,21 @@ public class OBJModel{
 			{
 				// debug.println(line);
 				// parse the line
+				
+				// The below patch/hack comes from Carles Tom‡s Mart’ and is a fix for single backslashes in Rhino obj files
+				
+				// BEGINNING OF RHINO OBJ FILES HACK
+	            // Statements can be broken in multiple lines using '\' at the end of a line.
+	            // In regular expressions, the backslash is also an escape character. 
+	            // The regular expression \\ matches a single backslash. This regular expression as a Java string, becomes "\\\\". 
+	            // That's right: 4 backslashes to match a single one.
+	            while(line.contains("\\")) 
+	            {
+	                line = line.split("\\\\")[0];
+	                final String s = bread.readLine();
+	                if(s != null) line += s;
+	            }
+	            // END OF RHINO OBJ FILES HACK
 
 				String[] elements = line.split("\\s+");
 
