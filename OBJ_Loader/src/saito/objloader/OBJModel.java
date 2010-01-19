@@ -660,7 +660,7 @@ public class OBJModel {
 	}
 
 	public void translateToCenter() {
-		OBJModelBoundingBox obox = new OBJModelBoundingBox(parent, this);
+		BoundingBox obox = new BoundingBox(parent, this);
 		translate(-obox.getCenterX(), -obox.getCenterY(), -obox.getCenterZ());
 	}
 

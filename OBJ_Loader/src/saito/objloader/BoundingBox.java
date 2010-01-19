@@ -3,7 +3,7 @@ package saito.objloader;
 import processing.core.*;
 import saito.objloader.*;
 
-public class OBJModelBoundingBox implements PConstants {
+public class BoundingBox implements PConstants {
 
 	PApplet parent;
 	private float x1 = MAX_FLOAT, y1 = MAX_FLOAT, z1 = MAX_FLOAT,
@@ -11,7 +11,7 @@ public class OBJModelBoundingBox implements PConstants {
 	private float centerX, centerY, centerZ;
 	public float width, height, depth;
 
-	public OBJModelBoundingBox(PApplet parent, OBJModel model) {
+	public BoundingBox(PApplet parent, OBJModel model) {
 
 		this.parent = parent;
 

@@ -293,7 +293,7 @@
 	<target name="addExamples">
 		<replaceregexp file="${dist}/web/index.html"
 	  					match="(##examples##)"
-	  	  				replace="&lt;li&gt;&lt;a href=&quot;examples/${exampleDir}/${exampleDir}.pde&quot;&gt;${exampleDir}&lt;/a&gt;&lt;/li&gt; \1"
+	  	  				replace="&lt;li&gt;&lt;a href=&quot;examples/${exampleDir}/applet/index.html&quot;&gt;${exampleDir}&lt;/a&gt;&lt;/li&gt; \1"
 	  	  				flags="g" />
 		</target>
 </project>
