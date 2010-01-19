@@ -4,7 +4,7 @@ import saito.objloader.*;
 import processing.opengl.*;
 
 OBJModel model ;
-OBJModelBoundingBox obox;
+BoundingBox obox;
 
 float rotX, rotY;
 
@@ -20,7 +20,7 @@ void setup()
   model.scale(20);
   model.translateToCenter();
   
-  obox = new OBJModelBoundingBox(this,model);
+  obox = new BoundingBox(this,model);
   
   println(obox.getCenterXYZ());
   

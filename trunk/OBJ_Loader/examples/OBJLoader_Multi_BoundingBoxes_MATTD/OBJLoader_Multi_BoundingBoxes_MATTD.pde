@@ -6,7 +6,7 @@ import processing.opengl.*;
 
 // declare that we need a OBJModel and we'll be calling it "model"
 OBJModel model;
-OBJModelBoundingBox theBox;
+BoundingBox theBox;
 float rotX;
 float rotY;
 
@@ -46,7 +46,7 @@ void setup()
   //and loading the model
   model.load("cube_sphere_test.obj"); 
   //model.load("modo.obj");
-  theBox = new OBJModelBoundingBox(this, model);
+  theBox = new BoundingBox(this, model);
   
   
   println("the model has this many segments = " + model.getSegmentCount());

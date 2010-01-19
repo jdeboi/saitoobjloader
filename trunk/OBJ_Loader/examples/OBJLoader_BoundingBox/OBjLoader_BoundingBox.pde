@@ -3,7 +3,7 @@ import processing.opengl.*;
 import saito.objloader.*;
 
 OBJModel model ;
-OBJModelBoundingBox bbox;
+BoundingBox bbox;
 
 void setup(){
 
@@ -15,7 +15,7 @@ void setup(){
   model.scale(100f);
   model.translateToCenter();
 
-  bbox = new OBJModelBoundingBox(this, model);
+  bbox = new BoundingBox(this, model);
 }
 
 
