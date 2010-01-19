@@ -6,7 +6,7 @@ public class Debug {
 	
 	public boolean enabled = true;
 	
-	PApplet parent;
+	private PApplet parent;
 	
 	public Debug(PApplet parent){
 		this.parent = parent;
