@@ -13,7 +13,7 @@ import java.util.Vector;
 
 /**
  * @author tatsuyas
- * test
+ *
  */
 public class Group {
 	public String groupName;
