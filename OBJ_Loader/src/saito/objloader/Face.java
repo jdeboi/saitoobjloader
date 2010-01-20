@@ -9,9 +9,11 @@ package saito.objloader;
  *  
  */
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 import processing.core.PConstants;
+import processing.core.PVector;
 
 /**
  * @author tatsuyas
@@ -26,18 +28,24 @@ public class Face implements PConstants {
 
 	public int indexType = POLYGON;
 
-	public Vector indices;
-	public Vector vertexIndices;
-	public Vector normalIndices;
+	public ArrayList<Integer> indices;
+	public ArrayList<Integer> vertexIndices;
+	public ArrayList<Integer> normalIndices;
+
+	public ArrayList<PVector> vertices;
+	public ArrayList<PVector> normals;
 
 	/**
-	 * Constructor for the Element. A model element is all the indices
-	 * needed to draw a face.
+	 * Constructor for the Element. A model element is all the indices needed to
+	 * draw a face.
 	 */
 	public Face() {
-		indices = new Vector();
-		vertexIndices = new Vector();
-		normalIndices = new Vector();
+		indices = new ArrayList<Integer>();
+		vertexIndices = new ArrayList<Integer>();
+		normalIndices = new ArrayList<Integer>();
+
+		vertices = new ArrayList<PVector>();
+		normals = new ArrayList<PVector>();
 	}
 
 	public int getIndexCount() {
@@ -71,17 +79,38 @@ public class Face implements PConstants {
 		return v;
 	}
 
+	PVector getNormal() {
+
+		// middle vertex
+		PVector m = new PVector();
+
+		for (int i = 0; i < vertices.size(); i++)
+			m.add(vertices.get(i));
+
+		m.div(vertices.size());
+
+		// middle - first vertex
+		PVector aToB = PVector.sub(m, vertices.get(0));
+
+		// middle - last vertex
+		PVector cToB = PVector.sub(m, vertices.get(vertices.size() - 1));
+
+		PVector n = cToB.cross(aToB);
+
+		return n.normalize(new PVector(1, 1, 1));
+	}
+
 	// Arrays start at 0 (hence the -1) But OBJ files start the
 	// indices at 1.
 	public int getVertexIndex(int i) {
-		return ((Integer) indices.elementAt(i)).intValue() - 1;
+		return indices.get(i) - 1;
 	}
 
 	public int getTextureIndex(int i) {
-		return ((Integer) vertexIndices.elementAt(i)).intValue() - 1;
+		return vertexIndices.get(i) - 1;
 	}
 
 	public int getNormalIndex(int i) {
-		return ((Integer) normalIndices.elementAt(i)).intValue() - 1;
+		return normalIndices.get(i) - 1;
 	}
 }
