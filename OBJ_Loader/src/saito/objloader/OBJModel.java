@@ -548,8 +548,7 @@ public class OBJModel {
 							// vidx = tmpModelElement.getVertexIndex(fp);
 							//
 							// v = (PVector) vertexes.elementAt(vidx);
-							v = (PVector) vertices.elementAt(tmpModelElement
-									.getVertexIndex(fp));
+							v = (PVector) vertices.elementAt(tmpModelElement.getVertexIndex(fp));
 
 							if (v != null) {
 								try {
@@ -560,9 +559,7 @@ public class OBJModel {
 										// vn = (PVector)
 										// normv.elementAt(vnidx);
 
-										vn = (PVector) normv
-												.elementAt(tmpModelElement
-														.getNormalIndex(fp));
+										vn = (PVector) normv.elementAt(tmpModelElement.getNormalIndex(fp));
 
 										parent.normal(vn.x, vn.y, vn.z);
 									}
@@ -574,12 +571,9 @@ public class OBJModel {
 										// vt = (PVector)
 										// texturev.elementAt(vtidx);
 
-										vt = (PVector) texturev
-												.elementAt(tmpModelElement
-														.getTextureIndex(fp));
+										vt = (PVector) texturev.elementAt(tmpModelElement.getTextureIndex(fp));
 
-										parent.vertex(v.x, v.y, v.z, vt.x,
-												1.0f - (vt.y));
+										parent.vertex(v.x, v.y, v.z, vt.x, 1.0f - (vt.y));
 									} else
 										parent.vertex(v.x, v.y, v.z);
 								} catch (Exception e) {
@@ -800,15 +794,16 @@ public class OBJModel {
 						tmpv.x = Float.valueOf(elements[1]).floatValue();
 						tmpv.y = Float.valueOf(elements[2]).floatValue();
 						tmpv.z = Float.valueOf(elements[3]).floatValue();
-						tmpv.y = -tmpv.y;
+						tmpv.y = -tmpv.y; // remember processing is upside down.
 						vertices.add(tmpv);
 					} else if (elements[0].equals("vn")) // normal
 					{
-						PVector tmpv = new PVector();
-						tmpv.x = Float.valueOf(elements[1]).floatValue();
-						tmpv.y = Float.valueOf(elements[2]).floatValue();
-						tmpv.z = Float.valueOf(elements[3]).floatValue();
-						normv.add(tmpv);
+						PVector tmpn = new PVector();
+						tmpn.x = Float.valueOf(elements[1]).floatValue();
+						tmpn.y = Float.valueOf(elements[2]).floatValue();
+						tmpn.z = Float.valueOf(elements[3]).floatValue();
+						tmpn.y = -tmpn.y; // as is her normals
+						normv.add(tmpn);
 					} else if (elements[0].equals("vt")) // uv
 					{
 						PVector tmpv = new PVector();
@@ -1246,13 +1241,11 @@ public class OBJModel {
 	 *         </br>
 	 */
 	public int[] getVertexIndicesInSegment(int i, int num) {
-		return ((Element) ((Segment) segments.elementAt(i)).getElement(num))
-				.getVertexIndices();
+		return ((Element) ((Segment) segments.elementAt(i)).getElement(num)).getVertexIndices();
 	}
 
 	/**
-	 * Returns an array of ints. Use these ints to get the normals of a single
-	 * face.<br>
+	 * Returns an array of ints. Use these ints to get the normals of a single face.<br>
 	 * </br>
 	 * 
 	 * @param the
@@ -1265,8 +1258,7 @@ public class OBJModel {
 	 *         </br>
 	 */
 	public int[] getNormalIndicesInSegment(int i, int num) {
-		return ((Element) ((Segment) segments.elementAt(i)).getElement(num))
-				.getNormalIndices();
+		return ((Element) ((Segment) segments.elementAt(i)).getElement(num)).getNormalIndices();
 	}
 
 	/**
@@ -1284,8 +1276,7 @@ public class OBJModel {
 	 *         </br>
 	 */
 	public int[] getTextureIndicesInSegment(int i, int num) {
-		return ((Element) ((Segment) segments.elementAt(i)).getElement(num))
-				.getTextureIndices();
+		return ((Element) ((Segment) segments.elementAt(i)).getElement(num)).getTextureIndices();
 	}
 
 	/**
