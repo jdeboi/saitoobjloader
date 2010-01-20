@@ -1,6 +1,6 @@
 package saito.objloader;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import java.nio.*;
 
 import javax.media.opengl.GL;
@@ -8,7 +8,7 @@ import javax.media.opengl.GL;
 import processing.core.*;
 
 public class Segment {
-	public Vector elements;
+	public ArrayList<Face> faces;
 
 	public String materialName;
 	public IntBuffer indexIB;
@@ -22,26 +22,26 @@ public class Segment {
 	 * and UV arrays that make up a single face.
 	 */
 	public Segment() {
-		elements = new Vector();
+		faces = new ArrayList<Face>();
 	}
 
 	public String getMaterialName() {
 		return materialName;
 	}
 
-	public Object getElement(int index) {
-		return elements.elementAt(index);
+	public Object getFace(int index) {
+		return faces.get(index);
 	}
 
-	public int getElementCount() {
-		return elements.size();
+	public int getFaceCount() {
+		return faces.size();
 	}
 
 	public int getIndexCount() {
 		int count = 0;
 
-		for (int i = 0; i < getElementCount(); i++)
-			count += ((Face) getElement(i)).getIndexCount();
+		for (int i = 0; i < getFaceCount(); i++)
+			count += ((Face) getFace(i)).getIndexCount();
 
 		return count;
 	}
@@ -60,15 +60,16 @@ public class Segment {
 	 * doesn't have the best memory usage anyway)
 	 */
 
-	public void setupGL(GL gl, Debug debug, Vector p, Vector t, Vector n) {
+	public void setupGL(GL gl, Debug debug, PVector[] p, PVector[] t,
+			PVector[] n) {
 		// disclaimer: this is damn ugly. with a little more thought I'm sure I
 		// could make this a little prettier.
 		int[] vertind = new int[0];
 		int[] texind = new int[0];
 		int[] normind = new int[0];
 
-		for (int j = 0; j < getElementCount(); j++) {
-			Face tmpf = (Face) (getElement(j));
+		for (int j = 0; j < getFaceCount(); j++) {
+			Face tmpf = (Face) (getFace(j));
 
 			if (j == 0) {
 				vertind = tmpf.getVertexIndices();
@@ -88,9 +89,9 @@ public class Segment {
 		debug.println("there are this many floats = " + f.length);
 
 		for (int i = 0; i < f.length / stride; i++) {
-			PVector points = (PVector) p.elementAt(vertind[i]);
-			PVector textureUV = (PVector) t.elementAt(texind[i]);
-			PVector normals = (PVector) n.elementAt(normind[i]);
+			PVector points = p[vertind[i]];
+			PVector textureUV = t[texind[i]];
+			PVector normals = n[normind[i]];
 
 			f[i * stride] = points.x;
 			f[i * stride + 1] = points.y; // negative to account for processing
@@ -99,7 +100,7 @@ public class Segment {
 			f[i * stride + 2] = points.z;
 			f[i * stride + 3] = textureUV.x;
 			f[i * stride + 4] = 1.0f - textureUV.y; // flipped to account for
-			
+
 			// top left
 			f[i * stride + 5] = normals.x;
 			f[i * stride + 6] = normals.y;
