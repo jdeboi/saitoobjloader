@@ -41,7 +41,7 @@ public class Segment {
 		int count = 0;
 
 		for (int i = 0; i < getElementCount(); i++)
-			count += ((Element) getElement(i)).getIndexCount();
+			count += ((Face) getElement(i)).getIndexCount();
 
 		return count;
 	}
@@ -68,7 +68,7 @@ public class Segment {
 		int[] normind = new int[0];
 
 		for (int j = 0; j < getElementCount(); j++) {
-			Element tmpf = (Element) (getElement(j));
+			Face tmpf = (Face) (getElement(j));
 
 			if (j == 0) {
 				vertind = tmpf.getVertexIndices();

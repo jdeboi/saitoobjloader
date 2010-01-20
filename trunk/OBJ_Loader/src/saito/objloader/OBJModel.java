@@ -492,7 +492,7 @@ public class OBJModel {
 			boolean useTexture;
 
 			Segment tmpModelSegment;
-			Element tmpModelElement;
+			Face tmpModelElement;
 
 			// render all triangles
 			for (int s = 0; s < getSegmentCount(); s++) {
@@ -525,7 +525,7 @@ public class OBJModel {
 				}
 
 				for (int f = 0; f < tmpModelSegment.getElementCount(); f++) {
-					tmpModelElement = (Element) (tmpModelSegment.getElement(f));
+					tmpModelElement = (Face) (tmpModelSegment.getElement(f));
 
 					if (tmpModelElement.getIndexCount() > 0) {
 
@@ -859,7 +859,7 @@ public class OBJModel {
 					else if (elements[0].equals("f")) // Element
 					{
 
-						Element tmpf = new Element();
+						Face tmpf = new Face();
 
 						if (elements.length < 3) {
 
@@ -925,7 +925,7 @@ public class OBJModel {
 
 					} else if (elements[0].equals("ll")) { // line
 
-						Element tmpf = new Element();
+						Face tmpf = new Face();
 
 						tmpf.indexType = PConstants.POLYGON;
 
@@ -1241,7 +1241,7 @@ public class OBJModel {
 	 *         </br>
 	 */
 	public int[] getVertexIndicesInSegment(int i, int num) {
-		return ((Element) ((Segment) segments.elementAt(i)).getElement(num)).getVertexIndices();
+		return ((Face) ((Segment) segments.elementAt(i)).getElement(num)).getVertexIndices();
 	}
 
 	/**
@@ -1258,7 +1258,7 @@ public class OBJModel {
 	 *         </br>
 	 */
 	public int[] getNormalIndicesInSegment(int i, int num) {
-		return ((Element) ((Segment) segments.elementAt(i)).getElement(num)).getNormalIndices();
+		return ((Face) ((Segment) segments.elementAt(i)).getElement(num)).getNormalIndices();
 	}
 
 	/**
@@ -1276,7 +1276,7 @@ public class OBJModel {
 	 *         </br>
 	 */
 	public int[] getTextureIndicesInSegment(int i, int num) {
-		return ((Element) ((Segment) segments.elementAt(i)).getElement(num)).getTextureIndices();
+		return ((Face) ((Segment) segments.elementAt(i)).getElement(num)).getTextureIndices();
 	}
 
 	/**
