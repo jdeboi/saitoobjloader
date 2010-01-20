@@ -22,7 +22,7 @@ import processing.core.PConstants;
  *         UV's needed to make a face
  */
 
-public class Element implements PConstants {
+public class Face implements PConstants {
 
 	public int indexType = POLYGON;
 
@@ -34,7 +34,7 @@ public class Element implements PConstants {
 	 * Constructor for the Element. A model element is all the indices
 	 * needed to draw a face.
 	 */
-	public Element() {
+	public Face() {
 		indices = new Vector();
 		vertexIndices = new Vector();
 		normalIndices = new Vector();
