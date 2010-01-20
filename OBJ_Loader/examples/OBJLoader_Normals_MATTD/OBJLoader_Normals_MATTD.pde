@@ -10,6 +10,9 @@ float rotY;
 
 int faceCount;
 int face;
+float normLength = 0;
+float normDir = 1;
+
 
 void setup()
 {
@@ -59,7 +62,14 @@ void draw()
   rotateX(rotY);
   rotateY(rotX);
 
-  float normLength = -30;
+  normLength += normDir;
+  
+  if(normLength < -30 || normLength > 30){
+   
+   normDir = - normDir; 
+    
+  }
+  
 
   for(int j = 0; j < model.getSegmentCount(); j++)
   {
