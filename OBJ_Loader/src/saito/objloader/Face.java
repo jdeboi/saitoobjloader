@@ -27,30 +27,30 @@ public class Face implements PConstants {
 
 	public int indexType = POLYGON;
 
-	public ArrayList<Integer> indices;
 	public ArrayList<Integer> vertexIndices;
+	public ArrayList<Integer> uvIndices;
 	public ArrayList<Integer> normalIndices;
 
 	public ArrayList<PVector> vertices;
 	public ArrayList<PVector> normals;
-	public ArrayList<PVector> uv;	
+	public ArrayList<PVector> uvs;
 
 	/**
 	 * Constructor for the Element. A model element is all the indices needed to
 	 * draw a face.
 	 */
 	public Face() {
-		indices = new ArrayList<Integer>();
 		vertexIndices = new ArrayList<Integer>();
+		uvIndices = new ArrayList<Integer>();
 		normalIndices = new ArrayList<Integer>();
 
 		vertices = new ArrayList<PVector>();
 		normals = new ArrayList<PVector>();
-		uv = new ArrayList<PVector>();
+		uvs = new ArrayList<PVector>();
 	}
 
 	public int getIndexCount() {
-		return indices.size();
+		return vertexIndices.size();
 	}
 
 	public int[] getVertexIndices() {
@@ -80,8 +80,19 @@ public class Face implements PConstants {
 		return v;
 	}
 
-	PVector getNormal() {
+	public PVector[] getVertices() {
+		return vertices.toArray(new PVector[vertices.size()]);
+	}
 
+	public PVector[] getNormals() {
+		return normals.toArray(new PVector[normals.size()]);
+	}
+
+	public PVector[] getUvs() {
+		return uvs.toArray(new PVector[uvs.size()]);
+	}
+
+	PVector getNormal() {
 		// middle vertex
 		PVector m = new PVector();
 
@@ -92,10 +103,8 @@ public class Face implements PConstants {
 
 		// middle - first vertex
 		PVector aToB = PVector.sub(m, vertices.get(0));
-
 		// middle - last vertex
 		PVector cToB = PVector.sub(m, vertices.get(vertices.size() - 1));
-
 		PVector n = cToB.cross(aToB);
 
 		return n.normalize(new PVector(1, 1, 1));
@@ -104,11 +113,11 @@ public class Face implements PConstants {
 	// Arrays start at 0 (hence the -1) But OBJ files start the
 	// indices at 1.
 	public int getVertexIndex(int i) {
-		return indices.get(i) - 1;
+		return vertexIndices.get(i) - 1;
 	}
 
 	public int getTextureIndex(int i) {
-		return vertexIndices.get(i) - 1;
+		return uvIndices.get(i) - 1;
 	}
 
 	public int getNormalIndex(int i) {

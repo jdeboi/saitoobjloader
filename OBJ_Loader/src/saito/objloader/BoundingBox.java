@@ -1,7 +1,6 @@
 package saito.objloader;
 
 import processing.core.*;
-import saito.objloader.*;
 
 public class BoundingBox implements PConstants {
 
