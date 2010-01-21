@@ -13,18 +13,18 @@ import java.util.Vector;
 
 /**
  * @author tatsuyas
- *
+ * 
  */
 public class Group {
 	public String groupName;
 	public Vector segments;
 
-	public Group(String groupName){
+	public Group(String groupName) {
 		segments = new Vector();
 		this.groupName = groupName;
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return groupName;
 	}
 }

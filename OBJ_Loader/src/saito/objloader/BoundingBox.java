@@ -20,10 +20,7 @@ public class BoundingBox implements PConstants {
 		int numberOfVerts = model.getVertexCount();
 
 		if (numberOfVerts == 0) {
-
-			model.debug
-					.println("OBJBoundingBox - \tThe model has no verts. Have you loaded it yet?");
-
+			model.debug.println("OBJBoundingBox - \tThe model has no verts. Have you loaded it yet?");
 		} else {
 
 			PVector v;
@@ -39,7 +36,6 @@ public class BoundingBox implements PConstants {
 				x2 = Math.max(x2, v.x);
 				y2 = Math.max(y2, v.y);
 				z2 = Math.max(z2, v.z);
-
 			}
 
 			width = (float) Math.sqrt((x2 - x1) * (x2 - x1));
