@@ -884,15 +884,37 @@ public class OBJModel {
 				}
 			}
 
-			// for (int i = 0; i < getSegmentCount(); i++) {
-			// int faceCount = getIndexCountInSegment(i);
-			//
-			// for (int j = 0; j < faceCount; j++) {
-			// Face face = getFace(j);
-			// int[] vertIndex = getVertexIndicesInSegment(i, j);
-			// int[] normIndex = getNormalIndicesInSegment(i, j);
-			// }
-			// }
+			for (int i = 0; i < getSegmentCount(); i++) {
+			 
+			 Segment seg = segments.get(i);
+			 
+			 int faceCount = seg.getFaceCount();
+			 
+			 for (int j = 0; j < faceCount; j++) {
+				 
+				 Face face = seg.getFace(j);
+				 
+				 int[] vertIndex = face.getVertexIndices();
+				 int[] normIndex = face.getNormalIndices();
+				 int[] uvIndex = face.getTextureIndices();
+				 
+				 // three for loops for safety. if there are no normals or uv's then nothing will break
+				 for(int k = 0; k < vertIndex.length; k ++){
+				 
+					face.vertices.add( vertices.get( vertIndex[k]) );
+				 	
+				 }
+				 for(int k = 0; k < normIndex.length; k ++){
+					 
+					 face.normals.add( normalVertices.get( normIndex[k] ) );
+					 	
+				 }
+				 for(int k = 0; k < uvIndex.length; k ++){
+					 
+					 face.uv.add( textureVertices.get( uvIndex[k] ) );
+				 }
+			 }
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
