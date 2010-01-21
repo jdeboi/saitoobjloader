@@ -33,13 +33,13 @@ import javax.media.opengl.*;
 public class OBJModel {
 
 	// global variables
-	private ArrayList<PVector> vertices; // vertexes
-	private ArrayList<PVector> textureVertices; // texture coordinates
-	private ArrayList<PVector> normalVertices; // normals
-	private ArrayList<Segment> segments;
+	private ArrayList <PVector> vertices; // vertexes
+	private ArrayList <PVector> textureVertices; // texture coordinates
+	private ArrayList <PVector> normalVertices; // normals
+	private ArrayList <Segment> segments;
 
-	private Hashtable materials;
-	private Hashtable groups;
+	private Hashtable<String, Material> materials;
+	private Hashtable<String, Group> groups;
 
 	String name = "default";
 
@@ -118,13 +118,13 @@ public class OBJModel {
 	private void setup(PApplet parent) {
 		this.parent = parent;
 
-		vertices = new ArrayList();
-		segments = new ArrayList();
-		textureVertices = new ArrayList();
-		normalVertices = new ArrayList();
+		vertices = new ArrayList<PVector>();
+		segments = new ArrayList<Segment>();
+		textureVertices = new ArrayList<PVector>();
+		normalVertices = new ArrayList<PVector>();
 
-		groups = new Hashtable();
-		materials = new Hashtable();
+		groups = new Hashtable<String, Group>();
+		materials = new Hashtable<String, Material>();
 
 		debug = new Debug(parent);
 		debug.enabled = false;
@@ -167,10 +167,8 @@ public class OBJModel {
 						+ tmpModelSegment.getMaterialName());
 
 				PVector[] vs = vertices.toArray(new PVector[vertices.size()]);
-				PVector[] tVs = vertices.toArray(new PVector[textureVertices
-						.size()]);
-				PVector[] nVs = vertices.toArray(new PVector[normalVertices
-						.size()]);
+				PVector[] tVs = vertices.toArray(new PVector[textureVertices.size()]);
+				PVector[] nVs = vertices.toArray(new PVector[normalVertices.size()]);
 
 				tmpModelSegment.setupGL(gl, debug, vs, tVs, nVs);
 
@@ -506,16 +504,14 @@ public class OBJModel {
 
 				tmpModelSegment = (Segment) segments.get(s);
 
-				tmpMaterial = (Material) materials
-						.get(tmpModelSegment.materialName);
+				tmpMaterial = (Material) materials.get(tmpModelSegment.materialName);
 
 				// if the material is not assigned for some
 				// reason, it uses the default material setting
 				if (tmpMaterial == null) {
 					tmpMaterial = (Material) materials.get(defaultMaterialName);
 
-					debug.println("Material '" + tmpModelSegment.materialName
-							+ "' not defined");
+					debug.println("Material '" + tmpModelSegment.materialName + "' not defined");
 				}
 
 				if (useMaterial) {
@@ -640,7 +636,7 @@ public class OBJModel {
 
 			for (int i = 0; i < numberOfVerts; i++) {
 				v = getVertex(i);
-
+				
 				v.x *= scaleX;
 				v.y *= scaleY;
 				v.z *= scaleZ;
@@ -796,25 +792,29 @@ public class OBJModel {
 					// analyze the format
 					if (elements[0].equals("v")) {
 						// vertex
-						PVector tmpv = new PVector(Float.valueOf(elements[1])
-								.floatValue(), Float.valueOf(elements[2])
-								.floatValue(), -Float.valueOf(elements[3])
-								.floatValue());// remember processing is upside
-						// down.
+						PVector tmpv = new PVector(
+								 Float.valueOf(elements[1]).floatValue() 
+								-Float.valueOf(elements[2]).floatValue(),
+								 Float.valueOf(elements[3]).floatValue());
+						// remember processing is upside down. hense the - y
 						vertices.add(tmpv);
+						
 					} else if (elements[0].equals("vn")) {
 						// normal
-						PVector tmpn = new PVector(Float.valueOf(elements[1])
-								.floatValue(), Float.valueOf(elements[2])
-								.floatValue(), Float.valueOf(elements[3])
-								.floatValue());// as is her normals
+						PVector tmpn = new PVector(
+								 Float.valueOf(elements[1]).floatValue(), 
+								-Float.valueOf(elements[2]).floatValue(), 
+								 Float.valueOf(elements[3]).floatValue());
+						// as is her normals (hense the - y)
 						normalVertices.add(tmpn);
+						
 					} else if (elements[0].equals("vt")) {
 						// uv
-						PVector tmpv = new PVector(Float.valueOf(elements[1])
-								.floatValue(), Float.valueOf(elements[2])
-								.floatValue());
+						PVector tmpv = new PVector(
+								Float.valueOf(elements[1]).floatValue(), 
+								Float.valueOf(elements[2]).floatValue());
 						textureVertices.add(tmpv);
+						
 					} else if (elements[0].equals("o")) {
 						if (elements[1] != null)
 							name = elements[1];
