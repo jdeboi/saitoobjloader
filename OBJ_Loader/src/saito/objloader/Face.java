@@ -10,7 +10,6 @@ package saito.objloader;
  */
 
 import java.util.ArrayList;
-import java.util.Vector;
 
 import processing.core.PConstants;
 import processing.core.PVector;
@@ -34,6 +33,7 @@ public class Face implements PConstants {
 
 	public ArrayList<PVector> vertices;
 	public ArrayList<PVector> normals;
+	public ArrayList<PVector> uv;	
 
 	/**
 	 * Constructor for the Element. A model element is all the indices needed to
@@ -46,6 +46,7 @@ public class Face implements PConstants {
 
 		vertices = new ArrayList<PVector>();
 		normals = new ArrayList<PVector>();
+		uv = new ArrayList<PVector>();
 	}
 
 	public int getIndexCount() {

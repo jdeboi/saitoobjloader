@@ -29,7 +29,7 @@ public class Segment {
 		return materialName;
 	}
 
-	public Object getFace(int index) {
+	public Face getFace(int index) {
 		return faces.get(index);
 	}
 
