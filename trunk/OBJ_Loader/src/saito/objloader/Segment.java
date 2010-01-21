@@ -60,8 +60,7 @@ public class Segment {
 	 * doesn't have the best memory usage anyway)
 	 */
 
-	public void setupGL(GL gl, Debug debug, PVector[] p, PVector[] t,
-			PVector[] n) {
+	public void setupGL(GL gl, Debug debug, PVector[] p, PVector[] t, PVector[] n) {
 		// disclaimer: this is damn ugly. with a little more thought I'm sure I
 		// could make this a little prettier.
 		int[] vertind = new int[0];
@@ -165,8 +164,7 @@ public class Segment {
 	}
 
 	private IntBuffer setupIntBuffer(int[] i) {
-		IntBuffer fb = ByteBuffer.allocateDirect(4 * i.length).order(
-				ByteOrder.nativeOrder()).asIntBuffer();
+		IntBuffer fb = ByteBuffer.allocateDirect(4 * i.length).order(ByteOrder.nativeOrder()).asIntBuffer();
 		fb.put(i);
 		fb.rewind();
 
@@ -174,8 +172,7 @@ public class Segment {
 	}
 
 	private FloatBuffer setupFloatBuffer(float[] f) {
-		FloatBuffer fb = ByteBuffer.allocateDirect(4 * f.length).order(
-				ByteOrder.nativeOrder()).asFloatBuffer();
+		FloatBuffer fb = ByteBuffer.allocateDirect(4 * f.length).order(ByteOrder.nativeOrder()).asFloatBuffer();
 		fb.put(f);
 		fb.rewind();
 
@@ -184,8 +181,6 @@ public class Segment {
 
 	private void bindThisBuffer(GL gl, int num, float[] f, FloatBuffer FB) {
 		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, num);
-		gl
-				.glBufferData(GL.GL_ARRAY_BUFFER, 4 * f.length, FB,
-						GL.GL_STATIC_DRAW);
+		gl.glBufferData(GL.GL_ARRAY_BUFFER, 4 * f.length, FB, GL.GL_STATIC_DRAW);
 	}
 }

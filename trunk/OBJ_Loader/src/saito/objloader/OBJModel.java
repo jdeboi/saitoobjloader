@@ -33,10 +33,10 @@ import javax.media.opengl.*;
 public class OBJModel {
 
 	// global variables
-	private ArrayList <PVector> vertices; // vertexes
-	private ArrayList <PVector> textureVertices; // texture coordinates
-	private ArrayList <PVector> normalVertices; // normals
-	private ArrayList <Segment> segments;
+	private ArrayList<PVector> vertices; // vertexes
+	private ArrayList<PVector> textureVertices; // texture coordinates
+	private ArrayList<PVector> normalVertices; // normals
+	private ArrayList<Segment> segments;
 
 	private Hashtable<String, Material> materials;
 	private Hashtable<String, Group> groups;
@@ -107,8 +107,7 @@ public class OBJModel {
 	 * TRIANGLES, POINTS, POLYGON, LINES, TRIANGLE_STRIP, QUAD_STRIP, QUADS.<br>
 	 * </br>
 	 */
-	public OBJModel(PApplet _parent, String _fileName, String _texturePathMode,
-			int _shapeMode) {
+	public OBJModel(PApplet _parent, String _fileName, String _texturePathMode, int _shapeMode) {
 		setup(parent);
 		texturePathMode = ABSOLUTE;
 		shapeMode(_shapeMode);
@@ -161,10 +160,8 @@ public class OBJModel {
 				// model
 				// segments? KAHN!!! - MD
 
-				debug.println("number of model elements = "
-						+ tmpModelSegment.getFaceCount());
-				debug.println("model element uses this mtl = "
-						+ tmpModelSegment.getMaterialName());
+				debug.println("number of model elements = " + tmpModelSegment.getFaceCount());
+				debug.println("model element uses this mtl = " + tmpModelSegment.getMaterialName());
 
 				PVector[] vs = vertices.toArray(new PVector[vertices.size()]);
 				PVector[] tVs = vertices.toArray(new PVector[textureVertices.size()]);
@@ -515,15 +512,9 @@ public class OBJModel {
 				}
 
 				if (useMaterial) {
-					parent.ambient(255.0f * tmpMaterial.Ka[0],
-							255.0f * tmpMaterial.Ka[1],
-							255.0f * tmpMaterial.Ka[2]);
-					parent.specular(255.0f * tmpMaterial.Ks[0],
-							255.0f * tmpMaterial.Ks[1],
-							255.0f * tmpMaterial.Ks[2]);
-					parent.fill(255.0f * tmpMaterial.Kd[0],
-							255.0f * tmpMaterial.Kd[1],
-							255.0f * tmpMaterial.Kd[2], 255.0f * tmpMaterial.d);
+					parent.ambient(255.0f * tmpMaterial.Ka[0], 255.0f * tmpMaterial.Ka[1], 255.0f * tmpMaterial.Ka[2]);
+					parent.specular(255.0f * tmpMaterial.Ks[0], 255.0f * tmpMaterial.Ks[1], 255.0f * tmpMaterial.Ks[2]);
+					parent.fill(255.0f * tmpMaterial.Kd[0], 255.0f * tmpMaterial.Kd[1], 255.0f * tmpMaterial.Kd[2], 255.0f * tmpMaterial.d);
 				}
 
 				for (int f = 0; f < tmpModelSegment.getFaceCount(); f++) {
@@ -550,8 +541,7 @@ public class OBJModel {
 							// vidx = tmpModelElement.getVertexIndex(fp);
 							//
 							// v = (PVector) vertexes.get(vidx);
-							v = (PVector) vertices.get(tmpModelElement
-									.getVertexIndex(fp));
+							v = (PVector) vertices.get(tmpModelElement.getVertexIndex(fp));
 
 							if (v != null) {
 								try {
@@ -562,9 +552,7 @@ public class OBJModel {
 										// vn = (PVector)
 										// normv.get(vnidx);
 
-										vn = (PVector) normalVertices
-												.get(tmpModelElement
-														.getNormalIndex(fp));
+										vn = (PVector) normalVertices.get(tmpModelElement.getNormalIndex(fp));
 
 										parent.normal(vn.x, vn.y, vn.z);
 									}
@@ -576,12 +564,9 @@ public class OBJModel {
 										// vt = (PVector)
 										// texturev.get(vtidx);
 
-										vt = (PVector) textureVertices
-												.get(tmpModelElement
-														.getTextureIndex(fp));
+										vt = (PVector) textureVertices.get(tmpModelElement.getTextureIndex(fp));
 
-										parent.vertex(v.x, v.y, v.z, vt.x,
-												1.0f - (vt.y));
+										parent.vertex(v.x, v.y, v.z, vt.x, 1.0f - (vt.y));
 									} else
 										parent.vertex(v.x, v.y, v.z);
 								} catch (Exception e) {
@@ -629,14 +614,13 @@ public class OBJModel {
 		int numberOfVerts = getVertexCount();
 
 		if (numberOfVerts == 0)
-			debug
-					.println("OBJTransform - \tThe model has no verts. Have you loaded it yet?");
+			debug.println("OBJTransform - \tThe model has no verts. Have you loaded it yet?");
 		else {
 			PVector v;
 
 			for (int i = 0; i < numberOfVerts; i++) {
 				v = getVertex(i);
-				
+
 				v.x *= scaleX;
 				v.y *= scaleY;
 				v.z *= scaleZ;
@@ -648,8 +632,7 @@ public class OBJModel {
 		int numberOfVerts = getVertexCount();
 
 		if (numberOfVerts == 0)
-			debug
-					.println("OBJTransform - \tThe model has no verts. Have you loaded it yet?");
+			debug.println("OBJTransform - \tThe model has no verts. Have you loaded it yet?");
 		else {
 			PVector v;
 			PVector m = new PVector(_x, _y, _z);
@@ -792,29 +775,21 @@ public class OBJModel {
 					// analyze the format
 					if (elements[0].equals("v")) {
 						// vertex
-						PVector tmpv = new PVector(
-								 Float.valueOf(elements[1]).floatValue() 
-								-Float.valueOf(elements[2]).floatValue(),
-								 Float.valueOf(elements[3]).floatValue());
+						PVector tmpv = new PVector(Float.valueOf(elements[1]).floatValue() - Float.valueOf(elements[2]).floatValue(), Float.valueOf(elements[3]).floatValue());
 						// remember processing is upside down. hense the - y
 						vertices.add(tmpv);
-						
+
 					} else if (elements[0].equals("vn")) {
 						// normal
-						PVector tmpn = new PVector(
-								 Float.valueOf(elements[1]).floatValue(), 
-								-Float.valueOf(elements[2]).floatValue(), 
-								 Float.valueOf(elements[3]).floatValue());
+						PVector tmpn = new PVector(Float.valueOf(elements[1]).floatValue(), -Float.valueOf(elements[2]).floatValue(), Float.valueOf(elements[3]).floatValue());
 						// as is her normals (hense the - y)
 						normalVertices.add(tmpn);
-						
+
 					} else if (elements[0].equals("vt")) {
 						// uv
-						PVector tmpv = new PVector(
-								Float.valueOf(elements[1]).floatValue(), 
-								Float.valueOf(elements[2]).floatValue());
+						PVector tmpv = new PVector(Float.valueOf(elements[1]).floatValue(), Float.valueOf(elements[2]).floatValue());
 						textureVertices.add(tmpv);
-						
+
 					} else if (elements[0].equals("o")) {
 						if (elements[1] != null)
 							name = elements[1];
@@ -855,8 +830,7 @@ public class OBJModel {
 						Face tmpf = new Face();
 
 						if (elements.length < 3)
-							debug
-									.println("Warning: potential model data error");
+							debug.println("Warning: potential model data error");
 
 						for (int i = 1; i < elements.length; i++) {
 							String seg = elements[i];
@@ -866,20 +840,16 @@ public class OBJModel {
 
 								if (forder.length > 2) {
 									if (forder[0].length() > 0)
-										tmpf.indices.add(Integer
-												.valueOf(forder[0]), null);
+										tmpf.indices.add(Integer.valueOf(forder[0]), null);
 
 									if (forder[1].length() > 0)
-										tmpf.vertexIndices.add(Integer
-												.valueOf(forder[1]));
+										tmpf.vertexIndices.add(Integer.valueOf(forder[1]));
 
 									if (forder[2].length() > 0)
-										tmpf.normalIndices.add(Integer
-												.valueOf(forder[2]));
+										tmpf.normalIndices.add(Integer.valueOf(forder[2]));
 								} else if (forder.length > 1) {
 									if (forder[0].length() > 0)
-										tmpf.indices.add(Integer
-												.valueOf(forder[0]));
+										tmpf.indices.add(Integer.valueOf(forder[0]));
 
 									if (forder[1].length() > 0) {
 										int index = Integer.valueOf(forder[1]);
@@ -887,8 +857,7 @@ public class OBJModel {
 									}
 								} else if (forder.length > 0) {
 									if (forder[0].length() > 0)
-										tmpf.indices.add(Integer
-												.valueOf(forder[0]));
+										tmpf.indices.add(Integer.valueOf(forder[0]));
 								}
 							} else {
 								if (seg.length() > 0)
@@ -905,8 +874,7 @@ public class OBJModel {
 						tmpf.indexType = PConstants.POLYGON;
 
 						if (elements.length < 2)
-							debug
-									.println("Warning: potential model data error");
+							debug.println("Warning: potential model data error");
 
 						for (int i = 1; i < elements.length; i++)
 							tmpf.indices.add(Integer.valueOf(elements[i]));
@@ -916,15 +884,15 @@ public class OBJModel {
 				}
 			}
 
-//			for (int i = 0; i < getSegmentCount(); i++) {
-//				int faceCount = getIndexCountInSegment(i);
-//
-//				for (int j = 0; j < faceCount; j++) {
-//					Face face = getFace(j);
-//					int[] vertIndex = getVertexIndicesInSegment(i, j);
-//					int[] normIndex = getNormalIndicesInSegment(i, j);
-//				}
-//			}
+			// for (int i = 0; i < getSegmentCount(); i++) {
+			// int faceCount = getIndexCountInSegment(i);
+			//
+			// for (int j = 0; j < faceCount; j++) {
+			// Face face = getFace(j);
+			// int[] vertIndex = getVertexIndicesInSegment(i, j);
+			// int[] normIndex = getNormalIndicesInSegment(i, j);
+			// }
+			// }
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1002,14 +970,12 @@ public class OBJModel {
 					//						
 					//
 					// }
-					else if (elements[0].equals("map_Kd")
-							&& elements.length > 1) {
+					else if (elements[0].equals("map_Kd") && elements.length > 1) {
 
 						String texname = elements[1];
 
 						if (texturePathMode == RELATIVE) {
-							debug.println("texture diffuse \t\t'" + elements[1]
-									+ "'");
+							debug.println("texture diffuse \t\t'" + elements[1] + "'");
 						} else if (texturePathMode == ABSOLUTE) {
 							int p1 = 0;
 
@@ -1030,26 +996,17 @@ public class OBJModel {
 						originalTexture = texname;
 
 					} else if (elements[0].equals("Ka") && elements.length > 1) {
-						currentMtl.Ka[0] = Float.valueOf(elements[1])
-								.floatValue();
-						currentMtl.Ka[1] = Float.valueOf(elements[2])
-								.floatValue();
-						currentMtl.Ka[2] = Float.valueOf(elements[3])
-								.floatValue();
+						currentMtl.Ka[0] = Float.valueOf(elements[1]).floatValue();
+						currentMtl.Ka[1] = Float.valueOf(elements[2]).floatValue();
+						currentMtl.Ka[2] = Float.valueOf(elements[3]).floatValue();
 					} else if (elements[0].equals("Kd") && elements.length > 1) {
-						currentMtl.Kd[0] = Float.valueOf(elements[1])
-								.floatValue();
-						currentMtl.Kd[1] = Float.valueOf(elements[2])
-								.floatValue();
-						currentMtl.Kd[2] = Float.valueOf(elements[3])
-								.floatValue();
+						currentMtl.Kd[0] = Float.valueOf(elements[1]).floatValue();
+						currentMtl.Kd[1] = Float.valueOf(elements[2]).floatValue();
+						currentMtl.Kd[2] = Float.valueOf(elements[3]).floatValue();
 					} else if (elements[0].equals("Ks") && elements.length > 1) {
-						currentMtl.Ks[0] = Float.valueOf(elements[1])
-								.floatValue();
-						currentMtl.Ks[1] = Float.valueOf(elements[2])
-								.floatValue();
-						currentMtl.Ks[2] = Float.valueOf(elements[3])
-								.floatValue();
+						currentMtl.Ks[0] = Float.valueOf(elements[1]).floatValue();
+						currentMtl.Ks[1] = Float.valueOf(elements[2]).floatValue();
+						currentMtl.Ks[2] = Float.valueOf(elements[3]).floatValue();
 					} else if (elements[0].equals("d") && elements.length > 1) {
 						currentMtl.d = Float.valueOf(elements[1]).floatValue();
 
@@ -1175,8 +1132,7 @@ public class OBJModel {
 		// debug.println("segmentNumber, indexNumber = " + segmentNumber + " " +
 		// indexNumber);
 
-		int[] vertindexes = getVertexIndicesInSegment(segmentNumber,
-				indexNumber);
+		int[] vertindexes = getVertexIndicesInSegment(segmentNumber, indexNumber);
 
 		// parent.println(vertindexes);
 
@@ -1222,8 +1178,7 @@ public class OBJModel {
 	 *         </br>
 	 */
 	public int[] getVertexIndicesInSegment(int i, int num) {
-		return ((Face) ((Segment) segments.get(i)).getFace(num))
-				.getVertexIndices();
+		return ((Face) ((Segment) segments.get(i)).getFace(num)).getVertexIndices();
 	}
 
 	/**
@@ -1241,8 +1196,7 @@ public class OBJModel {
 	 *         </br>
 	 */
 	public int[] getNormalIndicesInSegment(int i, int num) {
-		return ((Face) ((Segment) segments.get(i)).getFace(num))
-				.getNormalIndices();
+		return ((Face) ((Segment) segments.get(i)).getFace(num)).getNormalIndices();
 	}
 
 	/**
@@ -1260,23 +1214,22 @@ public class OBJModel {
 	 *         </br>
 	 */
 	public int[] getTextureIndicesInSegment(int i, int num) {
-		return ((Face) ((Segment) segments.get(i)).getFace(num))
-				.getTextureIndices();
+		return ((Face) ((Segment) segments.get(i)).getFace(num)).getTextureIndices();
 	}
 
-//	public Face getFaceInSegment(int faceIndex) {
-//		// debug.println("segmentNumber, indexNumber = " + segmentNumber + " " +
-//		// indexNumber);
-//		int segmentNumber = 0;
-//
-//		while (faceIndex >= getIndexCountInSegment(segmentNumber)) {
-//			faceIndex -= getIndexCountInSegment(segmentNumber);
-//			segmentNumber++;
-//		}
-//		
-//		return ((Face) ((Segment) segments.get(i)).getFace(faceIndex));
-//	}
-	
+	// public Face getFaceInSegment(int faceIndex) {
+	// // debug.println("segmentNumber, indexNumber = " + segmentNumber + " " +
+	// // indexNumber);
+	// int segmentNumber = 0;
+	//
+	// while (faceIndex >= getIndexCountInSegment(segmentNumber)) {
+	// faceIndex -= getIndexCountInSegment(segmentNumber);
+	// segmentNumber++;
+	// }
+	//		
+	// return ((Face) ((Segment) segments.get(i)).getFace(faceIndex));
+	// }
+
 	/**
 	 * Get's the total number of Verts in the model.<br>
 	 * </br>
