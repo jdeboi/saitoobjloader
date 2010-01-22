@@ -125,7 +125,9 @@ public class Face implements PConstants {
 		PVector cToB = PVector.sub(c, vertices.get(vertices.size() - 1));
 		PVector n = cToB.cross(aToB);
 
-		return n.normalize(new PVector(1, 1, 1));
+		n.normalize();
+		
+		return n;
 	}
 
 	// Arrays start at 0 (hence the -1) But OBJ files start the
@@ -142,21 +144,34 @@ public class Face implements PConstants {
 		return normalIndices.get(i) - 1;
 	}
 	
-	public boolean isFacingCamera(PVector cameraPosition) {
+	public boolean isFacingPosition(PVector position) {
 		PVector c = getCenter();
 		
 		// this works out the vector from the camera to the face.
-		PVector cameraToFace = new PVector(cameraPosition.x - c.x,
-				cameraPosition.y - c.y, cameraPosition.z - c.z);
+		PVector positionToFace = new PVector(position.x - c.x, position.y - c.y, position.z - c.z);
 
 		// We now know the vector from the camera to the face,
 		// and the vector that describes which direction the face
 		// is pointing, so we just need to do a dot-product and
 		// based on that we can tell if it's facing the camera or not
 		// float result = PVector.dot(cameraToFace, faceNormal);
-		float result = cameraToFace.dot(getNormal());
+		float result = positionToFace.dot(getNormal());
 
 		// if the result is positive, then it is facing the camera.
-		return result > 0;
+		return result < 0;
+	}
+	
+	public float getFacingAmount(PVector position) {
+		PVector c = getCenter();
+		
+		// this works out the vector from the camera to the face.
+		PVector positionToFace = new PVector(position.x - c.x, position.y - c.y, position.z - c.z);
+		
+		c.normalize();
+		
+		positionToFace.normalize();
+		
+		return (1.0f - (positionToFace.dot(getNormal()) + 1.0f)/2.0f);
+
 	}
 }
