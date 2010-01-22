@@ -1,6 +1,7 @@
 package saito.objloader;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.nio.*;
 
 import javax.media.opengl.GL;
@@ -31,6 +32,19 @@ public class Segment {
 
 	public Face getFace(int index) {
 		return faces.get(index);
+	}
+
+	public Face[] getFaces() {
+		return faces.toArray(new Face[faces.size()]);
+	}
+
+	public PVector[] getIndices() {
+		ArrayList<PVector> indices = new ArrayList();
+
+		for (int i = 0; i < faces.size(); i++)
+			indices.addAll(Arrays.asList(getFace(i).getVertices()));
+
+		return indices.toArray(new PVector[indices.size()]);
 	}
 
 	public int getFaceCount() {
