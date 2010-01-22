@@ -34,7 +34,7 @@ public class Face implements PConstants {
 	public ArrayList<PVector> vertices;
 	public ArrayList<PVector> normals;
 	public ArrayList<PVector> uvs;
-
+	
 	/**
 	 * Constructor for the Element. A model element is all the indices needed to
 	 * draw a face.
@@ -51,6 +51,18 @@ public class Face implements PConstants {
 
 	public int getIndexCount() {
 		return vertexIndices.size();
+	}
+	
+	public int getVertexCount() {
+		return vertices.size();
+	}
+	
+	public int getNormalCount() {
+		return normals.size();
+	}
+	
+	public int getUVCount() {
+		return uvs.size();
 	}
 
 	public int[] getVertexIndices() {
@@ -92,19 +104,25 @@ public class Face implements PConstants {
 		return uvs.toArray(new PVector[uvs.size()]);
 	}
 
-	PVector getNormal() {
-		// middle vertex
-		PVector m = new PVector();
+	public PVector getCenter() {
+		PVector c = new PVector();
 
 		for (int i = 0; i < vertices.size(); i++)
-			m.add(vertices.get(i));
+			c.add(vertices.get(i));
 
-		m.div(vertices.size());
+		c.div(vertices.size());
+		
+		return c;
+	}
+	
+	public PVector getNormal() {
+		// center vertex
+		PVector c = getCenter();
 
-		// middle - first vertex
-		PVector aToB = PVector.sub(m, vertices.get(0));
-		// middle - last vertex
-		PVector cToB = PVector.sub(m, vertices.get(vertices.size() - 1));
+		// center - first vertex
+		PVector aToB = PVector.sub(c, vertices.get(0));
+		// center - last vertex
+		PVector cToB = PVector.sub(c, vertices.get(vertices.size() - 1));
 		PVector n = cToB.cross(aToB);
 
 		return n.normalize(new PVector(1, 1, 1));

@@ -538,34 +538,17 @@ public class OBJModel {
 						}
 
 						for (int fp = 0; fp < tmpModelElement.getIndexCount(); fp++) {
-							// vidx = tmpModelElement.getVertexIndex(fp);
-							//
-							// v = (PVector) vertexes.get(vidx);
 							v = vertices.get(tmpModelElement.getVertexIndex(fp));
 
 							if (v != null) {
 								try {
 									if (tmpModelElement.normalIndices.size() > 0) {
-										// vnidx =
-										// tmpModelElement.getNormalIndex(fp);
-										//
-										// vn = (PVector)
-										// normv.get(vnidx);
-
 										vn = normalVertices.get(tmpModelElement.getNormalIndex(fp));
-
 										parent.normal(vn.x, vn.y, vn.z);
 									}
 
 									if (useTexture) {
-										// vtidx =
-										// tmpModelElement.getTextureIndex(fp);
-										//										
-										// vt = (PVector)
-										// texturev.get(vtidx);
-
 										vt = textureVertices.get(tmpModelElement.getTextureIndex(fp));
-
 										parent.vertex(v.x, v.y, v.z, vt.x, 1.0f - (vt.y));
 									} else
 										parent.vertex(v.x, v.y, v.z);
@@ -599,9 +582,8 @@ public class OBJModel {
 	public void load(String filename) {
 		parseOBJ(getBufferedReader(filename));
 
-		if (debug.enabled) {
+		if (debug.enabled)
 			this.printModelInfo();
-		}
 	}
 
 	/** TOOLS */
@@ -611,14 +593,14 @@ public class OBJModel {
 	}
 
 	public void scale(float scaleX, float scaleY, float scaleZ) {
-		int numberOfVerts = getVertexCount();
+		int vertexCount = getVertexCount();
 
-		if (numberOfVerts == 0)
+		if (vertexCount == 0)
 			debug.println("OBJTransform - \tThe model has no verts. Have you loaded it yet?");
 		else {
 			PVector v;
 
-			for (int i = 0; i < numberOfVerts; i++) {
+			for (int i = 0; i < vertexCount; i++) {
 				v = getVertex(i);
 
 				v.x *= scaleX;
@@ -629,15 +611,15 @@ public class OBJModel {
 	}
 
 	public void translate(float _x, float _y, float _z) {
-		int numberOfVerts = getVertexCount();
+		int vertexCount = getVertexCount();
 
-		if (numberOfVerts == 0)
+		if (vertexCount == 0)
 			debug.println("OBJTransform - \tThe model has no verts. Have you loaded it yet?");
 		else {
 			PVector v;
 			PVector m = new PVector(_x, _y, _z);
 
-			for (int i = 0; i < numberOfVerts; i++) {
+			for (int i = 0; i < vertexCount; i++) {
 				v = getVertex(i);
 				v.add(m);
 			}
@@ -819,7 +801,7 @@ public class OBJModel {
 						currentModelSegment.materialName = elements[1];
 					} else if (elements[0].equals("f")) {
 						// face setting
-						Face tmpf = new Face();
+						Face f = new Face();
 
 						if (elements.length < 3)
 							debug.println("Warning: potential model data error");
@@ -832,90 +814,81 @@ public class OBJModel {
 
 								if (forder.length > 2) {
 									if (forder[0].length() > 0) {
-										tmpf.vertexIndices.add(Integer.valueOf(forder[0]), null);
-										tmpf.vertices.add(getVertex(Integer.valueOf(forder[0])));
+										f.vertexIndices.add(Integer.valueOf(forder[0]));
+										// f.vertices.add(getVertex(Integer.valueOf(forder[0])));
 									}
 
 									if (forder[1].length() > 0) {
-										tmpf.uvIndices.add(Integer.valueOf(forder[1]));
-										tmpf.uvs.add(getVertex(Integer.valueOf(forder[1])));
+										f.uvIndices.add(Integer.valueOf(forder[1]));
+										// f.uvs.add(getVertex(Integer.valueOf(forder[1])));
 									}
 
 									if (forder[2].length() > 0) {
-										tmpf.normalIndices.add(Integer.valueOf(forder[2]));
-										tmpf.normals.add(getVertex(Integer.valueOf(forder[2])));
+										f.normalIndices.add(Integer.valueOf(forder[2]));
+										// f.normals.add(getVertex(Integer.valueOf(forder[2])));
 									}
 								} else if (forder.length > 1) {
 									if (forder[0].length() > 0) {
-										tmpf.vertexIndices.add(Integer.valueOf(forder[0]));
-										tmpf.vertices.add(getVertex(Integer.valueOf(forder[0])));
+										f.vertexIndices.add(Integer.valueOf(forder[0]));
+										// f.vertices.add(getVertex(Integer.valueOf(forder[0])));
 									}
 
 									if (forder[1].length() > 0) {
-										tmpf.uvIndices.add(Integer.valueOf(forder[1]));
-										tmpf.uvs.add(getVertex(Integer.valueOf(forder[1])));
+										f.uvIndices.add(Integer.valueOf(forder[1]));
+										// f.uvs.add(getVertex(Integer.valueOf(forder[1])));
 									}
 								} else if (forder.length > 0) {
 									if (forder[0].length() > 0) {
-										tmpf.vertexIndices.add(Integer.valueOf(forder[0]));
-										tmpf.vertices.add(getVertex(Integer.valueOf(forder[0])));
+										f.vertexIndices.add(Integer.valueOf(forder[0]));
+										// f.vertices.add(getVertex(Integer.valueOf(forder[0])));
 									}
 								}
 							} else {
-								if (seg.length() > 0)
-									tmpf.vertexIndices.add(Integer.valueOf(seg));
+								if (seg.length() > 0) {
+									f.vertexIndices.add(Integer.valueOf(seg));
+									// f.vertices.add(getVertex(Integer.valueOf(seg));
+								}
 							}
 						}
 
-						currentModelSegment.faces.add(tmpf);
+						currentModelSegment.faces.add(f);
 
 					} else if (elements[0].equals("ll")) {
 						// line
-
-						Face tmpf = new Face();
-						tmpf.indexType = PConstants.POLYGON;
+						Face f = new Face();
+						f.indexType = PConstants.POLYGON;
 
 						if (elements.length < 2)
 							debug.println("Warning: potential model data error");
 
 						for (int i = 1; i < elements.length; i++)
-							tmpf.vertexIndices.add(Integer.valueOf(elements[i]));
+							f.vertexIndices.add(Integer.valueOf(elements[i]));
 
-						currentModelSegment.faces.add(tmpf);
+						currentModelSegment.faces.add(f);
 					}
 				}
 			}
 
 			for (int i = 0; i < getSegmentCount(); i++) {
+				Segment s = segments.get(i);
 
-				Segment seg = segments.get(i);
+				for (int j = 0; j < s.getFaceCount(); j++) {
+					Face f = s.getFace(j);
 
-				int faceCount = seg.getFaceCount();
-
-				for (int j = 0; j < faceCount; j++) {
-
-					Face face = seg.getFace(j);
-
-					int[] vertIndex = face.getVertexIndices();
-					int[] normIndex = face.getNormalIndices();
-					int[] uvIndex = face.getTextureIndices();
+					int[] vtIndex = f.getVertexIndices();
+					int[] nmIndex = f.getNormalIndices();
+					int[] uvIndex = f.getTextureIndices();
 
 					// three for loops for safety. if there are no normals or
 					// uv's then nothing will break
-					for (int k = 0; k < vertIndex.length; k++) {
+					for (int k = 0; k < vtIndex.length; k++)
+						f.vertices.add(vertices.get(vtIndex[k]));
 
-						face.vertices.add(vertices.get(vertIndex[k]));
+					for (int k = 0; k < nmIndex.length; k++)
+						f.normals.add(normalVertices.get(nmIndex[k]));
 
-					}
-					for (int k = 0; k < normIndex.length; k++) {
-
-						face.normals.add(normalVertices.get(normIndex[k]));
-
-					}
-					for (int k = 0; k < uvIndex.length; k++) {
-
-						face.uvs.add(textureVertices.get(uvIndex[k]));
-					}
+					for (int k = 0; k < uvIndex.length; k++)
+						f.uvs.add(textureVertices.get(uvIndex[k]));
 				}
 			}
 
@@ -1099,6 +1072,14 @@ public class OBJModel {
 		return this.groups.get(groupName);
 	}
 
+	public Segment getSegment(int _index) {
+		return segments.get(_index);
+	}
+
+	public Face getFaceInSegment(int _segmentIndex, int _faceIndex) {
+		return ((segments.get(_segmentIndex)).getFace(_faceIndex));
+	}
+
 	/**
 	 * Gets the number of segments in the model.<br>
 	 * </br> A segment is a unique material and an array of indexes into the
@@ -1120,14 +1101,13 @@ public class OBJModel {
 	 * @return int
 	 */
 	public int getFaceCount() {
-
-		int tmp = 0;
+		int count = 0;
 
 		for (int i = 0; i < getSegmentCount(); i++) {
-			tmp += getIndexCountInSegment(i);
+			count += getIndexCountInSegment(i);
 		}
 
-		return tmp;
+		return count;
 	}
 
 	/**
@@ -1239,7 +1219,7 @@ public class OBJModel {
 	 *         </br>
 	 */
 	public int[] getTextureIndicesInSegment(int i, int num) {
-		return ((Face) ((Segment) segments.get(i)).getFace(num)).getTextureIndices();
+		return ((segments.get(i)).getFace(num)).getTextureIndices();
 	}
 
 	// public Face getFaceInSegment(int faceIndex) {
@@ -1311,7 +1291,7 @@ public class OBJModel {
 	 *         </br>
 	 */
 	public PVector getVertex(int i) {
-		return (PVector) vertices.get(i);
+		return vertices.get(i);
 	}
 
 	/**
@@ -1329,7 +1309,7 @@ public class OBJModel {
 	 *         </br>
 	 */
 	public PVector getNormal(int i) {
-		return (PVector) normalVertices.get(i);
+		return normalVertices.get(i);
 	}
 
 	/**
@@ -1353,7 +1333,7 @@ public class OBJModel {
 	 *         </br>
 	 */
 	public PVector getUV(int i) {
-		return (PVector) textureVertices.get(i);
+		return textureVertices.get(i);
 	}
 
 	/**
@@ -1365,7 +1345,7 @@ public class OBJModel {
 	 *            supplied PVector
 	 */
 	public void setVertex(int i, PVector vertex) {
-		((PVector) vertices.get(i)).set(vertex);
+		(vertices.get(i)).set(vertex);
 	}
 
 	/**
@@ -1377,7 +1357,7 @@ public class OBJModel {
 	 * @param z
 	 */
 	public void setVertex(int i, float x, float y, float z) {
-		((PVector) vertices.get(i)).set(x, y, z);
+		(vertices.get(i)).set(x, y, z);
 	}
 
 	/**
@@ -1389,7 +1369,7 @@ public class OBJModel {
 	 *            supplied PVector
 	 */
 	public void setNormal(int i, PVector normal) {
-		((PVector) normalVertices.get(i)).set(normal);
+		(normalVertices.get(i)).set(normal);
 	}
 
 	/**
@@ -1401,7 +1381,7 @@ public class OBJModel {
 	 *            supplied PVector
 	 */
 	public void setUV(int i, PVector uv) {
-		((PVector) textureVertices.get(i)).set(uv);
+		(textureVertices.get(i)).set(uv);
 	}
 
 	/**
