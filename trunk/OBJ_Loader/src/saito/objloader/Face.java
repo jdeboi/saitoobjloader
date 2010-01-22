@@ -172,6 +172,5 @@ public class Face implements PConstants {
 		positionToFace.normalize();
 		
 		return (1.0f - (positionToFace.dot(getNormal()) + 1.0f)/2.0f);
-
 	}
 }
