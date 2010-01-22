@@ -2,6 +2,7 @@ package saito.objloader;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.nio.*;
 
 import javax.media.opengl.GL;
@@ -58,6 +59,18 @@ public class Segment {
 			count += (getFace(i)).getIndexCount();
 
 		return count;
+	}
+
+	public void sortFacesByX() {
+		Collections.sort(faces, Face.FaceXComparator);
+	}
+
+	public void sortFacesByY() {
+		Collections.sort(faces, Face.FaceYComparator);
+	}
+
+	public void sortFacesByZ() {
+		Collections.sort(faces, Face.FaceZComparator);
 	}
 
 	/*
