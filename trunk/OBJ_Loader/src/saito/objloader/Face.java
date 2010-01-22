@@ -141,4 +141,22 @@ public class Face implements PConstants {
 	public int getNormalIndex(int i) {
 		return normalIndices.get(i) - 1;
 	}
+	
+	boolean isFacingCamera(PVector cameraPosition) {
+		PVector c = getCenter();
+		
+		// this works out the vector from the camera to the face.
+		PVector cameraToFace = new PVector(cameraPosition.x - c.x,
+				cameraPosition.y - c.y, cameraPosition.z - c.z);
+
+		// We now know the vector from the camera to the face,
+		// and the vector that describes which direction the face
+		// is pointing, so we just need to do a dot-product and
+		// based on that we can tell if it's facing the camera or not
+		// float result = PVector.dot(cameraToFace, faceNormal);
+		float result = cameraToFace.dot(getNormal());
+
+		// if the result is positive, then it is facing the camera.
+		return result > 0;
+	}
 }
