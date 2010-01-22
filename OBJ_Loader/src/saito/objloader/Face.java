@@ -142,7 +142,7 @@ public class Face implements PConstants {
 		return normalIndices.get(i) - 1;
 	}
 	
-	boolean isFacingCamera(PVector cameraPosition) {
+	public boolean isFacingCamera(PVector cameraPosition) {
 		PVector c = getCenter();
 		
 		// this works out the vector from the camera to the face.
