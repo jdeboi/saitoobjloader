@@ -37,8 +37,9 @@ public class Face implements PConstants, Comparable {
 	public ArrayList<PVector> uvs;
 
 	/**
-	 * Constructor for the Element. A model element is all the indices needed to
-	 * draw a face.
+	 * Constructor for the Face. The Face class contains an a collection of arrays for the vert, normal and uv indexes. 
+	 * For convenience there are PVector Arrays that hold the verts, normals and uv's of the face. 
+	 * These arrays are only references back to the main Arrays that live in OBJModel.
 	 */
 	public Face() {
 		vertexIndices = new ArrayList<Integer>();
@@ -85,6 +86,7 @@ public class Face implements PConstants, Comparable {
 	}
 
 	public int[] getTextureIndices() {
+		
 		int[] v = new int[getIndexCount()];
 
 		for (int i = 0; i < v.length; i++)
@@ -93,18 +95,36 @@ public class Face implements PConstants, Comparable {
 		return v;
 	}
 
+	/**
+	 * Returns an array of PVectors that make up this face
+	 * @return PVector []
+	 */
+	
 	public PVector[] getVertices() {
 		return vertices.toArray(new PVector[vertices.size()]);
 	}
 
+	/**
+	 * Returns an array of normals that make up this face
+	 * @return PVector []
+	 */
 	public PVector[] getNormals() {
 		return normals.toArray(new PVector[normals.size()]);
 	}
 
+	/**
+	 * Returns an array of uvs that make up this face
+	 * @return PVector []
+	 */
 	public PVector[] getUvs() {
 		return uvs.toArray(new PVector[uvs.size()]);
 	}
 
+	
+	/**
+	 * Get's the center position of the face.
+	 * @return PVector []
+	 */
 	public PVector getCenter() {
 		PVector c = new PVector();
 
@@ -116,6 +136,12 @@ public class Face implements PConstants, Comparable {
 		return c;
 	}
 
+	/**
+	 * Returns the face normal. The face normal is calculated from the face center using the cross product of the first and last vert. 
+	 * An alternate method would be to get the average of all vert normals. But that one you can do yourself, because in certain situations it's not reliable..  
+	 * @return a normalized PVector
+	 */
+	
 	public PVector getNormal() {
 		// center vertex
 		PVector c = getCenter();
@@ -133,18 +159,28 @@ public class Face implements PConstants, Comparable {
 
 	// Arrays start at 0 (hence the -1) But OBJ files start the
 	// indices at 1.
-	public int getVertexIndex(int i) {
+	private int getVertexIndex(int i) {
 		return vertexIndices.get(i) - 1;
 	}
 
-	public int getTextureIndex(int i) {
+	private int getTextureIndex(int i) {
 		return uvIndices.get(i) - 1;
 	}
 
-	public int getNormalIndex(int i) {
+	private int getNormalIndex(int i) {
 		return normalIndices.get(i) - 1;
 	}
-
+	
+	/**
+	 * Used for knowing if a face is pointing in the direction of the supplied PVector. 
+	 * In a dense mesh it can be faster to check to see if the face should be draw before drawing it.
+	 * Also it can look cool.
+	 * 
+	 * @param position
+	 * @return True if the angle made between the face normal and position from the face center is less than 90.
+	 */
+	
+	
 	public boolean isFacingPosition(PVector position) {
 		PVector c = getCenter();
 
@@ -162,6 +198,13 @@ public class Face implements PConstants, Comparable {
 		return result < 0;
 	}
 
+	/**
+	 * Returns a float value from 0 - 1. With 1 occurring if the position is in direct line with the face normal. 
+	 * Likewise 0 is facing completely away from the face normal. And you guessed it. A value of 0.5 comes is from perpendicular faces.
+	 * @param position
+	 * @return 
+	 */
+	
 	public float getFacingAmount(PVector position) {
 		PVector c = getCenter();
 
