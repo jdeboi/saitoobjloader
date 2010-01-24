@@ -159,15 +159,15 @@ public class Face implements PConstants, Comparable {
 
 	// Arrays start at 0 (hence the -1) But OBJ files start the
 	// indices at 1.
-	private int getVertexIndex(int i) {
+	public int getVertexIndex(int i) {
 		return vertexIndices.get(i) - 1;
 	}
 
-	private int getTextureIndex(int i) {
+	public int getTextureIndex(int i) {
 		return uvIndices.get(i) - 1;
 	}
 
-	private int getNormalIndex(int i) {
+	public int getNormalIndex(int i) {
 		return normalIndices.get(i) - 1;
 	}
 	
