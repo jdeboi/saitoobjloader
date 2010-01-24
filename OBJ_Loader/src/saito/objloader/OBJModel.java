@@ -610,15 +610,16 @@ public class OBJModel {
 		}
 	}
 
-	public void translate(float _x, float _y, float _z) {
+	public void translate(PVector p) {
 		int vertexCount = getVertexCount();
 
 		if (vertexCount == 0)
 			debug.println("OBJTransform - \tThe model has no verts. Have you loaded it yet?");
 		else {
 			PVector v;
-			PVector m = new PVector(_x, _y, _z);
-
+			PVector m = new PVector(p.x, p.y, p.z);
+			m.mult(-1);
+			
 			for (int i = 0; i < vertexCount; i++) {
 				v = getVertex(i);
 				v.add(m);
@@ -628,7 +629,7 @@ public class OBJModel {
 
 	public void translateToCenter() {
 		BoundingBox obox = new BoundingBox(parent, this);
-		translate(-obox.getCenterX(), -obox.getCenterY(), -obox.getCenterZ());
+		translate(obox.getCenter());
 	}
 
 	public void mapUVToZeroOne() {
