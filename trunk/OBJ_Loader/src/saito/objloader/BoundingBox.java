@@ -68,8 +68,8 @@ public class BoundingBox implements PConstants {
 
 	public PVector getMax() {
 		return max;
-	}
-
+	}	
+	
 	public PVector getCenter() {
 		return center;
 	}
