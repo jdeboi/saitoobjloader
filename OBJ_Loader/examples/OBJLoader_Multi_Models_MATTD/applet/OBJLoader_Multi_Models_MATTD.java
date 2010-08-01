@@ -1,4 +1,25 @@
-import saito.objloader.*;
+import processing.core.*; 
+import processing.xml.*; 
+
+import saito.objloader.*; 
+
+import java.applet.*; 
+import java.awt.Dimension; 
+import java.awt.Frame; 
+import java.awt.event.MouseEvent; 
+import java.awt.event.KeyEvent; 
+import java.awt.event.FocusEvent; 
+import java.awt.Image; 
+import java.io.*; 
+import java.net.*; 
+import java.text.*; 
+import java.util.*; 
+import java.util.zip.*; 
+import java.util.regex.*; 
+
+public class OBJLoader_Multi_Models_MATTD extends PApplet {
+
+
 
 // declare that we need a OBJModel and we'll be calling it "model"
 OBJModel model;
@@ -11,7 +32,7 @@ boolean bStroke = false;
 boolean bMaterial = true;
 
 
-void setup()
+public void setup()
 {
     size(600, 600, P3D);
 
@@ -26,7 +47,7 @@ void setup()
     noStroke();
 }
 
-void draw()
+public void draw()
 {
     background(32);
     lights();
@@ -46,7 +67,7 @@ void draw()
 
 
 
-void keyPressed() {
+public void keyPressed() {
     // turns on and off the texture listed in .mtl file
     if(key == 't') {
         if(!bTexture) {
@@ -119,9 +140,13 @@ void keyPressed() {
     }
 }
 
-void mouseDragged()
+public void mouseDragged()
 {
-    rotX += (mouseX - pmouseX) * 0.01;
-    rotY -= (mouseY - pmouseY) * 0.01;
+    rotX += (mouseX - pmouseX) * 0.01f;
+    rotY -= (mouseY - pmouseY) * 0.01f;
 }
 
+    static public void main(String args[]) {
+        PApplet.main(new String[] { "--bgcolor=#FFFFFF", "OBJLoader_Multi_Models_MATTD" });
+    }
+}
