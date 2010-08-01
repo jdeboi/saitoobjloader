@@ -12,16 +12,17 @@ void setup()
   model.enableDebug();
   model.load("dma.obj");
   tmpmodel.load("dma.obj");
+  stroke(255);
 }
 void draw()
 {
-  background(255);
+  background(128);
   lights();
   pushMatrix();
   translate(width/2, height/2, 0);
   rotateX(rotY);
   rotateY(rotX);
-  scale(30.0);
+  scale(20.0);
 
   // renders the temporary model
   tmpmodel.draw();
