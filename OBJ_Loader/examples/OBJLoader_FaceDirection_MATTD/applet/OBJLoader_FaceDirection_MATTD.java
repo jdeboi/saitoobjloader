@@ -1,4 +1,25 @@
-import saito.objloader.*;
+import processing.core.*; 
+import processing.xml.*; 
+
+import saito.objloader.*; 
+
+import java.applet.*; 
+import java.awt.Dimension; 
+import java.awt.Frame; 
+import java.awt.event.MouseEvent; 
+import java.awt.event.KeyEvent; 
+import java.awt.event.FocusEvent; 
+import java.awt.Image; 
+import java.io.*; 
+import java.net.*; 
+import java.text.*; 
+import java.util.*; 
+import java.util.zip.*; 
+import java.util.regex.*; 
+
+public class OBJLoader_FaceDirection_MATTD extends PApplet {
+
+
 
 OBJModel model;
 
@@ -9,7 +30,7 @@ float normLength = -25;
 
 PVector pos;
 
-void setup() {
+public void setup() {
     size(600, 600, P3D);
 
     model = new OBJModel(this, "cubic_sphere.obj", "relative", QUADS);
@@ -21,7 +42,7 @@ void setup() {
 
 }
 
-void draw() {
+public void draw() {
     background(32);
     lights();
 
@@ -58,7 +79,7 @@ void draw() {
 }
 
 
-void drawFaces(Face[] fc) {
+public void drawFaces(Face[] fc) {
 
     // draw faces
     noStroke();
@@ -84,7 +105,7 @@ void drawFaces(Face[] fc) {
 
 
 
-void drawNormals( Face[] fc ) {
+public void drawNormals( Face[] fc ) {
 
     beginShape(LINES);
     // draw face normals
@@ -96,7 +117,7 @@ void drawNormals( Face[] fc ) {
         // 0.0 = directly facing away
         // 1.0 = directly facing 
         // in truth this is the dot product normalized
-        stroke(255, 0, 255, 255.0 * fc[i].getFacingAmount(pos));
+        stroke(255, 0, 255, 255.0f * fc[i].getFacingAmount(pos));
 
         vertex(v.x, v.y, v.z);
         vertex(v.x + (n.x * normLength), v.y + (n.y * normLength), v.z + (n.z * normLength));
@@ -105,7 +126,7 @@ void drawNormals( Face[] fc ) {
 }
 
 
-void drawPoint(PVector p){
+public void drawPoint(PVector p){
  
     translate(p.x, p.y, p.z);
 
@@ -119,8 +140,12 @@ void drawPoint(PVector p){
 }
 
 
-void mouseDragged() {
-    rotX += (mouseX - pmouseX) * 0.01;
-    rotY -= (mouseY - pmouseY) * 0.01;
+public void mouseDragged() {
+    rotX += (mouseX - pmouseX) * 0.01f;
+    rotY -= (mouseY - pmouseY) * 0.01f;
 }
 
+    static public void main(String args[]) {
+        PApplet.main(new String[] { "--bgcolor=#FFFFFF", "OBJLoader_FaceDirection_MATTD" });
+    }
+}
