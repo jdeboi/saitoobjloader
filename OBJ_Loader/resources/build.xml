@@ -6,7 +6,7 @@
 
 	
 <!-- #### (1) where are your processing libraries located? edit location. #### -->
-	<property name="processing" location="../../Processing/libraries"/>
+	<property name="processing" location="../../../../Processing/libraries"/>
 
 
 <!-- #### (2) where are the jar files located that are required for compiling 
@@ -41,19 +41,19 @@
 	<property name="libraryName"  value="OBJLoader"/>
 	
 <!-- #### (8) give your library a name. edit value.   #### -->
-	<property name="versionNumber"  value="0.1.1"/>
+	<property name="versionNumber"  value="020"/>
 	
 <!-- #### (9) your contact url. edit value. #### -->
-	<property name="yourLink"  value="http://www.processing.org" />
+	<property name="yourLink"  value="http://code.google.com/p/saitoobjloader/" />
 	
 <!-- #### (10) a comma separated list of keywords describing your library. edit value. #### -->
-	<property name="keywords"  value="?" />
+	<property name="keywords"  value="obj, loader, 3d" />
 	
 <!-- #### (11) a comma separated list of platforms the library has been tested. edit value. #### -->
-	<property name="tested:platform"  value="?" />
+	<property name="tested:platform"  value="OSX" />
 	
 <!-- #### (12) the processing version this library has been tested with. edit value. #### -->
-	<property name="tested:processingVersion"  value="?" />
+	<property name="tested:processingVersion"  value="1.2.2" />
 	
 <!-- #### (13) does the library depend on any other library, dll, jnilib, etc. edit value. #### -->
 	<property name="tested:dependencies"  value="?" />
