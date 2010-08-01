@@ -18,18 +18,21 @@ import javax.media.opengl.*;
 /**
  * 
  * @author tatsuyas
- * @author mditton
+ * @author Matt Ditton
  * @author Ekene Ijeoma
  * 
  * @TODO: Add documentation and examples to the google code repository
  * @TODO: Add java doc commenting
- * @TODO: Add vertex normals and face normals from Collada Loader
  * 
  *        google code address (because I always forget)
  *        http://code.google.com/p/saitoobjloader/
  * 
  */
 
+/**
+ * @author matt
+ *
+ */
 public class OBJModel {
 
 	// global variables
@@ -41,7 +44,7 @@ public class OBJModel {
 	private Hashtable<String, Material> materials;
 	private Hashtable<String, Group> groups;
 
-	String name = "default";
+	private String name = "default";
 
 	private String defaultMaterialName = "default";
 
@@ -49,10 +52,10 @@ public class OBJModel {
 	private Segment defaultSegment = new Segment();
 
 	private PApplet parent;
-	PImage texture; // texture image applied from the code.
+	private PImage texture; // texture image applied from the code.
 
 	// runtime rendering variables
-	private int shapeMode = PConstants.TRIANGLES; // render mode (ex. POLYGON,
+	private int drawMode = PConstants.TRIANGLES; // render mode (ex. POLYGON,
 	// POINTS ..)
 
 	private boolean useTexture = true;
@@ -62,54 +65,49 @@ public class OBJModel {
 	public static String ABSOLUTE = "absolute";
 	private String texturePathMode = RELATIVE;
 
-	public static String OPENGL = "opengl";
-	public static String P3D = "p3d";
-	private String drawMode = P3D;
-
 	public Debug debug;
 
-	String originalTexture;
+	private String originalTexture;
 
-	GL gl;
+	private GL gl;
 
 	/**
 	 * Class Constructor to setup an empty obj model
 	 */
-	public OBJModel(PApplet parent) {
-		setup(parent);
+	public OBJModel(PApplet _parent) {
+		setup(_parent);
 	}
 
 	/**
-	 * Class Constructor, loads the string as an obj from the data directory
+	 * Class Constructor, loads the file from the data directory
 	 */
-	public OBJModel(PApplet parent, String filename) {
-		setup(parent);
-		load(filename);
+	public OBJModel(PApplet _parent, String _filename) {
+		setup(_parent);
+		load(_filename);
 	}
 
 	/**
-	 * Class Constructor, loads the string as an obj from the data directory.<br>
-	 * </br> The boolean decides if local paths should be used when loading the
-	 * mtl and textures in the mtl.<br>
-	 * </br>
+	 * Class Constructor, loads the file from the data directory.<br>
+	 * </br> use String "relative" to search the data folder for the mtl and textures </br>
+	 * use "absolute" to load the files from the specific path</br>
 	 */
 	public OBJModel(PApplet _parent, String _fileName, String _texturePathMode) {
 		setup(_parent);
-		texturePathMode = ABSOLUTE;
+		texturePathMode = _texturePathMode.toLowerCase();
 		load(_fileName);
 	}
 
 	/**
 	 * Class Constructor, loads the string as an obj from the data directory. <br>
-	 * </br> The boolean decides if local paths should be used when loading the
-	 * mtl and textures in the mtl.<br>
+	 * </br> use String "relative" to search the data folder for the mtl and textures </br>
+	 * use "absolute" to load the files from the specific path</br>
 	 * </br> The int sets the draw mode, to the processing draw mode, eg.
 	 * TRIANGLES, POINTS, POLYGON, LINES, TRIANGLE_STRIP, QUAD_STRIP, QUADS.<br>
 	 * </br>
 	 */
 	public OBJModel(PApplet _parent, String _fileName, String _texturePathMode, int _shapeMode) {
-		setup(parent);
-		texturePathMode = ABSOLUTE;
+		setup(_parent);
+		texturePathMode = _texturePathMode.toLowerCase();
 		shapeMode(_shapeMode);
 		load(_fileName);
 	}
@@ -126,7 +124,7 @@ public class OBJModel {
 		materials = new Hashtable<String, Material>();
 
 		debug = new Debug(parent);
-		debug.enabled = false;
+		debug.enabled = true;
 	}
 
 	/**
@@ -134,6 +132,7 @@ public class OBJModel {
 	 * </br> This will setup the Vertex buffer objects ready for the drawOPENGL
 	 * method.<br>
 	 * </br> The obj file must be loaded for this method to work. <br>
+	 * NOTE: this method is on the way out. It'll be removed in the near future.
 	 * </br>
 	 */
 	public void setupGL() {
@@ -181,6 +180,7 @@ public class OBJModel {
 	 * Draws the obj model using the Vertex Buffers that were made in the
 	 * setupOPENGL method<br>
 	 * </br>
+	 * NOTE: this method is on the way out. It'll be removed in the near future.
 	 */
 	public void drawGL() {
 		boolean fill = parent.g.fill;
@@ -210,7 +210,7 @@ public class OBJModel {
 
 				mtl.beginDrawGL(gl, useMaterial, useTexture);
 
-				switch (shapeMode) {
+				switch (drawMode) {
 
 				case (PConstants.POINTS):
 					tmpModelSegment.drawGL(gl, GL.GL_POINTS);
@@ -259,6 +259,7 @@ public class OBJModel {
 	 * Called at the start of drawOPENGL.<br>
 	 * </br> This saves the current state ready so it doesn't get hammered from
 	 * the objModel.<br>
+	 * NOTE: this method is on the way out. It'll be removed in the near future.
 	 * </br>
 	 */
 	private void saveGLState() {
@@ -272,6 +273,7 @@ public class OBJModel {
 	/**
 	 * Returns back to original opengl state that Processing was in.<br>
 	 * </br>
+	 * NOTE: this method is on the way out. It'll be removed in the near future.
 	 */
 	private void revertGLState() {
 		gl.glMatrixMode(GL.GL_PROJECTION);
@@ -315,8 +317,8 @@ public class OBJModel {
 	public void enableDebug() {
 		debug.enabled = true;
 		debug.println("");
-		debug.println("objloader version 019");
-		debug.println("19 January 2010");
+		debug.println("objloader version 020");
+		debug.println("1 August 2010");
 		debug.println("http://code.google.com/p/saitoobjloader/");
 		debug.println("");
 	}
@@ -355,6 +357,7 @@ public class OBJModel {
 		groups.clear();
 		segments.clear();
 		materials.clear();
+		originalTexture();
 		debug.println("OBJModel is empty");
 	}
 
@@ -365,7 +368,7 @@ public class OBJModel {
 	 */
 	public void disableTexture() {
 		useTexture = false;
-		debug.println("texture:\t\toff");
+		debug.println("texture:\t\t" + useTexture);
 	}
 
 	/**
@@ -374,7 +377,7 @@ public class OBJModel {
 	 */
 	public void enableTexture() {
 		useTexture = true;
-		debug.println("texture:\t\ton");
+		debug.println("texture:\t\t" + useTexture);
 	}
 
 	/**
@@ -395,7 +398,7 @@ public class OBJModel {
 	}
 
 	/**
-	 * Turns back on the use of the material that came from the mtl file<br>
+	 * Turns on the use of the material that came from the mtl file<br>
 	 * </br>
 	 */
 	public void enableMaterial() {
@@ -403,22 +406,6 @@ public class OBJModel {
 		debug.println("material:\t\ton");
 	}
 
-	/**
-	 * Sets an override texture for the drawing of the model.<br>
-	 * </br> Any PImage supplied will be used over all model segments<br>
-	 * </br>
-	 * 
-	 * @param PImage
-	 * <br>
-	 *            </br> <br>
-	 *            </br> NOTE: I think this method will be changing in the future
-	 *            to allow for more direct control over each modelSegment<br>
-	 *            </br>
-	 */
-	public void texture(PImage tex) {
-		texture = tex;
-		debug.println("Using new texture");
-	}
 
 	/**
 	 * Set's the beginShape mode for drawing the model. <br>
@@ -429,15 +416,16 @@ public class OBJModel {
 	 * draw nothing in OPENGL.<br>
 	 * </br> A common misconception is that LINES will result in a wireframe.
 	 * For this effect you should leave the drawmode as the correct mode and
-	 * disable the material and use sroke() to get a wireframe<br>
+	 * disable the material and use stroke() to get a wireframe<br>
 	 * </br>
+	 * All the standard processing modes are supported</br>
+	 * TRIANGLES, POINTS, POLYGON, LINES, TRIANGLE_STRIP, QUAD_STRIP, QUADS</br>
 	 * 
-	 * @param TRIANGLES
-	 *            , POINTS, POLYGON, LINES, TRIANGLE_STRIP, QUAD_STRIP, QUADS<br>
-	 *            </br>
+	 * @param int 
+	 * 
 	 */
 	public void shapeMode(int mode) {
-		this.shapeMode = mode;
+		this.drawMode = mode;
 
 		switch (mode) {
 		case (PConstants.POINTS):
@@ -486,18 +474,14 @@ public class OBJModel {
 	private void drawModel() {
 		try {
 			PVector v = null, vt = null, vn = null;
-			// int vtidx = 0, vnidx = 0, vidx = 0;
 
 			Material tmpMaterial = null;
-
-			boolean useTexture;
 
 			Segment tmpModelSegment;
 			Face tmpModelElement;
 
 			// render all triangles
 			for (int s = 0; s < getSegmentCount(); s++) {
-				useTexture = true;
 
 				tmpModelSegment = segments.get(s);
 
@@ -520,10 +504,10 @@ public class OBJModel {
 				for (int f = 0; f < tmpModelSegment.getFaceCount(); f++) {
 					tmpModelElement = (tmpModelSegment.getFace(f));
 
-					if (tmpModelElement.getIndexCount() > 0) {
+					if (tmpModelElement.getVertIndexCount() > 0) {
 
 						parent.textureMode(PConstants.NORMAL);
-						parent.beginShape(shapeMode); // specify render mode
+						parent.beginShape(drawMode); // specify render mode
 						if (useTexture == false || tmpMaterial.map_Kd == null)
 							useTexture = false;
 
@@ -531,13 +515,10 @@ public class OBJModel {
 							if (texture != null)
 								parent.texture(texture);
 							else
-								parent.texture(tmpMaterial.map_Kd); // setting
-							// texture
-							// from mtl
-							// info
+								parent.texture(tmpMaterial.map_Kd); 
 						}
 
-						for (int fp = 0; fp < tmpModelElement.getIndexCount(); fp++) {
+						for (int fp = 0; fp < tmpModelElement.getVertIndexCount(); fp++) {
 							v = vertices.get(tmpModelElement.getVertexIndex(fp));
 
 							if (v != null) {
@@ -549,7 +530,7 @@ public class OBJModel {
 
 									if (useTexture) {
 										vt = textureVertices.get(tmpModelElement.getTextureIndex(fp));
-										parent.vertex(v.x, v.y, v.z, vt.x, 1.0f - (vt.y));
+										parent.vertex(v.x, v.y, v.z, vt.x, vt.y);
 									} else
 										parent.vertex(v.x, v.y, v.z);
 								} catch (Exception e) {
@@ -571,7 +552,7 @@ public class OBJModel {
 	}
 
 	/**
-	 * The manual load method for obj files. This method is automaticly called
+	 * The manual load method for obj files. This method is automatically called
 	 * when using Constructors that include the file name<br>
 	 * </br> The method uses the Processing createReader() function to get a
 	 * BufferedReader object in order to read the file one line at a time.<br>
@@ -580,18 +561,31 @@ public class OBJModel {
 	 * </br>
 	 */
 	public void load(String filename) {
-		parseOBJ(getBufferedReader(filename));
+		
+		parseOBJ( getBufferedReader(filename) );
 
 		if (debug.enabled)
 			this.printModelInfo();
 	}
 
-	/** TOOLS */
+
+	/**
+	 * Scales the vertex positions of the model. As processing runs in pixel units and the rest of the world works in cm,mm,meters, there's a damn good chance you'll need to scale the model in order to draw it.
+	 * 
+	 * @param scale
+	 */
 	public void scale(float scale) {
 		scale(scale, scale, scale);
 
 	}
 
+	/**
+	 * Scales the vertex positions of the model. As processing runs in pixel units and the rest of the world works in cm,mm,meters, there's a damn good chance you'll need to scale the model in order to draw it.
+	 * 
+	 * @param scaleX
+	 * @param scaleY
+	 * @param scaleZ
+	 */
 	public void scale(float scaleX, float scaleY, float scaleZ) {
 		int vertexCount = getVertexCount();
 
@@ -610,6 +604,11 @@ public class OBJModel {
 		}
 	}
 
+	
+	/**
+	 * Translates all the verts by the PVector amount 
+	 * @param p
+	 */
 	public void translate(PVector p) {
 		int vertexCount = getVertexCount();
 
@@ -627,11 +626,18 @@ public class OBJModel {
 		}
 	}
 
+	/**
+	 * Helper function to move the origin point of the model to the center of the objects BoundingBox
+	 */
 	public void translateToCenter() {
-		BoundingBox obox = new BoundingBox(parent, this);
-		translate(obox.getCenter());
+		BoundingBox box = new BoundingBox(parent, this);
+		translate(box.getCenter());
 	}
 
+	
+	/**
+	 * Helper function to scale the UV's so they sit within 0-1. One day I'll be able to kill this function. 
+	 */
 	public void mapUVToZeroOne() {
 		int count = getUVCount();
 
@@ -655,7 +661,11 @@ public class OBJModel {
 		}
 	}
 
-	public void clampUVToZeroOne() {
+	/**
+	 * Helper function to clamp the UV's so they sit within 0-1. One day I'll be able to kill this function. 
+	 */
+	
+	public void clampUV() {
 		int count = getUVCount();
 
 		PVector temp;
@@ -671,25 +681,37 @@ public class OBJModel {
 	 * Used in the loading of obj files and mtl files that come from mtl files.<br>
 	 * </br>
 	 * 
-	 * @param The
+	 * @param String
 	 *            filename. A String containing the location of the obj file.
 	 *            The createReader function should take care of finding the file
 	 *            in all the usual Processing places.<br>
 	 *            </br>
-	 * @return a BufferedReader<br>
+	 * @return BufferedReader<br>
 	 *         </br>
 	 */
-	private BufferedReader getBufferedReader(String filename) {
-		debug.println("Loading this file = " + filename);
-
-		BufferedReader retval = parent.createReader(filename);
-
-		if (retval != null) {
-			return retval;
-		} else {
-			PApplet.println("Could not find this file " + filename);
-			return null;
+	
+	private  BufferedReader getBufferedReader(String filename) {
+		debug.println("Loading this = " + filename);
+		
+		BufferedReader retval;
+		
+		try{
+			
+			retval = parent.createReader(filename);
+			
+			if (retval != null) {
+				return retval;
+			} else {
+				PApplet.println("Could not find this file " + filename);
+				return null;
+			}
 		}
+		catch(Exception e){
+			
+			e.printStackTrace();
+		}
+
+		return null;
 
 	}
 
@@ -703,6 +725,7 @@ public class OBJModel {
 	 * </br>
 	 */
 	private void parseOBJ(BufferedReader bread) {
+	//private void parseOBJ(String[] bread) {	
 		try {
 			// adding default variables to the global data table creating the
 			// default group
@@ -726,26 +749,26 @@ public class OBJModel {
 
 			Segment currentModelSegment = defaultSegment;
 
-			String line;
+			String line = "";
 
 			while ((line = bread.readLine()) != null) {
-				// debug.println(line);
+			
+				//debug.println(line);
+				
+				
 				// parse the line
 
 				// The below patch/hack comes from Carles Tom‡s Mart’ and is a
 				// fix for single backslashes in Rhino obj files
 
 				// BEGINNING OF RHINO OBJ FILES HACK
-				// Statements can be broken in multiple lines using '\' at the
-				// end of a line.
-				// In regular expressions, the backslash is also an escape
-				// character.
-				// The regular expression \\ matches a single backslash. This
-				// regular expression as a Java string, becomes "\\\\".
+				// Statements can be broken in multiple lines using '\' at the end of a line.
+				// In regular expressions, the backslash is also an escape character.
+				// The regular expression \\ matches a single backslash. This regular expression as a Java string, becomes "\\\\".
 				// That's right: 4 backslashes to match a single one.
 				while (line.contains("\\")) {
 					line = line.split("\\\\")[0];
-					final String s = bread.readLine();
+					final String s = line;
 					if (s != null)
 						line += s;
 				}
@@ -767,7 +790,8 @@ public class OBJModel {
 						normalVertices.add(tmpn);
 					} else if (elements[0].equals("vt")) {
 						// uv
-						PVector tmpv = new PVector(Float.valueOf(elements[1]).floatValue(), Float.valueOf(elements[2]).floatValue());
+						// in processing uv's 0,0 is top left. In the rest of the world it's bottom right
+						PVector tmpv = new PVector(Float.valueOf(elements[1]).floatValue(), 1.0f - Float.valueOf(elements[2]).floatValue());
 						textureVertices.add(tmpv);
 					} else if (elements[0].equals("o")) {
 						if (elements[1] != null)
@@ -777,6 +801,8 @@ public class OBJModel {
 							this.parseMTL(this.getBufferedReader(elements[1]));
 					} else if (elements[0].equals("g")) {
 						// grouping setting
+						debug.println("found group");
+						
 						Segment newModelSegment = new Segment();
 
 						segments.add(newModelSegment);
@@ -786,7 +812,7 @@ public class OBJModel {
 
 						for (int e = 1; e < elements.length; e++) {
 							if (groups.get(elements[e]) == null) {
-								// debug.println("group '" + elements[e] +"'");
+								debug.println("group '" + elements[e] +"'");
 								Group newGroup = new Group(elements[e]);
 
 								groups.put(elements[e], newGroup);
@@ -810,44 +836,44 @@ public class OBJModel {
 						for (int i = 1; i < elements.length; i++) {
 							String seg = elements[i];
 
-							if (seg.indexOf("/") > 0) {
+							if (seg.indexOf("/") > 0) 
+							{
 								String[] forder = seg.split("/");
 
-								if (forder.length > 2) {
+//								if (forder.length > 2) {
 									if (forder[0].length() > 0) {
 										f.vertexIndices.add(Integer.valueOf(forder[0]));
-										// f.vertices.add(getVertex(Integer.valueOf(forder[0])));
 									}
 
 									if (forder[1].length() > 0) {
 										f.uvIndices.add(Integer.valueOf(forder[1]));
-										// f.uvs.add(getVertex(Integer.valueOf(forder[1])));
 									}
 
 									if (forder[2].length() > 0) {
 										f.normalIndices.add(Integer.valueOf(forder[2]));
-										// f.normals.add(getVertex(Integer.valueOf(forder[2])));
 									}
-								} else if (forder.length > 1) {
-									if (forder[0].length() > 0) {
-										f.vertexIndices.add(Integer.valueOf(forder[0]));
-										// f.vertices.add(getVertex(Integer.valueOf(forder[0])));
-									}
-
-									if (forder[1].length() > 0) {
-										f.uvIndices.add(Integer.valueOf(forder[1]));
-										// f.uvs.add(getVertex(Integer.valueOf(forder[1])));
-									}
-								} else if (forder.length > 0) {
-									if (forder[0].length() > 0) {
-										f.vertexIndices.add(Integer.valueOf(forder[0]));
-										// f.vertices.add(getVertex(Integer.valueOf(forder[0])));
-									}
-								}
-							} else {
+//								}
+//								else if (forder.length > 1) 
+//								{
+//									if (forder[0].length() > 0) {
+//										f.vertexIndices.add(Integer.valueOf(forder[0]));
+//									}
+//
+//									if (forder[1].length() > 0) {
+//										f.uvIndices.add(Integer.valueOf(forder[1]));
+//									}
+//								} 
+//								else if (forder.length > 0) 
+//								{
+//									if (forder[0].length() > 0) {
+//										f.vertexIndices.add(Integer.valueOf(forder[0]));
+//									}
+//								}
+							}
+							else 
+							{
 								if (seg.length() > 0) {
 									f.vertexIndices.add(Integer.valueOf(seg));
-									// f.vertices.add(getVertex(Integer.valueOf(seg));
 								}
 							}
 						}
@@ -897,14 +923,14 @@ public class OBJModel {
 			e.printStackTrace();
 		}
 
-		// Depending on the layout of the obj file, extra empty modeSegments can
-		// be created.
+		// Depending on the layout of the obj file, extra empty modeSegments can be created.
 		// Here I check each segment to ensure it contains indexes.
-		// If there aren't any then the Segment will draw no faces so it's fine
-		// to kill it off.
-		for (int i = getSegmentCount() - 1; i >= 0; i--) {
-			if (getIndexCountInSegment(i) == 0) { // again with the empty model
-				// segments WTF?
+		// If there aren't any then the Segment will draw no faces so it's fine to kill it off.
+		for (int i = getSegmentCount() - 1; i >= 0; i--) 
+		{
+			if (getIndexCountInSegment(i) == 0) 
+			{ 
+				// again with the empty model segments WTF?
 				segments.remove(i);
 			}
 		}
@@ -917,7 +943,7 @@ public class OBJModel {
 
 	/**
 	 * The method that does the work of parsing the mtl file. <br>
-	 * </br> This method is called automaticly when an mtl reference is found in
+	 * </br> This method is called automatically when an mtl reference is found in
 	 * obj. <br>
 	 * </br> This can cause issues when the mtl file location is a hard coded
 	 * path.<br>
@@ -928,7 +954,7 @@ public class OBJModel {
 
 	private void parseMTL(BufferedReader bread) {
 		try {
-			String line;
+			String line = "";
 
 			Material currentMtl = null;
 
@@ -937,78 +963,86 @@ public class OBJModel {
 				// parse the line
 
 				line = line.trim();
+				
+				//PApplet.println(line);
+				
+				if(line.length() > 0){
 
-				String elements[] = line.split("\\s+");
-
-				if (elements.length > 0) {
-					// analyze the format
-
-					if (elements[0].equals("newmtl")) {
-
-						debug.println("material: \t\t'" + elements[1] + "'");
-
-						String mtlName = elements[1];
-
-						Material tmpMtl = new Material();
-
-						currentMtl = tmpMtl;
-
-						materials.put(mtlName, tmpMtl);
-					}
-
-					// I'd like to do something with this but at the moment it'd
-					// only be supported in the OPENGL mode
-					// else if (elements[0].equals("map_Ka") && elements.length
-					// > 1) {
-					//
-					// debug.println("texture ambient \t\t'" + elements[1] +
-					// "'");
-					//
-					// // String texname = elements[1];
-					// // currentMtl.map_Ka = parent.loadImage(texname);
-					//						
-					//
-					// }
-					else if (elements[0].equals("map_Kd") && elements.length > 1) {
-
-						String texname = elements[1];
-
-						if (texturePathMode == RELATIVE) {
-							debug.println("texture diffuse \t\t'" + elements[1] + "'");
-						} else if (texturePathMode == ABSOLUTE) {
-							int p1 = 0;
-
-							// TODO get the system folder slash. (where is that
-							// pocket java guide when you need it)
-							String slash = "\\";
-
-							while (p1 != -1) {
-								p1 = texname.indexOf(slash);
-								texname = texname.substring(p1 + 1);
-							}
-
-							debug.println("diffuse: \t\t'" + texname + "'");
+					String elements[] = line.split("\\s+");
+	
+					//PApplet.println(elements);
+					
+					
+					if (elements.length > 0) {
+						// analyze the format
+	
+						if (elements[0].equals("newmtl")) {
+	
+							debug.println("material: \t\t'" + elements[1] + "'");
+	
+							String mtlName = elements[1];
+	
+							Material tmpMtl = new Material();
+	
+							currentMtl = tmpMtl;
+	
+							materials.put(mtlName, tmpMtl);
 						}
-
-						currentMtl.map_Kd = parent.loadImage(texname);
-
-						originalTexture = texname;
-
-					} else if (elements[0].equals("Ka") && elements.length > 1) {
-						currentMtl.Ka[0] = Float.valueOf(elements[1]).floatValue();
-						currentMtl.Ka[1] = Float.valueOf(elements[2]).floatValue();
-						currentMtl.Ka[2] = Float.valueOf(elements[3]).floatValue();
-					} else if (elements[0].equals("Kd") && elements.length > 1) {
-						currentMtl.Kd[0] = Float.valueOf(elements[1]).floatValue();
-						currentMtl.Kd[1] = Float.valueOf(elements[2]).floatValue();
-						currentMtl.Kd[2] = Float.valueOf(elements[3]).floatValue();
-					} else if (elements[0].equals("Ks") && elements.length > 1) {
-						currentMtl.Ks[0] = Float.valueOf(elements[1]).floatValue();
-						currentMtl.Ks[1] = Float.valueOf(elements[2]).floatValue();
-						currentMtl.Ks[2] = Float.valueOf(elements[3]).floatValue();
-					} else if (elements[0].equals("d") && elements.length > 1) {
-						currentMtl.d = Float.valueOf(elements[1]).floatValue();
-
+	
+						// I'd like to do something with this but at the moment it'd
+						// only be supported in the OPENGL mode
+						// else if (elements[0].equals("map_Ka") && elements.length
+						// > 1) {
+						//
+						// debug.println("texture ambient \t\t'" + elements[1] +
+						// "'");
+						//
+						// // String texname = elements[1];
+						// // currentMtl.map_Ka = parent.loadImage(texname);
+						//						
+						//
+						// }
+						else if (elements[0].equals("map_Kd") && elements.length > 1) {
+							
+							String texname = elements[1];
+	
+							if (texturePathMode.equals(ABSOLUTE) ) {
+								debug.println("texture diffuse \t\t'" + elements[1] + "'");
+							} else if (texturePathMode.equals(RELATIVE)) {
+								int p1 = 0;
+	
+								// TODO get the system folder slash. (where is that
+								// pocket java guide when you need it)
+								String slash = "\\";
+	
+								while (p1 != -1) {
+									p1 = texname.indexOf(slash);
+									texname = texname.substring(p1 + 1);
+								}
+	
+								debug.println("diffuse: \t\t'" + texname + "'");
+							}
+	
+							currentMtl.map_Kd = parent.loadImage(texname);
+	
+							originalTexture = texname;
+	
+						} else if (elements[0].equals("Ka") && elements.length > 1) {
+							currentMtl.Ka[0] = Float.valueOf(elements[1]).floatValue();
+							currentMtl.Ka[1] = Float.valueOf(elements[2]).floatValue();
+							currentMtl.Ka[2] = Float.valueOf(elements[3]).floatValue();
+						} else if (elements[0].equals("Kd") && elements.length > 1) {
+							currentMtl.Kd[0] = Float.valueOf(elements[1]).floatValue();
+							currentMtl.Kd[1] = Float.valueOf(elements[2]).floatValue();
+							currentMtl.Kd[2] = Float.valueOf(elements[3]).floatValue();
+						} else if (elements[0].equals("Ks") && elements.length > 1) {
+							currentMtl.Ks[0] = Float.valueOf(elements[1]).floatValue();
+							currentMtl.Ks[1] = Float.valueOf(elements[2]).floatValue();
+							currentMtl.Ks[2] = Float.valueOf(elements[3]).floatValue();
+						} else if (elements[0].equals("d") && elements.length > 1) {
+							currentMtl.d = Float.valueOf(elements[1]).floatValue();
+	
+						}
 					}
 				}
 			}
@@ -1020,26 +1054,34 @@ public class OBJModel {
 	// -------------------------------------------------------------------------
 	// --------------------------------------------------- Get and Set Functions
 	// -------------------------------------------------------------------------
-	public void setDrawMode(String _drawMode) {
+	/**
+	 * Sets the draw mode of the shape drawing
+	 * @param _drawMode
+	 */
+	public void setDrawMode(int _drawMode) {
 		drawMode = _drawMode;
 	}
 
-	public String getDrawMode() {
+	/**
+	 * Gets the drawmode
+	 * @return int
+	 */
+	public int getDrawMode() {
 		return drawMode;
 	}
 
-	public void setShapeMode(int _shapeMode) {
-		shapeMode = _shapeMode;
-	}
 
-	public int getShapeMode() {
-		return shapeMode;
-	}
-
+	/**
+	 * Use "relative" or "absolute" to set the texture load method
+	 * @param _texturePathMode
+	 */
 	public void setTexturePathMode(String _texturePathMode) {
 		texturePathMode = _texturePathMode;
 	}
 
+	/**
+	 * Should return "relative" or "absolute"
+	 */	
 	public String getTexturePathMode() {
 		return texturePathMode;
 	}
@@ -1050,8 +1092,7 @@ public class OBJModel {
 	 * </br> So you can get the size, but it's not going to do much for you.<br>
 	 * </br>
 	 * 
-	 * @return int count of the group<br>
-	 *         </br>
+	 * @return int
 	 */
 	public int getGroupCount() {
 		return this.groups.size();
@@ -1063,11 +1104,8 @@ public class OBJModel {
 	 * anywhere. <br>
 	 * </br>
 	 * 
-	 * @param A
-	 *            String of the group name that was in the obj file <br>
-	 *            </br>
-	 * @return a Group <br>
-	 *         </br>
+	 * @param String
+	 * @return Group
 	 */
 	public Group getGroup(String groupName) {
 		return this.groups.get(groupName);
@@ -1083,8 +1121,7 @@ public class OBJModel {
 
 	/**
 	 * Gets the number of segments in the model.<br>
-	 * </br> A segment is a unique material and an array of indexes into the
-	 * vert, norm and uv Vectors<br>
+	 * </br> A segment is a unique material and an array of indexes into the vert, norm and uv Vectors<br>
 	 * </br>
 	 * 
 	 * @return int
@@ -1112,12 +1149,10 @@ public class OBJModel {
 	}
 
 	/**
-	 * Gets an array of PVectors that make up the position co-ordinates of the
-	 * face.<br>
-	 * </br> This method needs one int that must be between 0 and the
-	 * getTotalFaceCount()<br>
+	 * Gets an array of PVectors that make up the position co-ordinates of the face.<br>
+	 * </br> This method needs one int that must be between 0 and the getTotalFaceCount()<br>
 	 * </br> This is mostly used when you need raw verts for physics simulation<br>
-	 * </br>
+	 * </br> Personally I wouldn't do this during draw. It's going to be expensive.
 	 * 
 	 * @return PVector[]
 	 */
@@ -1153,16 +1188,13 @@ public class OBJModel {
 	}
 
 	/**
-	 * Gets the number of Index count in the Segment. <br>
+	 * Gets the number of Indexes in the Segment. <br>
 	 * </br> In effect this is the number of faces in the Segment. <br>
 	 * </br> As each Index is an Array of ints to the vert, normal, or uv Array <br>
-	 * </br>
+	 * </br> Make sure the param is between 0 and the number of segments
 	 * 
-	 * @param a
-	 *            number between 0 and the number of segments <br>
-	 *            </br>
-	 * @return int <br>
-	 *         </br>
+	 * @param int 
+	 * @return int
 	 */
 	public int getIndexCountInSegment(int i) {
 		return (segments.get(i)).getFaceCount();
@@ -1170,78 +1202,43 @@ public class OBJModel {
 
 	// there are just to many casts here. It feels very muddy.
 	/**
-	 * Returns an array of ints. Use these ints to get the verts of a single
-	 * face.<br>
-	 * </br>
+	 * Returns an array of ints. Use these ints to get the verts of a single face.</br>
 	 * 
-	 * @param the
-	 *            segment number<br>
-	 *            </br>
-	 * @param the
-	 *            face number<br>
-	 *            </br>
-	 * @return int[] of indexes<br>
-	 *         </br>
+	 * @param int</br>
+	 * @param int</br>
+	 * @return int[]</br>
 	 */
 	public int[] getVertexIndicesInSegment(int i, int num) {
 		return ((segments.get(i)).getFace(num)).getVertexIndices();
 	}
 
 	/**
-	 * Returns an array of ints. Use these ints to get the normals of a single
-	 * face.<br>
-	 * </br>
+	 * Returns an array of ints. Use these ints to get the normals of a single face.</br>
 	 * 
-	 * @param the
-	 *            segment number<br>
-	 *            </br>
-	 * @param the
-	 *            face number<br>
-	 *            </br>
-	 * @return int[] of indexes<br>
-	 *         </br>
+	 * @param int</br>
+	 * @param int</br>
+	 * @return int[]</br>
 	 */
 	public int[] getNormalIndicesInSegment(int i, int num) {
 		return ((segments.get(i)).getFace(num)).getNormalIndices();
 	}
 
 	/**
-	 * Returns an array of ints. Use these ints to get the UV's of a single
-	 * face.<br>
-	 * </br>
+	 * Returns an array of ints. Use these ints to get the UV's of a single face.</br>
 	 * 
-	 * @param the
-	 *            segment number<br>
-	 *            </br>
-	 * @param the
-	 *            face number<br>
-	 *            </br>
-	 * @return int[] of indexes<br>
-	 *         </br>
+	 * @param int</br>
+	 * @param int</br>
+	 * @return int[]</br>
 	 */
 	public int[] getTextureIndicesInSegment(int i, int num) {
 		return ((segments.get(i)).getFace(num)).getTextureIndices();
 	}
 
-	// public Face getFaceInSegment(int faceIndex) {
-	// // debug.println("segmentNumber, indexNumber = " + segmentNumber + " " +
-	// // indexNumber);
-	// int segmentNumber = 0;
-	//
-	// while (faceIndex >= getIndexCountInSegment(segmentNumber)) {
-	// faceIndex -= getIndexCountInSegment(segmentNumber);
-	// segmentNumber++;
-	// }
-	//		
-	// return ((Face) ((Segment) segments.get(i)).getFace(faceIndex));
-	// }
 
 	/**
-	 * Get's the total number of Verts in the model.<br>
-	 * </br>
+	 * Get's the total number of Verts in the model.</br>
 	 * 
-	 * @return an int of the number of verts<br>
-	 *         </br>
+	 * @return int</br>
 	 */
 	public int getVertexCount() {
 		return this.vertices.size();
@@ -1256,22 +1253,19 @@ public class OBJModel {
 	 * Vert.<br>
 	 * </br> However this can also be total luck. The correct method of getting
 	 * the normal for the correct vert is to go through the ModelSegment to
-	 * ModelElement to VertIndex and NormalIndex.<br>
-	 * </br>
+	 * ModelElement to VertIndex and NormalIndex.</br>
+	 * Or take the easy route and get the Face
 	 * 
-	 * @return an int of the number of normals<br>
-	 *         </br>
+	 * @return int</br>
 	 */
 	public int getNormalCount() {
 		return this.normalVertices.size();
 	}
 
 	/**
-	 * Get's the total number of UVs in the model.<br>
-	 * </br>
+	 * Get's the total number of UVs in the model.</br>
 	 * 
-	 * @return an int of the number of UV's<br>
-	 *         </br>
+	 * @return int</br>
 	 */
 	public int getUVCount() {
 		return this.textureVertices.size();
@@ -1285,11 +1279,8 @@ public class OBJModel {
 	 * </br> tmp.x += 10;<br>
 	 * </br>
 	 * 
-	 * @param an
-	 *            index to the vert<br>
-	 *            </br>
-	 * @return a PVector<br>
-	 *         </br>
+	 * @param int</br>
+	 * @return PVector</br>
 	 */
 	public PVector getVertex(int i) {
 		return vertices.get(i);
@@ -1303,11 +1294,8 @@ public class OBJModel {
 	 * </br> tmp.mult(-1);<br>
 	 * </br>
 	 * 
-	 * @param an
-	 *            index to the normal<br>
-	 *            </br>
-	 * @return a PVector<br>
-	 *         </br>
+	 * @param int</br>
+	 * @return PVector</br>
 	 */
 	public PVector getNormal(int i) {
 		return normalVertices.get(i);
@@ -1327,11 +1315,8 @@ public class OBJModel {
 	 * </br> tmp.x += 0.01;<br>
 	 * </br>
 	 * 
-	 * @param an
-	 *            index to the normal<br>
-	 *            </br>
-	 * @return a PVector<br>
-	 *         </br>
+	 * @param int</br>
+	 * @return PVector</br>
 	 */
 	public PVector getUV(int i) {
 		return textureVertices.get(i);
@@ -1340,10 +1325,8 @@ public class OBJModel {
 	/**
 	 * Sets the vert at index i to the PVector supplied
 	 * 
-	 * @param index
-	 *            into the vert array
-	 * @param A
-	 *            supplied PVector
+	 * @param int
+	 * @param PVector
 	 */
 	public void setVertex(int i, PVector vertex) {
 		(vertices.get(i)).set(vertex);
@@ -1364,10 +1347,8 @@ public class OBJModel {
 	/**
 	 * Sets the Normal at index i to the PVector supplied
 	 * 
-	 * @param index
-	 *            into the normal array
-	 * @param A
-	 *            supplied PVector
+	 * @param int
+	 * @param PVector
 	 */
 	public void setNormal(int i, PVector normal) {
 		(normalVertices.get(i)).set(normal);
@@ -1376,10 +1357,9 @@ public class OBJModel {
 	/**
 	 * Sets the UV at index i to the PVector supplied
 	 * 
-	 * @param index
-	 *            into the uv array
-	 * @param A
-	 *            supplied PVector
+	 * @param int
+	 * @param PVector
+	 * 
 	 */
 	public void setUV(int i, PVector uv) {
 		(textureVertices.get(i)).set(uv);
@@ -1388,16 +1368,24 @@ public class OBJModel {
 	/**
 	 * Sets an override texture for the drawing of the model.<br>
 	 * </br> Any PImage supplied will be used over all model segments<br>
-	 * </br>
+	 * </br>NOTE: This method is identical to texture(), It has the better syntax.
 	 * 
 	 * @param PImage
-	 * <br>
-	 *            </br> <br>
-	 *            </br> NOTE: This method is identical to texture(), It has the
-	 *            better syntax.
 	 */
 	public void setTexture(PImage textureName) {
 		texture = textureName;
+	}
+	
+	/**
+	 * Sets an override texture for the drawing of the model.<br>
+	 * </br> Any PImage supplied will be used over all model segments<br>
+	 * </br>
+	 * 
+	 * @param PImage
+	 */
+	public void texture(PImage tex) {
+		texture = tex;
+		debug.println("Using new texture");
 	}
 
 	/**

@@ -9,7 +9,7 @@ package saito.objloader;
  *  
  */
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * @author tatsuyas
@@ -17,10 +17,10 @@ import java.util.Vector;
  */
 public class Group {
 	public String groupName;
-	public Vector segments;
+	public ArrayList<Segment> segments;
 
 	public Group(String groupName) {
-		segments = new Vector();
+		segments = new ArrayList<Segment>();
 		this.groupName = groupName;
 	}
 

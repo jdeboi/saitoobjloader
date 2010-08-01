@@ -40,7 +40,7 @@ public class Segment {
 	}
 
 	public PVector[] getIndices() {
-		ArrayList<PVector> indices = new ArrayList();
+		ArrayList<PVector> indices = new ArrayList<PVector>();
 
 		for (int i = 0; i < faces.size(); i++)
 			indices.addAll(Arrays.asList(getFace(i).getVertices()));
@@ -56,7 +56,7 @@ public class Segment {
 		int count = 0;
 
 		for (int i = 0; i < getFaceCount(); i++)
-			count += (getFace(i)).getIndexCount();
+			count += (getFace(i)).getVertIndexCount();
 
 		return count;
 	}

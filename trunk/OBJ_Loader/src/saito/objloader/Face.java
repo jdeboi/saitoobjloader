@@ -17,7 +17,7 @@ import processing.core.PVector;
 
 /**
  * @author tatsuyas
- * @author mattDitton
+ * @author Matt Ditton
  * @author Ekene Ijeoma
  * 
  *         Each model element contains the indexes to the vertices, normals and
@@ -51,8 +51,14 @@ public class Face implements PConstants, Comparable {
 		uvs = new ArrayList<PVector>();
 	}
 
-	public int getIndexCount() {
+	public int getVertIndexCount() {
 		return vertexIndices.size();
+	}
+	public int getNormIndexCount() {
+		return normalIndices.size();
+	}
+	public int getUVIndexCount() {
+		return uvIndices.size();
 	}
 
 	public int getVertexCount() {
@@ -68,7 +74,7 @@ public class Face implements PConstants, Comparable {
 	}
 
 	public int[] getVertexIndices() {
-		int[] v = new int[getIndexCount()];
+		int[] v = new int[getVertIndexCount()];
 
 		for (int i = 0; i < v.length; i++)
 			v[i] = getVertexIndex(i);
@@ -77,7 +83,7 @@ public class Face implements PConstants, Comparable {
 	}
 
 	public int[] getNormalIndices() {
-		int[] v = new int[getIndexCount()];
+		int[] v = new int[getNormIndexCount()];
 
 		for (int i = 0; i < v.length; i++)
 			v[i] = getNormalIndex(i);
@@ -87,7 +93,7 @@ public class Face implements PConstants, Comparable {
 
 	public int[] getTextureIndices() {
 		
-		int[] v = new int[getIndexCount()];
+		int[] v = new int[getUVIndexCount()];
 
 		for (int i = 0; i < v.length; i++)
 			v[i] = getTextureIndex(i);
@@ -139,7 +145,7 @@ public class Face implements PConstants, Comparable {
 	/**
 	 * Returns the face normal. The face normal is calculated from the face center using the cross product of the first and last vert. 
 	 * An alternate method would be to get the average of all vert normals. But that one you can do yourself, because in certain situations it's not reliable..  
-	 * @return a normalized PVector
+	 * @return PVector
 	 */
 	
 	public PVector getNormal() {
@@ -153,6 +159,7 @@ public class Face implements PConstants, Comparable {
 		PVector n = cToB.cross(aToB);
 
 		n.normalize();
+		n.mult(-1);
 
 		return n;
 	}
@@ -160,15 +167,15 @@ public class Face implements PConstants, Comparable {
 	// Arrays start at 0 (hence the -1) But OBJ files start the
 	// indices at 1.
 	public int getVertexIndex(int i) {
-		return vertexIndices.get(i) - 1;
+		return vertexIndices.get(i)-1;
 	}
 
 	public int getTextureIndex(int i) {
-		return uvIndices.get(i) - 1;
+		return uvIndices.get(i)-1;
 	}
 
 	public int getNormalIndex(int i) {
-		return normalIndices.get(i) - 1;
+		return normalIndices.get(i)-1;
 	}
 	
 	/**
