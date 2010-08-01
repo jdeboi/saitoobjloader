@@ -1,12 +1,10 @@
 import saito.objloader.*;
-import saito.objtools.*;
 
 // declare that we need a OBJModel and we'll be calling it "model"
 OBJModel model;
+OBJModel tmpmodel;
 float rotX;
 float rotY;
-
-int direction = 0;
 
 
 void setup()
@@ -14,38 +12,11 @@ void setup()
   size(600, 600, P3D);
 
   // making an object called "model" that is a new instance of OBJModel
-  model = new OBJModel(this);
+  model = new OBJModel(this, "cube_sphere_test.obj");
+  tmpmodel = new OBJModel(this, "cube_sphere_test.obj");
 
   // turning on the debug output (it's all the stuff that spews out in the black box down the bottom)
   model.enableDebug();
-
-  // enableLocalTexture is usefull if you're modeling package uses absolute paths when pointing to the diffuse testure (like XSI)
-  // see mtl file in data folder for example
-  model.setTexturePathMode(OBJModel.ABSOLUTE);  
-
-  //setting the draw mode
-  model.shapeMode(TRIANGLES);
-
-//  model.disableMaterial();
-
-  model.load("cube_sphere_test.obj");
-
-
-
-//  println("the model has this many segments = " + model.getSegmentCount());
-//
-//  for (int i = 0; i < model.getSegmentCount(); i ++){
-//
-//    println("segment " + i + " has this many indexes = " + model.getIndexCountInSegment(i));
-//
-//    for (int j = 0; j < model.getIndexCountInSegment(i); j ++){
-//
-//      println(model.getVertIndexArrayInSegment(i,j));
-//
-//    }
-//  }
-//
-//  faceCount = model.getIndexCountInSegment(1);
 
   noStroke();
 }
@@ -70,23 +41,12 @@ void draw()
   {
 
     PVector u = model.getUV(i);
+    PVector stable_u = tmpmodel.getUV(i);
 
-    u.x = (u.x + (0.01 * direction));
+    u.x = stable_u.x + sin(radians(frameCount))/2;
     
   }
   
-
-  
-  if(count == 0){
-   direction =1; 
-  }
-  
-  if(count%30 == 0)
-  {
-   direction = - direction; 
-  }
-    count ++;
-
 }
 
 
