@@ -87,6 +87,18 @@ public class OBJModel {
 	}
 
 	/**
+	 * Class Constructor, loads the string as an obj from the data directory. <br>
+	 * </br> The int sets the draw mode, to the processing draw mode, eg.
+	 * TRIANGLES, POINTS, POLYGON, LINES, TRIANGLE_STRIP, QUAD_STRIP, QUADS.<br>
+	 * </br>
+	 */
+	public OBJModel(PApplet _parent, String _fileName, int _shapeMode) {
+		setup(_parent);
+		shapeMode(_shapeMode);
+		load(_fileName);
+	}	
+	
+	/**
 	 * Class Constructor, loads the file from the data directory.<br>
 	 * </br> use String "relative" to search the data folder for the mtl and textures </br>
 	 * use "absolute" to load the files from the specific path</br>
