@@ -175,8 +175,8 @@ public class OBJModel {
 				debug.println("model element uses this mtl = " + tmpModelSegment.getMaterialName());
 
 				PVector[] vs = vertices.toArray(new PVector[vertices.size()]);
-				PVector[] tVs = vertices.toArray(new PVector[textureVertices.size()]);
-				PVector[] nVs = vertices.toArray(new PVector[normalVertices.size()]);
+				PVector[] tVs = textureVertices.toArray(new PVector[textureVertices.size()]);
+				PVector[] nVs = normalVertices.toArray(new PVector[normalVertices.size()]);
 
 				tmpModelSegment.setupGL(gl, debug, vs, tVs, nVs);
 
@@ -329,8 +329,8 @@ public class OBJModel {
 	public void enableDebug() {
 		debug.enabled = true;
 		debug.println("");
-		debug.println("objloader version 020");
-		debug.println("1 August 2010");
+		debug.println("objloader version 021");
+		debug.println("18 August 2010");
 		debug.println("http://code.google.com/p/saitoobjloader/");
 		debug.println("");
 	}
