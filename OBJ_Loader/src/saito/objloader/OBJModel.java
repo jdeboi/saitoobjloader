@@ -329,8 +329,8 @@ public class OBJModel {
 	public void enableDebug() {
 		debug.enabled = true;
 		debug.println("");
-		debug.println("objloader version 021");
-		debug.println("18 August 2010");
+		debug.println("objloader version 022");
+		debug.println("28 October 2010");
 		debug.println("http://code.google.com/p/saitoobjloader/");
 		debug.println("");
 	}
@@ -491,6 +491,8 @@ public class OBJModel {
 
 			Segment tmpModelSegment;
 			Face tmpModelElement;
+			
+			parent.textureMode(PConstants.NORMAL);
 
 			// render all triangles
 			for (int s = 0; s < getSegmentCount(); s++) {
@@ -508,19 +510,21 @@ public class OBJModel {
 				}
 
 				if (useMaterial) {
-					parent.ambient(255.0f * tmpMaterial.Ka[0], 255.0f * tmpMaterial.Ka[1], 255.0f * tmpMaterial.Ka[2]);
+					parent.ambient(	255.0f * tmpMaterial.Ka[0], 255.0f * tmpMaterial.Ka[1], 255.0f * tmpMaterial.Ka[2]);
 					parent.specular(255.0f * tmpMaterial.Ks[0], 255.0f * tmpMaterial.Ks[1], 255.0f * tmpMaterial.Ks[2]);
-					parent.fill(255.0f * tmpMaterial.Kd[0], 255.0f * tmpMaterial.Kd[1], 255.0f * tmpMaterial.Kd[2], 255.0f * tmpMaterial.d);
+					parent.fill(	255.0f * tmpMaterial.Kd[0], 255.0f * tmpMaterial.Kd[1], 255.0f * tmpMaterial.Kd[2], 255.0f * tmpMaterial.d);
 				}
 
-				for (int f = 0; f < tmpModelSegment.getFaceCount(); f++) {
+				for (int f = 0; f < tmpModelSegment.getFaceCount(); f++) 
+				{
 					tmpModelElement = (tmpModelSegment.getFace(f));
 
-					if (tmpModelElement.getVertIndexCount() > 0) {
+					if (tmpModelElement.getVertIndexCount() > 0) 
+					{
 
-						parent.textureMode(PConstants.NORMAL);
 						parent.beginShape(drawMode); // specify render mode
-						if (useTexture == false || tmpMaterial.map_Kd == null)
+						
+						if (tmpMaterial.map_Kd == null)
 							useTexture = false;
 
 						if (useTexture) {
@@ -533,7 +537,8 @@ public class OBJModel {
 						for (int fp = 0; fp < tmpModelElement.getVertIndexCount(); fp++) {
 							v = vertices.get(tmpModelElement.getVertexIndex(fp));
 
-							if (v != null) {
+							if (v != null) 
+							{
 								try {
 									if (tmpModelElement.normalIndices.size() > 0) {
 										vn = normalVertices.get(tmpModelElement.getNormalIndex(fp));
@@ -554,9 +559,11 @@ public class OBJModel {
 
 						parent.endShape();
 
-						parent.textureMode(PConstants.IMAGE);
 					}
 				}
+				
+				parent.textureMode(PConstants.IMAGE);
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -850,37 +857,23 @@ public class OBJModel {
 
 							if (seg.indexOf("/") > 0) 
 							{
-								String[] forder = seg.split("/");
+								String[] faceOrder = seg.split("/");
 
-//								if (forder.length > 2) {
-									if (forder[0].length() > 0) {
-										f.vertexIndices.add(Integer.valueOf(forder[0]));
-									}
+								if (faceOrder.length > 0) {
+									f.vertexIndices.add(Integer.valueOf(faceOrder[0]));
+								}
 
-									if (forder[1].length() > 0) {
-										f.uvIndices.add(Integer.valueOf(forder[1]));
+								if (faceOrder.length > 1) {
+									if(faceOrder[1].length() > 0){
+										// this is allow for a mesh with no uv's but has normals
+										// Yep. it's in the spec.
+										f.uvIndices.add(Integer.valueOf(faceOrder[1]));
 									}
+								}
 
-									if (forder[2].length() > 0) {
-										f.normalIndices.add(Integer.valueOf(forder[2]));
-									}
-//								}
-//								else if (forder.length > 1) 
-//								{
-//									if (forder[0].length() > 0) {
-//										f.vertexIndices.add(Integer.valueOf(forder[0]));
-//									}
-//
-//									if (forder[1].length() > 0) {
-//										f.uvIndices.add(Integer.valueOf(forder[1]));
-//									}
-//								} 
-//								else if (forder.length > 0) 
-//								{
-//									if (forder[0].length() > 0) {
-//										f.vertexIndices.add(Integer.valueOf(forder[0]));
-//									}
-//								}
+								if (faceOrder.length > 2) {
+									f.normalIndices.add(Integer.valueOf(faceOrder[2]));
+								}
 							}
 							else 
 							{
@@ -908,10 +901,12 @@ public class OBJModel {
 				}
 			}
 
-			for (int i = 0; i < getSegmentCount(); i++) {
+			for (int i = 0; i < getSegmentCount(); i++) 
+			{
 				Segment s = segments.get(i);
 
-				for (int j = 0; j < s.getFaceCount(); j++) {
+				for (int j = 0; j < s.getFaceCount(); j++) 
+				{
 					Face f = s.getFace(j);
 
 					int[] vtIndex = f.getVertexIndices();
@@ -966,6 +961,7 @@ public class OBJModel {
 
 	private void parseMTL(BufferedReader bread) {
 		try {
+			
 			String line = "";
 
 			Material currentMtl = null;
