@@ -46,7 +46,7 @@ public class OBJModel {
 
 	private String name = "default";
 
-	private String defaultMaterialName = "default";
+	private String defaultMaterialName = "chicken";
 
 	private Group defaultGroup = new Group("default");
 	private Segment defaultSegment = new Segment();
@@ -318,6 +318,8 @@ public class OBJModel {
 		debug.println("Vn Size: \t\t" + normalVertices.size());
 		debug.println("G  Size: \t\t" + groups.size());
 		debug.println("S  Size: \t\t" + getSegmentCount());
+		debug.println("M Size: \t\t" + materials.size());
+		
 		debug.println("");
 	}
 
@@ -498,7 +500,9 @@ public class OBJModel {
 			for (int s = 0; s < getSegmentCount(); s++) {
 
 				tmpModelSegment = segments.get(s);
-
+				
+				
+				
 				tmpMaterial = materials.get(tmpModelSegment.materialName);
 
 				// if the material is not assigned for some
@@ -524,14 +528,16 @@ public class OBJModel {
 
 						parent.beginShape(drawMode); // specify render mode
 						
-						if (tmpMaterial.map_Kd == null)
+						if (tmpMaterial.map_Kd == null){
 							useTexture = false;
+						}
 
 						if (useTexture) {
 							if (texture != null)
 								parent.texture(texture);
-							else
-								parent.texture(tmpMaterial.map_Kd); 
+							else{
+								parent.texture(tmpMaterial.map_Kd);
+							}
 						}
 
 						for (int fp = 0; fp < tmpModelElement.getVertIndexCount(); fp++) {
@@ -753,13 +759,12 @@ public class OBJModel {
 			Group currentGroup = defaultGroup;
 			String currentMaterial = defaultMaterialName;
 
+			// ?? This was removed because I'm pretty sure it's rubbish and isn't needed.
 			// creating the default material
-			Material defaultMaterial = new Material();
-			defaultMaterial.mtlName = defaultMaterialName;
-
-			materials.put(defaultMaterialName, defaultMaterial);
-
-			defaultSegment.materialName = currentMaterial;
+			//Material defaultMaterial = new Material();
+			//defaultMaterial.mtlName = defaultMaterialName;
+			//materials.put(defaultMaterialName, defaultMaterial);
+			//defaultSegment.materialName = currentMaterial;
 
 			// creating the default model segment
 			segments.add(defaultSegment);
@@ -845,6 +850,9 @@ public class OBJModel {
 
 						currentModelSegment = newModelSegment;
 						currentModelSegment.materialName = elements[1];
+						
+						currentMaterial = elements[1];
+						
 					} else if (elements[0].equals("f")) {
 						// face setting
 						Face f = new Face();
