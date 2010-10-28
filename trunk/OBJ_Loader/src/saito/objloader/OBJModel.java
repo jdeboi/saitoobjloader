@@ -136,7 +136,7 @@ public class OBJModel {
 		materials = new Hashtable<String, Material>();
 
 		debug = new Debug(parent);
-		debug.enabled = true;
+		//debug.enabled = true;
 	}
 
 	/**
