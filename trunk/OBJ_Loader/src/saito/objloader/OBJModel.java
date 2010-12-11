@@ -59,7 +59,7 @@ public class OBJModel {
 	// POINTS ..)
 
 	private boolean useTexture = true;
-	private boolean useMaterial = true;
+	private boolean useMaterial = false;
 
 	public static String RELATIVE = "relative";
 	public static String ABSOLUTE = "absolute";
