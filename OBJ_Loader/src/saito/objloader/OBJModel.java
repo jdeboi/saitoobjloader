@@ -331,8 +331,8 @@ public class OBJModel {
 	public void enableDebug() {
 		debug.enabled = true;
 		debug.println("");
-		debug.println("objloader version 022");
-		debug.println("28 October 2010");
+		debug.println("objloader version 023");
+		debug.println("12 December 2010");
 		debug.println("http://code.google.com/p/saitoobjloader/");
 		debug.println("");
 	}
