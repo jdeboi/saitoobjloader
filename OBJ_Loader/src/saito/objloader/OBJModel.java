@@ -501,16 +501,17 @@ public class OBJModel {
 
 				tmpModelSegment = segments.get(s);
 				
-				
-				
 				tmpMaterial = materials.get(tmpModelSegment.materialName);
 
 				// if the material is not assigned for some
 				// reason, it uses the default material setting
-				if (tmpMaterial == null) {
+				if (tmpMaterial == null) 
+				{
 					tmpMaterial = materials.get(defaultMaterialName);
 
 					debug.println("Material '" + tmpModelSegment.materialName + "' not defined");
+					
+					//useTexture = false;
 				}
 
 				if (useMaterial) {
@@ -761,10 +762,10 @@ public class OBJModel {
 
 			// ?? This was removed because I'm pretty sure it's rubbish and isn't needed.
 			// creating the default material
-			//Material defaultMaterial = new Material();
-			//defaultMaterial.mtlName = defaultMaterialName;
-			//materials.put(defaultMaterialName, defaultMaterial);
-			//defaultSegment.materialName = currentMaterial;
+			Material defaultMaterial = new Material();
+			defaultMaterial.mtlName = defaultMaterialName;
+			materials.put(defaultMaterialName, defaultMaterial);
+			defaultSegment.materialName = currentMaterial;
 
 			// creating the default model segment
 			segments.add(defaultSegment);
@@ -821,8 +822,13 @@ public class OBJModel {
 						if (elements[1] != null)
 							name = elements[1];
 					} else if (elements[0].equals("mtllib")) {
-						if (elements[1] != null)
+						if (elements[1] != null){
+							
+							useMaterial = true;
+							
 							this.parseMTL(this.getBufferedReader(elements[1]));
+							
+						}
 					} else if (elements[0].equals("g")) {
 						// grouping setting
 						debug.println("found group");
@@ -833,6 +839,8 @@ public class OBJModel {
 
 						currentModelSegment = newModelSegment;
 						currentModelSegment.materialName = currentMaterial;
+						
+						useMaterial = true;
 
 						for (int e = 1; e < elements.length; e++) {
 							if (groups.get(elements[e]) == null) {
@@ -852,6 +860,8 @@ public class OBJModel {
 						currentModelSegment.materialName = elements[1];
 						
 						currentMaterial = elements[1];
+						
+						useMaterial = true;
 						
 					} else if (elements[0].equals("f")) {
 						// face setting
@@ -968,6 +978,9 @@ public class OBJModel {
 	 */
 
 	private void parseMTL(BufferedReader bread) {
+		
+		if(bread == null)return;
+		
 		try {
 			
 			String line = "";
@@ -1064,6 +1077,7 @@ public class OBJModel {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			useMaterial = false;
 		}
 	}
 
